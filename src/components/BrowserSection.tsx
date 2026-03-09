@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Monitor, KeyRound, Zap } from "lucide-react";
 
-const spring = { type: "spring", stiffness: 100, damping: 20 };
+const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 
 const features = [
   { icon: Monitor, title: "Navegador de escritorio", desc: "Disponible para Windows y macOS. Descárgalo e instálalo en segundos." },
