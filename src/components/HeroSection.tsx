@@ -1,82 +1,124 @@
 import { motion } from "framer-motion";
-import { Download, Users, TrendingUp } from "lucide-react";
+import { LayoutGrid, ArrowUpRight, ChevronRight } from "lucide-react";
 
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 
+const tools = [
+  { name: "TrendLab", price: "$99" },
+  { name: "Eleven Labs", price: "$11" },
+  { name: "Adsparo", price: "$69" },
+  { name: "Grok", price: "$20" },
+  { name: "Kalodata", price: "$99" },
+  { name: "ChatGPT Pro", price: "$20" },
+  { name: "Claude Pro", price: "$100" },
+  { name: "Midjourney", price: "$30" },
+  { name: "Canva Pro", price: "$7" },
+  { name: "SimilarWeb", price: "$125" },
+];
+
 const HeroSection = () => {
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center px-4 pt-24 pb-16">
-      {/* Mesh glow orbs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent/8 rounded-full blur-[100px]" />
+    <section className="relative min-h-screen flex items-center px-6 pt-24 pb-16 overflow-hidden">
+      {/* Purple glow on right */}
+      <div className="absolute top-0 right-0 w-[60%] h-full pointer-events-none">
+        <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-[hsl(260_50%_30%/0.25)] rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/3 right-1/4 w-[300px] h-[300px] bg-[hsl(280_40%_25%/0.2)] rounded-full blur-[120px]" />
       </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto text-center">
+      <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        {/* Left Column */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, x: -40 }}
+          animate={{ opacity: 1, x: 0 }}
           transition={{ ...spring, delay: 0.1 }}
         >
-          <div className="inline-flex items-center gap-2 glass px-4 py-2 mb-8 text-sm text-muted-foreground">
-            <Users className="w-4 h-4 text-accent" />
-            <span className="text-savings-foreground font-semibold">1,634</span>
-            <span>miembros ahorrando</span>
-            <span className="text-savings-foreground font-semibold">$2,221+/mes</span>
-          </div>
-        </motion.div>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] text-foreground mb-6">
+            Accede a más de{" "}
+            <span className="text-coral">$2,000</span>{" "}
+            en herramientas por{" "}
+            <span className="text-coral">$29/mes</span>
+          </h1>
 
-        <motion.h1
-          className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight mb-6 leading-[1.1]"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ ...spring, delay: 0.2 }}
-        >
-          Desbloquea más de{" "}
-          <span className="text-primary">50 herramientas</span>{" "}
-          premium
-        </motion.h1>
-
-        <motion.p
-          className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ ...spring, delay: 0.3 }}
-        >
-          Accede a más de <span className="text-foreground font-semibold">$2,000</span> en herramientas por solo{" "}
-          <span className="text-primary font-bold text-2xl">$29/mes</span>
-        </motion.p>
-
-        <motion.div
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ ...spring, delay: 0.4 }}
-        >
-          <button className="glow-button inline-flex items-center gap-3 bg-primary text-primary-foreground px-8 py-4 rounded-2xl text-lg font-semibold hover:brightness-110 transition-all duration-300 shadow-lg shadow-primary/25">
-            <Download className="w-5 h-5" />
-            Descargar (3 días gratis)
-          </button>
-          <p className="text-xs text-muted-foreground">
-            La prueba comienza al iniciar sesión, no al descargar
+          <p className="text-secondary-foreground text-lg mb-8 flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span>• 50+ herramientas premium</span>
+            <span>• Inicio de sesión instantáneo</span>
+            <span>• No hay contraseña</span>
           </p>
+
+          <div className="flex flex-wrap items-center gap-4 mb-8">
+            <button className="glow-button inline-flex items-center gap-2 bg-coral text-coral-foreground px-7 py-3.5 rounded-2xl text-base font-semibold hover:brightness-110 transition-all duration-300 shadow-lg shadow-coral/20">
+              <LayoutGrid className="w-5 h-5" />
+              Descargar (3 días gratis)
+            </button>
+            <button className="inline-flex items-center gap-2 border border-glass-hover text-foreground px-7 py-3.5 rounded-2xl text-base font-semibold hover:bg-secondary/40 transition-all duration-300">
+              Ver todas las herramientas
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+
+          <motion.div
+            className="flex items-center gap-2 text-sm text-muted-foreground"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
+          >
+            <span>
+              <span className="text-savings-foreground font-semibold">1,634</span>{" "}
+              miembros ahorrando{" "}
+              <span className="text-savings-foreground font-semibold">$2,221+/mes</span>
+            </span>
+            <ArrowUpRight className="w-4 h-4 text-savings" />
+          </motion.div>
         </motion.div>
 
+        {/* Right Column - Pricing Card */}
         <motion.div
-          className="flex items-center justify-center gap-8 mt-12"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ ...spring, delay: 0.25 }}
+          className="w-full max-w-md mx-auto lg:ml-auto"
         >
-          {[
-            { icon: TrendingUp, label: "Windows & macOS" },
-            { icon: Users, label: "Sin contraseñas" },
-          ].map((item) => (
-            <div key={item.label} className="flex items-center gap-2 text-sm text-muted-foreground">
-              <item.icon className="w-4 h-4 text-primary" />
-              <span>{item.label}</span>
+          <div className="glass rounded-3xl p-6 border border-glass">
+            {/* Scrollable tool list */}
+            <div className="max-h-52 overflow-y-auto pr-2 scrollbar-thin space-y-1">
+              {tools.map((tool, i) => (
+                <div
+                  key={`${tool.name}-${i}`}
+                  className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-secondary/40 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center text-xs font-bold text-muted-foreground">
+                      {tool.name.charAt(0)}
+                    </div>
+                    <span className="text-sm font-medium text-foreground">{tool.name}</span>
+                  </div>
+                  <span className="text-sm font-semibold text-coral">-{tool.price}</span>
+                </div>
+              ))}
             </div>
-          ))}
+
+            {/* Dashed separator */}
+            <div className="border-t border-dashed border-muted my-4" />
+
+            {/* Total */}
+            <div className="flex items-center justify-between px-3 mb-4">
+              <span className="text-sm text-muted-foreground">Total si se compran individualmente</span>
+              <span className="text-lg font-bold text-coral">$2,250</span>
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-between px-3 pt-3 border-t border-glass">
+              <div className="flex items-center">
+                <span className="text-sm font-bold text-foreground">Scal</span>
+                <span className="bg-foreground text-background text-sm font-bold px-1 py-0.5 rounded ml-0.5">
+                  Pass
+                </span>
+              </div>
+              <span className="text-2xl font-extrabold text-foreground">
+                29$/mes
+              </span>
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>
