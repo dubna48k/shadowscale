@@ -54,6 +54,10 @@ export default {
           DEFAULT: "hsl(var(--savings))",
           foreground: "hsl(var(--savings-foreground))",
         },
+        coral: {
+          DEFAULT: "hsl(var(--coral))",
+          foreground: "hsl(var(--coral-foreground))",
+        },
         glass: {
           DEFAULT: "hsl(var(--glass-border))",
           hover: "hsl(var(--glass-border-hover))",
