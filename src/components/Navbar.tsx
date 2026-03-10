@@ -9,7 +9,7 @@ interface NavbarProps {
 const Navbar = ({ searchQuery, onSearchChange }: NavbarProps) => {
   return (
     <motion.nav
-      className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-glass"
+      className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-[hsl(0_0%_100%/0.08)]"
       initial={{ y: -80 }}
       animate={{ y: 0 }}
       transition={{ type: "spring", stiffness: 100, damping: 20 }}
@@ -31,7 +31,7 @@ const Navbar = ({ searchQuery, onSearchChange }: NavbarProps) => {
             <a
               key={link}
               href={`#${link.toLowerCase()}`}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+              className="nav-link text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 pb-0.5"
             >
               {link}
             </a>
@@ -47,12 +47,12 @@ const Navbar = ({ searchQuery, onSearchChange }: NavbarProps) => {
               placeholder="Buscar herramientas..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-48 bg-secondary/60 border border-glass rounded-xl pl-10 pr-4 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-coral/50 transition-all"
+              className="w-48 bg-secondary/60 border border-[hsl(0_0%_100%/0.1)] rounded-xl pl-10 pr-4 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-coral/50 transition-all"
             />
           </div>
           <a
             href="#download"
-            className="inline-flex items-center gap-2 bg-coral text-coral-foreground px-4 py-2 rounded-xl text-sm font-medium hover:brightness-110 transition shrink-0"
+            className="glow-button inline-flex items-center gap-2 bg-coral text-coral-foreground px-4 py-2 rounded-xl text-sm font-medium"
           >
             <LayoutGrid className="w-4 h-4" />
             Descargar (3 días gratis)
