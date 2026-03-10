@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Search, Zap } from "lucide-react";
+import { Search, LayoutGrid } from "lucide-react";
 
 interface NavbarProps {
   searchQuery: string;
@@ -9,36 +9,55 @@ interface NavbarProps {
 const Navbar = ({ searchQuery, onSearchChange }: NavbarProps) => {
   return (
     <motion.nav
-      className="fixed top-0 left-0 right-0 z-50 glass border-b border-glass"
+      className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-glass"
       initial={{ y: -80 }}
       animate={{ y: 0 }}
       transition={{ type: "spring", stiffness: 100, damping: 20 }}
     >
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2 shrink-0">
-          <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center">
-            <Zap className="w-4 h-4 text-primary-foreground" />
+      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-6">
+        {/* Logo */}
+        <div className="flex items-center shrink-0">
+          <span className="text-lg font-bold tracking-tight text-foreground">
+            Scal
+          </span>
+          <span className="bg-foreground text-background text-lg font-bold px-1.5 py-0.5 rounded-md ml-0.5">
+            Pass
+          </span>
+        </div>
+
+        {/* Center links */}
+        <div className="hidden md:flex items-center gap-8">
+          {["Herramientas", "Afiliados", "Precios"].map((link) => (
+            <a
+              key={link}
+              href={`#${link.toLowerCase()}`}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+            >
+              {link}
+            </a>
+          ))}
+        </div>
+
+        {/* Right side */}
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="relative hidden sm:block">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Buscar herramientas..."
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
+              className="w-48 bg-secondary/60 border border-glass rounded-xl pl-10 pr-4 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-coral/50 transition-all"
+            />
           </div>
-          <span className="text-lg font-bold tracking-tight">Scalboost</span>
+          <a
+            href="#download"
+            className="inline-flex items-center gap-2 bg-coral text-coral-foreground px-4 py-2 rounded-xl text-sm font-medium hover:brightness-110 transition shrink-0"
+          >
+            <LayoutGrid className="w-4 h-4" />
+            Descargar (3 días gratis)
+          </a>
         </div>
-
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Buscar herramientas..."
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full bg-secondary/60 border border-glass rounded-xl pl-10 pr-4 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all"
-          />
-        </div>
-
-        <a
-          href="#download"
-          className="hidden sm:inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-medium hover:brightness-110 transition shrink-0"
-        >
-          Empezar gratis
-        </a>
       </div>
     </motion.nav>
   );
