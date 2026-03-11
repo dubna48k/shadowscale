@@ -14,13 +14,13 @@ const Navbar = ({ searchQuery, onSearchChange }: NavbarProps) => {
       animate={{ y: 0 }}
       transition={{ type: "spring", stiffness: 100, damping: 20 }}
     >
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-6">
+      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between gap-6">
         {/* Logo */}
         <div className="flex items-center shrink-0">
-          <span className="text-lg font-bold tracking-tight text-foreground">
+          <span className="text-[14px] font-bold tracking-tight text-foreground">
             Scal
           </span>
-          <span className="bg-foreground text-background text-lg font-bold px-1.5 py-0.5 rounded-md ml-0.5">
+          <span className="bg-foreground text-background text-[14px] font-bold px-1 py-0.5 rounded ml-0.5">
             Pass
           </span>
         </div>
