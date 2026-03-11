@@ -146,18 +146,6 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#030303] via-[#030303]/80 to-transparent pointer-events-none" />
         )}
 
-        <div className="flex justify-center mt-2 relative z-10">
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="inline-flex items-center gap-1.5 bg-white/5 border border-white/10 text-white text-[13px] font-medium px-4 py-1.5 rounded-full hover:bg-white/10 transition-all duration-200"
-          >
-            {isExpanded ? (
-              <>Mostrar menos <ChevronUp className="w-3.5 h-3.5" /></>
-            ) : (
-              <>Mostrar todo <ChevronDown className="w-3.5 h-3.5" /></>
-            )}
-          </button>
-        </div>
       </div>
     </section>
   );
