@@ -113,7 +113,7 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
           className="overflow-hidden transition-[max-height] duration-500 ease-in-out"
           style={{ maxHeight: isExpanded ? "2000px" : "220px" }}
         >
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             <AnimatePresence mode="popLayout">
               {filtered.map((tool) => (
                 <motion.div
@@ -141,11 +141,12 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
           </div>
         </div>
 
-        {/* Gradient overlay + button */}
-        {!isExpanded && (
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#030303] via-[#030303]/80 to-transparent pointer-events-none" />
-        )}
-
+        {/* Gradient overlay */}
+        <div
+          className={`absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#030303]/80 via-[#030303]/40 to-transparent pointer-events-none transition-opacity duration-500 ${
+            isExpanded ? "opacity-0" : "opacity-100"
+          }`}
+        />
       </div>
     </section>
   );
