@@ -18,7 +18,7 @@ const Index = () => {
       <FAQSection />
 
       {/* Footer CTA */}
-      <section id="download" className="max-w-2xl mx-auto px-6 py-14 text-center">
+      <section id="download" className="max-w-2xl mx-auto px-4 sm:px-6 py-10 sm:py-14 text-center">
         <h2 className="text-xl font-bold text-white mb-3">¿Listo para ahorrar?</h2>
         <p className="text-[13px] text-gray-500 mb-6">
           Descarga ScalPass Browser y empieza tu prueba gratuita de 3 días.

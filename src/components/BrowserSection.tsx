@@ -11,7 +11,7 @@ const features = [
 
 const BrowserSection = () => {
   return (
-    <section className="max-w-4xl mx-auto px-6 py-16">
+    <section className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
       <motion.div
         className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-8 sm:p-10"
         initial={{ opacity: 0, y: 30 }}

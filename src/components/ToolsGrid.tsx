@@ -60,7 +60,7 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
   }, [active, searchQuery]);
 
   return (
-    <section id="tools" className="max-w-5xl mx-auto px-8 py-10">
+    <section id="tools" className="max-w-5xl mx-auto px-4 sm:px-8 py-8 sm:py-10">
       {/* Search */}
       <div className="max-w-xl mx-auto mb-5">
         <div className="relative">
@@ -110,7 +110,7 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
           className="overflow-hidden transition-[max-height] duration-500 ease-in-out"
           style={{ maxHeight: isExpanded ? "2000px" : "260px" }}
         >
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-2.5">
             <AnimatePresence mode="popLayout">
               {filtered.map((tool) => (
                 <motion.div

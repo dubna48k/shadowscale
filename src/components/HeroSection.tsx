@@ -18,22 +18,22 @@ const tools = [
 
 const HeroSection = () => {
   return (
-    <section className="relative flex items-center px-8 pt-14 pb-4 min-h-[60vh] overflow-hidden">
+    <section className="relative flex items-center px-4 sm:px-8 pt-14 pb-4 min-h-[60vh] overflow-hidden">
       <div className="absolute top-0 right-0 w-[50%] h-full pointer-events-none">
-        <div className="absolute top-1/4 right-0 w-[400px] h-[400px] bg-[hsl(260_50%_30%/0.25)] rounded-full blur-[130px]" />
-        <div className="absolute top-1/2 right-[10%] w-[250px] h-[250px] bg-[hsl(280_40%_25%/0.2)] rounded-full blur-[100px]" />
+        <div className="absolute top-1/4 right-0 w-[300px] sm:w-[400px] h-[300px] sm:h-[400px] bg-[hsl(260_50%_30%/0.25)] rounded-full blur-[130px]" />
+        <div className="absolute top-1/2 right-[10%] w-[200px] sm:w-[250px] h-[200px] sm:h-[250px] bg-[hsl(280_40%_25%/0.2)] rounded-full blur-[100px]" />
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto w-full grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-12 items-center">
+      <div className="relative z-10 max-w-5xl mx-auto w-full grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 lg:gap-12 items-center">
         {/* Left */}
-        <div>
+        <div className="text-center lg:text-left">
           <motion.h1
-            className="text-[2.2rem] md:text-[2.8rem] font-bold leading-[1.15] tracking-[-0.01em] text-white max-w-[500px] mb-4"
-            initial={{ opacity: 0, y: 20 }}
+            className="text-3xl sm:text-4xl md:text-[2.8rem] font-bold leading-[1.15] tracking-[-0.01em] text-white max-w-[500px] mx-auto lg:mx-0 mb-4"
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ...spring, delay: 0.1 }}
           >
-            <span className="whitespace-nowrap">Accede a más de $2,000</span>
+            <span className="lg:whitespace-nowrap">Accede a más de $2,000</span>
             <br />
             en herramientas por
             <br />
@@ -41,8 +41,8 @@ const HeroSection = () => {
           </motion.h1>
 
           <motion.p
-            className="text-[14px] text-gray-400 mb-6"
-            initial={{ opacity: 0, y: 20 }}
+            className="text-[13px] sm:text-[14px] text-gray-400 mb-5 sm:mb-6"
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ...spring, delay: 0.2 }}
           >
@@ -50,22 +50,22 @@ const HeroSection = () => {
           </motion.p>
 
           <motion.div
-            className="flex flex-wrap items-center gap-3 mb-4"
-            initial={{ opacity: 0, y: 20 }}
+            className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 sm:gap-3 mb-4"
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ...spring, delay: 0.3 }}
           >
-            <button className="glow-button inline-flex items-center gap-2 bg-coral text-white px-6 py-2.5 rounded-xl text-[15px] font-semibold shadow-[0_0_25px_4px_rgba(255,90,54,0.4)]">
-              <LayoutGrid className="w-4 h-4" />
+            <button className="glow-button inline-flex items-center gap-2 bg-coral text-white px-5 sm:px-6 py-2 sm:py-2.5 rounded-xl text-[13px] sm:text-[15px] font-semibold shadow-[0_0_25px_4px_rgba(255,90,54,0.4)]">
+              <LayoutGrid className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
               Descargar (3 días gratis)
             </button>
-            <button className="inline-flex items-center gap-2 border border-white/15 text-white px-6 py-2.5 rounded-xl text-[15px] font-medium hover:bg-white/5 transition-all duration-300">
+            <button className="inline-flex items-center gap-2 border border-white/15 text-white px-5 sm:px-6 py-2 sm:py-2.5 rounded-xl text-[13px] sm:text-[15px] font-medium hover:bg-white/5 transition-all duration-300">
               Ver todas las herramientas
             </button>
           </motion.div>
 
           <motion.div
-            className="flex items-center gap-1.5 text-[13px] text-gray-500"
+            className="flex items-center justify-center lg:justify-start gap-1.5 text-[11px] sm:text-[13px] text-gray-500"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.4 }}
@@ -73,19 +73,18 @@ const HeroSection = () => {
             <span className="text-savings-foreground font-semibold">1634</span>
             <span>miembros ahorrando</span>
             <span className="text-savings-foreground font-semibold">$2,221+/mes</span>
-            <ArrowUpRight className="w-3.5 h-3.5 text-savings" />
+            <ArrowUpRight className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-savings" />
           </motion.div>
         </div>
 
         {/* Right - Card */}
         <motion.div
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ ...spring, delay: 0.25 }}
-          className="relative w-[280px] shrink-0 hidden lg:block self-center"
+          className="relative w-full max-w-[300px] sm:max-w-[280px] mx-auto lg:mx-0 shrink-0 self-center"
         >
           <div className="bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] rounded-xl px-3 py-3">
-            {/* Scrollable list */}
             <div className="h-[120px] overflow-y-auto pr-1 [&::-webkit-scrollbar]:w-[2px] [&::-webkit-scrollbar-thumb]:bg-coral [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
               {tools.map((tool) => (
                 <div
