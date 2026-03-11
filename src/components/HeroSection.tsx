@@ -18,7 +18,7 @@ const tools = [
 
 const HeroSection = () => {
   return (
-    <section className="relative px-6 pt-40 md:pt-14 pb-6 overflow-hidden md:min-h-[60vh] md:flex md:items-center">
+    <section className="relative px-6 pt-[120px] md:pt-14 pb-6 overflow-hidden md:min-h-[60vh] md:flex md:items-center">
       <div className="absolute top-0 right-0 w-[50%] h-full pointer-events-none">
         <div className="absolute top-1/4 right-0 w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-[hsl(260_50%_30%/0.25)] rounded-full blur-[130px]" />
         <div className="absolute top-1/2 right-[10%] w-[200px] md:w-[250px] h-[200px] md:h-[250px] bg-[hsl(280_40%_25%/0.2)] rounded-full blur-[100px]" />
@@ -30,7 +30,7 @@ const HeroSection = () => {
           {/* Left content */}
           <div>
             <motion.h1
-              className="text-[22px] sm:text-[32px] md:text-[2.8rem] font-bold leading-tight md:leading-[1.15] tracking-[-0.01em] text-white max-w-[500px] mb-3 md:mb-4 text-left"
+              className="text-[32px] sm:text-[36px] md:text-[2.8rem] font-bold leading-tight md:leading-[1.15] tracking-[-0.01em] text-white max-w-[500px] mb-3 md:mb-4 text-left"
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...spring, delay: 0.1 }}
