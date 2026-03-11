@@ -19,14 +19,14 @@ const BrowserSection = () => {
         viewport={{ once: true, margin: "-80px" }}
         transition={spring}
       >
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex items-center justify-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-xl bg-coral/10 flex items-center justify-center">
             <Download className="w-5 h-5 text-coral" />
           </div>
           <h2 className="text-xl font-bold text-white">Descarga la aplicación</h2>
         </div>
 
-        <p className="text-[14px] text-gray-400 mb-8 max-w-lg">
+        <p className="text-[14px] text-gray-400 mb-8 max-w-lg text-center mx-auto">
           ScalPass Browser es un navegador de escritorio para Windows y macOS que te permite acceder a más de 50 herramientas premium con inicio de sesión instantáneo y sin contraseñas. La prueba gratuita de 3 días comienza al iniciar sesión, no al descargar.
         </p>
 
