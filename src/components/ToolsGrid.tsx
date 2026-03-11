@@ -61,7 +61,7 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
   }, [active, searchQuery]);
 
   return (
-    <section id="tools" className="max-w-5xl mx-auto px-6 py-12">
+    <section id="tools" className="max-w-5xl mx-auto px-8 py-10">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-white text-lg font-bold">Explora Herramientas Premium</h2>
         <button
