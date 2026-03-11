@@ -30,7 +30,7 @@ const HeroSection = () => {
           {/* Left content */}
           <div>
             <motion.h1
-              className="text-[26px] sm:text-[32px] md:text-[2.8rem] font-bold leading-tight md:leading-[1.15] tracking-[-0.01em] text-white max-w-[500px] mb-3 md:mb-4"
+              className="text-[26px] sm:text-[32px] md:text-[2.8rem] font-bold leading-tight md:leading-[1.15] tracking-[-0.01em] text-white max-w-[500px] mb-3 md:mb-4 text-left"
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...spring, delay: 0.1 }}
