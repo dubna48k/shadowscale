@@ -17,6 +17,63 @@ const tools = [
   { name: "FastMoss", price: "$20", color: "bg-orange-500" },
 ];
 
+const InfiniteToolScroll = ({ tools, height, textSize }: { tools: typeof toolsList; height: string; textSize: string }) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    let raf: number;
+    let speed = 0.5;
+
+    const step = () => {
+      el.scrollTop += speed;
+      // Reset to top seamlessly when hitting the duplicate set
+      if (el.scrollTop >= el.scrollHeight / 2) {
+        el.scrollTop = 0;
+      }
+      raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+
+    const pause = () => cancelAnimationFrame(raf);
+    const resume = () => { raf = requestAnimationFrame(step); };
+    el.addEventListener("mouseenter", pause);
+    el.addEventListener("mouseleave", resume);
+    el.addEventListener("touchstart", pause);
+    el.addEventListener("touchend", resume);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      el.removeEventListener("mouseenter", pause);
+      el.removeEventListener("mouseleave", resume);
+      el.removeEventListener("touchstart", pause);
+      el.removeEventListener("touchend", resume);
+    };
+  }, []);
+
+  const doubled = [...tools, ...tools];
+
+  return (
+    <div
+      ref={scrollRef}
+      className={`${height} overflow-y-auto scrollbar-hide select-none cursor-pointer touch-pan-y`}
+    >
+      {doubled.map((tool, i) => (
+        <div key={`${tool.name}-${i}`} className="flex items-center justify-between py-[5px] px-1 hover:bg-white/5 rounded-md transition-colors duration-150">
+          <div className="flex items-center gap-2">
+            <div className={`w-4 h-4 rounded-full ${tool.color} shrink-0`} />
+            <span className={`${textSize} font-medium text-white`}>{tool.name}</span>
+          </div>
+          <span className={`${textSize} font-medium text-white`}>-{tool.price}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const toolsList = tools;
+
 const HeroSection = () => {
   return (
     <section className="relative px-6 pt-20 md:pt-14 pb-6 overflow-hidden md:min-h-[60vh] md:flex md:items-center">
