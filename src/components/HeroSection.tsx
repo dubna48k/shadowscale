@@ -51,7 +51,7 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ ...spring, delay: 0.3 }}
           >
-            <button className="glow-button inline-flex items-center gap-2 bg-coral text-coral-foreground px-6 py-2.5 rounded-2xl text-sm font-semibold">
+            <button className="glow-button inline-flex items-center gap-2 bg-coral text-coral-foreground px-6 py-2.5 rounded-2xl text-sm font-semibold shadow-[0_0_25px_4px_rgba(255,90,54,0.5)]">
               <LayoutGrid className="w-4 h-4" />
               Descargar (3 días gratis)
             </button>
@@ -81,44 +81,44 @@ const HeroSection = () => {
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ ...spring, delay: 0.25 }}
-          className="relative w-full max-w-[320px] mx-auto lg:ml-auto"
+          className="relative w-full max-w-[340px] mx-auto lg:ml-auto"
         >
           <div className="absolute -inset-8 -z-10 pointer-events-none">
             <div className="absolute inset-0 bg-[hsl(260_60%_30%/0.3)] rounded-full blur-[80px]" />
           </div>
 
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5">
-            {/* Scrollable tool list - manual scroll, no animation */}
-            <div className="flex flex-col gap-3 max-h-[220px] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-4">
+            {/* Scrollable tool list with visible thin scrollbar */}
+            <div className="flex flex-col gap-1 max-h-36 overflow-y-scroll [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-700 [&::-webkit-scrollbar-thumb]:rounded-full">
               {tools.map((tool) => (
                 <div
                   key={tool.name}
-                  className="flex items-center justify-between py-1.5 px-2 rounded-xl hover:bg-white/10 hover:scale-[1.03] transition-all duration-200 cursor-default"
+                  className="flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-white/10 transition-all duration-200 cursor-default shrink-0"
                 >
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-xs font-bold text-gray-400">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-md bg-white/10 flex items-center justify-center text-[10px] font-bold text-gray-400">
                       {tool.name.charAt(0)}
                     </div>
-                    <span className="text-sm font-medium text-white">{tool.name}</span>
+                    <span className="text-xs font-medium text-white">{tool.name}</span>
                   </div>
-                  <span className="text-sm font-semibold text-coral">-{tool.price}</span>
+                  <span className="text-xs font-semibold text-coral">-{tool.price}</span>
                 </div>
               ))}
             </div>
 
             <div className="border-t border-dashed border-gray-600 my-3" />
 
-            <div className="flex items-center justify-between px-2 mb-3">
-              <span className="text-xs text-gray-500">Total si se compran individualmente</span>
-              <span className="text-base font-bold text-coral">$2,250</span>
+            <div className="flex items-center justify-between px-2 mb-2">
+              <span className="text-[11px] text-gray-500">Total si se compran individualmente</span>
+              <span className="text-sm font-bold text-coral">$2,250</span>
             </div>
 
-            <div className="flex items-center justify-between px-2 pt-2.5 border-t border-white/[0.08]">
+            <div className="flex items-center justify-between px-2 pt-2 border-t border-white/[0.08]">
               <div className="flex items-center">
-                <span className="text-sm font-bold text-white">Scal</span>
-                <span className="bg-white text-black text-sm font-bold px-1 py-0.5 rounded ml-0.5">Pass</span>
+                <span className="text-xs font-bold text-white">Scal</span>
+                <span className="bg-white text-black text-xs font-bold px-1 py-0.5 rounded ml-0.5">Pass</span>
               </div>
-              <span className="text-xl font-extrabold text-white">29$/mes</span>
+              <span className="text-lg font-extrabold text-white">29$/mes</span>
             </div>
           </div>
         </motion.div>
