@@ -19,6 +19,14 @@ const Index = () => {
       <HeroSection />
       <ToolsGrid searchQuery={searchQuery} onSearchChange={setSearchQuery} />
       <BrowserSection />
+
+      {/* Video Section */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+        <div className="aspect-video rounded-2xl border border-white/[0.08] bg-white/[0.03] flex items-center justify-center">
+          <p className="text-sm text-gray-500">Video aquí</p>
+        </div>
+      </section>
+
       <FAQSection />
 
       {/* Footer CTA */}
