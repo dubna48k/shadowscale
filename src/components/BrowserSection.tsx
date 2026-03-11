@@ -26,7 +26,7 @@ const BrowserSection = () => {
           <h2 className="text-xl font-bold text-white">Descarga la aplicación</h2>
         </div>
 
-        <p className="text-[14px] text-gray-400 mb-8 max-w-lg text-center mx-auto">
+        <p className="text-[14px] text-gray-400 mb-8 max-w-lg text-left mx-auto">
           ScalPass Browser es un navegador de escritorio para Windows y macOS que te permite acceder a más de 50 herramientas premium con inicio de sesión instantáneo y sin contraseñas. La prueba gratuita de 3 días comienza al iniciar sesión, no al descargar.
         </p>
 
