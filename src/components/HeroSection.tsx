@@ -170,17 +170,7 @@ const HeroSection = () => {
           className="md:hidden mt-6 w-full max-w-[320px] mx-auto"
         >
           <div className="bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] rounded-xl px-3 py-3">
-            <div className="h-[110px] overflow-y-auto pr-1 scrollbar-hide cursor-grab active:cursor-grabbing touch-pan-y">
-              {tools.map((tool) => (
-                <div key={`m-${tool.name}`} className="flex items-center justify-between py-[5px] px-1 hover:bg-white/5 rounded-md transition-colors duration-150 cursor-default">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-4 h-4 rounded-full ${tool.color} shrink-0`} />
-                    <span className="text-[12px] font-medium text-white">{tool.name}</span>
-                  </div>
-                  <span className="text-[12px] font-medium text-white">-{tool.price}</span>
-                </div>
-              ))}
-            </div>
+            <InfiniteToolScroll tools={toolsList} height="h-[110px]" textSize="text-[12px]" />
             <div className="border-t border-white/[0.08] my-2" />
             <div className="flex items-center justify-between px-1 mb-2">
               <span className="text-[10px] text-gray-500">Total si se compran individualmente</span>
