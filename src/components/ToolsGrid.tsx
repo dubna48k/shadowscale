@@ -62,9 +62,19 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
 
   return (
     <section id="tools" className="max-w-5xl mx-auto px-6 py-12">
-      <h2 className="text-white text-lg font-bold text-center mb-6">
-        Explora Herramientas Premium
-      </h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-white text-lg font-bold">Explora Herramientas Premium</h2>
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="inline-flex items-center gap-1.5 bg-white/5 border border-white/10 text-white text-[12px] font-medium px-3 py-1 rounded-full hover:bg-white/10 transition-all duration-200"
+        >
+          {isExpanded ? (
+            <>Mostrar menos <ChevronUp className="w-3 h-3" /></>
+          ) : (
+            <>Mostrar todo <ChevronDown className="w-3 h-3" /></>
+          )}
+        </button>
+      </div>
 
       {/* Search */}
       <div className="max-w-sm mx-auto mb-4">
@@ -136,18 +146,6 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#030303] via-[#030303]/80 to-transparent pointer-events-none" />
         )}
 
-        <div className="flex justify-center mt-2 relative z-10">
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="inline-flex items-center gap-1.5 bg-white/5 border border-white/10 text-white text-[13px] font-medium px-4 py-1.5 rounded-full hover:bg-white/10 transition-all duration-200"
-          >
-            {isExpanded ? (
-              <>Mostrar menos <ChevronUp className="w-3.5 h-3.5" /></>
-            ) : (
-              <>Mostrar todo <ChevronDown className="w-3.5 h-3.5" /></>
-            )}
-          </button>
-        </div>
       </div>
     </section>
   );
