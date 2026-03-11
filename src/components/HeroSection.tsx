@@ -18,7 +18,7 @@ const tools = [
 
 const HeroSection = () => {
   return (
-    <section className="relative flex items-center px-6 pt-16 pb-6 min-h-[65vh] overflow-hidden">
+    <section className="relative flex items-center px-8 pt-14 pb-4 min-h-[60vh] overflow-hidden">
       <div className="absolute top-0 right-0 w-[50%] h-full pointer-events-none">
         <div className="absolute top-1/4 right-0 w-[400px] h-[400px] bg-[hsl(260_50%_30%/0.25)] rounded-full blur-[130px]" />
         <div className="absolute top-1/2 right-[10%] w-[250px] h-[250px] bg-[hsl(280_40%_25%/0.2)] rounded-full blur-[100px]" />
