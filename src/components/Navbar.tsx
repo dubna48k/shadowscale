@@ -31,7 +31,7 @@ const Navbar = ({ searchQuery, onSearchChange }: NavbarProps) => {
             <a
               key={link}
               href={`#${link.toLowerCase()}`}
-              className="nav-link text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 pb-0.5"
+              className="nav-link text-[14px] font-light text-muted-foreground hover:text-foreground transition-colors duration-200 pb-0.5"
             >
               {link}
             </a>
