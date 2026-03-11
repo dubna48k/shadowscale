@@ -108,7 +108,7 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
       <div className="relative">
         <div
           className="overflow-hidden transition-[max-height] duration-500 ease-in-out"
-          style={{ maxHeight: isExpanded ? "2000px" : "260px" }}
+          style={{ maxHeight: isExpanded ? "2000px" : "180px" }}
         >
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-2.5">
             <AnimatePresence mode="popLayout">
