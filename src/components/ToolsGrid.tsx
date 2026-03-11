@@ -141,12 +141,7 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
           </div>
         </div>
 
-        {/* Gradient overlay */}
-        <div
-          className={`absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#030303]/80 via-[#030303]/40 to-transparent pointer-events-none transition-opacity duration-500 ${
-            isExpanded ? "opacity-0" : "opacity-100"
-          }`}
-        />
+
       </div>
     </section>
   );
