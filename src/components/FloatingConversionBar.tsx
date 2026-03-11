@@ -6,7 +6,7 @@ const FloatingConversionBar = () => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setVisible(window.scrollY > 600);
+    const onScroll = () => setVisible(window.scrollY > 400);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -15,27 +15,23 @@ const FloatingConversionBar = () => {
     <AnimatePresence>
       {visible && (
         <motion.div
-          key="floating-bar"
-          initial={{ y: 80, opacity: 0 }}
+          key="bottom-bar"
+          initial={{ y: 60, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 80, opacity: 0 }}
-          transition={{ type: "spring", stiffness: 260, damping: 28 }}
-          className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[9999] w-[90%] md:w-auto md:min-w-[500px]"
+          exit={{ y: 60, opacity: 0 }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          className="fixed bottom-0 left-0 right-0 z-[9999]"
         >
-          <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-full px-6 py-3 flex justify-between items-center gap-8">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="flex items-center shrink-0">
-                <span className="text-[12px] font-bold text-white italic">Scal</span>
-                <span className="bg-white text-black text-[10px] font-bold italic px-1 py-0.5 rounded ml-0.5">Pass</span>
-              </div>
-              <span className="text-[12px] text-gray-400 truncate">50+ Premium Tools</span>
-            </div>
+          <div className="bg-[hsl(var(--background))] border-t border-white/[0.08] px-4 sm:px-8 py-3 flex items-center justify-center gap-4 sm:gap-6">
+            <span className="text-[12px] sm:text-[13px] text-muted-foreground">
+              Desbloquea más de 50 herramientas premium – Comienza tu prueba gratuita de 3 días
+            </span>
             <a
               href="#download"
-              className="shrink-0 inline-flex items-center gap-1.5 bg-coral text-coral-foreground px-4 py-2 rounded-full text-[12px] font-bold shadow-[0_0_16px_rgba(255,90,54,0.35)] hover:shadow-[0_0_24px_rgba(255,90,54,0.5)] transition-shadow duration-300"
+              className="shrink-0 inline-flex items-center gap-2 bg-coral text-coral-foreground px-4 sm:px-5 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold shadow-[0_0_16px_rgba(255,90,54,0.35)] hover:shadow-[0_0_24px_rgba(255,90,54,0.5)] transition-shadow duration-300"
             >
-              <LayoutGrid className="w-3 h-3" />
-              Descargar
+              <LayoutGrid className="w-3.5 h-3.5" />
+              Descargar (3 días gratis)
             </a>
           </div>
         </motion.div>
