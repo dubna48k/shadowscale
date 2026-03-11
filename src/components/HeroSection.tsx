@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { LayoutGrid, ArrowUpRight } from "lucide-react";
 
