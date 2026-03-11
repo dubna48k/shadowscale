@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search } from "lucide-react";
+import { Search, ChevronDown, ChevronUp } from "lucide-react";
 
 interface Tool {
   id: string;
@@ -12,7 +12,7 @@ interface Tool {
 
 const tools: Tool[] = [
   { id: "perplexity", name: "Perplexity", category: "IA", categoryId: "ia", icon: "P" },
-  { id: "dropkiller", name: "Dropkiller", category: "Comercio electrónico", categoryId: "ecommerce", icon: "D" },
+  { id: "dropkiller", name: "Dropkiller", category: "Ecommerce", categoryId: "ecommerce", icon: "D" },
   { id: "fishaudio", name: "FishAudio", category: "Audio", categoryId: "audio", icon: "F" },
   { id: "envato", name: "Envato", category: "Diseño", categoryId: "design", icon: "E" },
   { id: "canva", name: "Canva Pro", category: "Diseño", categoryId: "design", icon: "C" },
@@ -50,6 +50,7 @@ interface ToolsGridProps {
 
 const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
   const [active, setActive] = useState("all");
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const filtered = useMemo(() => {
     return tools.filter((t) => {
@@ -96,32 +97,57 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
         ))}
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
-        <AnimatePresence mode="popLayout">
-          {filtered.map((tool) => (
-            <motion.div
-              key={tool.id}
-              layout
-              layoutId={tool.id}
-              initial={{ opacity: 0, scale: 0.97 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.97 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="bg-[#111113] border border-white/5 rounded-xl p-2.5 cursor-pointer hover:border-white/20 hover:bg-white/[0.04] transition-all duration-150"
-            >
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 shrink-0 rounded-lg bg-white/10 flex items-center justify-center text-[11px] font-bold text-gray-400">
-                  {tool.icon}
-                </div>
-                <div className="min-w-0">
-                  <h3 className="text-[13px] font-semibold text-white truncate">{tool.name}</h3>
-                  <p className="text-[11px] text-gray-600">{tool.category}</p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
+      {/* Grid with expand/collapse */}
+      <div className="relative">
+        <div
+          className="overflow-hidden transition-[max-height] duration-500 ease-in-out"
+          style={{ maxHeight: isExpanded ? "2000px" : "220px" }}
+        >
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+            <AnimatePresence mode="popLayout">
+              {filtered.map((tool) => (
+                <motion.div
+                  key={tool.id}
+                  layout
+                  layoutId={tool.id}
+                  initial={{ opacity: 0, scale: 0.97 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.97 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  className="bg-[#111113] border border-white/5 rounded-xl p-2.5 cursor-pointer hover:border-white/20 hover:bg-white/[0.04] transition-all duration-150"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 shrink-0 rounded-lg bg-white/10 flex items-center justify-center text-[11px] font-bold text-gray-400">
+                      {tool.icon}
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="text-[13px] font-semibold text-white truncate">{tool.name}</h3>
+                      <p className="text-[11px] text-gray-600">{tool.category}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* Gradient overlay + button */}
+        {!isExpanded && (
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#030303] via-[#030303]/80 to-transparent pointer-events-none" />
+        )}
+
+        <div className="flex justify-center mt-2 relative z-10">
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="inline-flex items-center gap-1.5 bg-white/5 border border-white/10 text-white text-[13px] font-medium px-4 py-1.5 rounded-full hover:bg-white/10 transition-all duration-200"
+          >
+            {isExpanded ? (
+              <>Mostrar menos <ChevronUp className="w-3.5 h-3.5" /></>
+            ) : (
+              <>Mostrar todo <ChevronDown className="w-3.5 h-3.5" /></>
+            )}
+          </button>
+        </div>
       </div>
     </section>
   );
