@@ -4,7 +4,7 @@ import HeroSection from "@/components/HeroSection";
 import ToolsGrid from "@/components/ToolsGrid";
 import BrowserSection from "@/components/BrowserSection";
 import FAQSection from "@/components/FAQSection";
-import StickyConversionBar from "@/components/StickyConversionBar";
+import FloatingConversionBar from "@/components/FloatingConversionBar";
 import { Download, Globe } from "lucide-react";
 
 const Index = () => {
