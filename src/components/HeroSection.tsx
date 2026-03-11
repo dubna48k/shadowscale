@@ -19,25 +19,29 @@ const tools = [
 
 const InfiniteToolScroll = ({ tools, height, textSize }: { tools: typeof toolsList; height: string; textSize: string }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
+  const startY = useRef(0);
+  const startScroll = useRef(0);
 
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
     let raf: number;
-    let speed = 0.5;
+    let paused = false;
 
     const step = () => {
-      el.scrollTop += speed;
-      // Reset to top seamlessly when hitting the duplicate set
-      if (el.scrollTop >= el.scrollHeight / 2) {
-        el.scrollTop = 0;
+      if (!paused) {
+        el.scrollTop += 0.5;
+        if (el.scrollTop >= el.scrollHeight / 2) {
+          el.scrollTop = 0;
+        }
       }
       raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
 
-    const pause = () => cancelAnimationFrame(raf);
-    const resume = () => { raf = requestAnimationFrame(step); };
+    const pause = () => { paused = true; };
+    const resume = () => { if (!isDragging.current) paused = false; };
     el.addEventListener("mouseenter", pause);
     el.addEventListener("mouseleave", resume);
     el.addEventListener("touchstart", pause);
@@ -52,12 +56,45 @@ const InfiniteToolScroll = ({ tools, height, textSize }: { tools: typeof toolsLi
     };
   }, []);
 
+  const onMouseDown = (e: React.MouseEvent) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    isDragging.current = true;
+    startY.current = e.clientY;
+    startScroll.current = el.scrollTop;
+    document.body.style.cursor = "grabbing";
+  };
+
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging.current) return;
+    const el = scrollRef.current;
+    if (!el) return;
+    const delta = startY.current - e.clientY;
+    el.scrollTop = startScroll.current + delta;
+    if (el.scrollTop >= el.scrollHeight / 2) el.scrollTop = 0;
+    if (el.scrollTop < 0) el.scrollTop = el.scrollHeight / 2 + el.scrollTop;
+  };
+
+  const onMouseUp = () => {
+    isDragging.current = false;
+    document.body.style.cursor = "";
+  };
+
+  useEffect(() => {
+    const up = () => { isDragging.current = false; document.body.style.cursor = ""; };
+    window.addEventListener("mouseup", up);
+    return () => window.removeEventListener("mouseup", up);
+  }, []);
+
   const doubled = [...tools, ...tools];
 
   return (
     <div
       ref={scrollRef}
-      className={`${height} overflow-y-auto scrollbar-hide select-none cursor-pointer touch-pan-y`}
+      className={`${height} overflow-y-auto scrollbar-hide select-none cursor-grab active:cursor-grabbing touch-pan-y`}
+      onMouseDown={onMouseDown}
+      onMouseMove={onMouseMove}
+      onMouseUp={onMouseUp}
     >
       {doubled.map((tool, i) => (
         <div key={`${tool.name}-${i}`} className="flex items-center justify-between py-[5px] px-1 hover:bg-white/5 rounded-md transition-colors duration-150">
