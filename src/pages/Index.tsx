@@ -13,7 +13,7 @@ const Index = () => {
   return (
     <div className="min-h-screen mesh-gradient">
       <Navbar />
-      <FloatingBar />
+      <StickyConversionBar />
       <HeroSection />
       <ToolsGrid searchQuery={searchQuery} onSearchChange={setSearchQuery} />
       <BrowserSection />
