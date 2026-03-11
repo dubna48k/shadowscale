@@ -29,7 +29,7 @@ const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 
 const FAQSection = () => {
   return (
-    <section className="max-w-2xl mx-auto px-6 py-16">
+    <section className="max-w-2xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
