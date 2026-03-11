@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { LayoutGrid, ArrowUpRight } from "lucide-react";
 
@@ -15,6 +16,63 @@ const tools = [
   { name: "Canva Pro", price: "$7", color: "bg-blue-400" },
   { name: "FastMoss", price: "$20", color: "bg-orange-500" },
 ];
+
+const InfiniteToolScroll = ({ tools, height, textSize }: { tools: typeof toolsList; height: string; textSize: string }) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    let raf: number;
+    let speed = 0.5;
+
+    const step = () => {
+      el.scrollTop += speed;
+      // Reset to top seamlessly when hitting the duplicate set
+      if (el.scrollTop >= el.scrollHeight / 2) {
+        el.scrollTop = 0;
+      }
+      raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+
+    const pause = () => cancelAnimationFrame(raf);
+    const resume = () => { raf = requestAnimationFrame(step); };
+    el.addEventListener("mouseenter", pause);
+    el.addEventListener("mouseleave", resume);
+    el.addEventListener("touchstart", pause);
+    el.addEventListener("touchend", resume);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      el.removeEventListener("mouseenter", pause);
+      el.removeEventListener("mouseleave", resume);
+      el.removeEventListener("touchstart", pause);
+      el.removeEventListener("touchend", resume);
+    };
+  }, []);
+
+  const doubled = [...tools, ...tools];
+
+  return (
+    <div
+      ref={scrollRef}
+      className={`${height} overflow-y-auto scrollbar-hide select-none cursor-pointer touch-pan-y`}
+    >
+      {doubled.map((tool, i) => (
+        <div key={`${tool.name}-${i}`} className="flex items-center justify-between py-[5px] px-1 hover:bg-white/5 rounded-md transition-colors duration-150">
+          <div className="flex items-center gap-2">
+            <div className={`w-4 h-4 rounded-full ${tool.color} shrink-0`} />
+            <span className={`${textSize} font-medium text-white`}>{tool.name}</span>
+          </div>
+          <span className={`${textSize} font-medium text-white`}>-{tool.price}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const toolsList = tools;
 
 const HeroSection = () => {
   return (
@@ -87,17 +145,7 @@ const HeroSection = () => {
             className="hidden md:block relative w-[280px] shrink-0 self-center"
           >
             <div className="bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] rounded-xl px-3 py-3">
-              <div className="h-[120px] overflow-y-auto pr-1 scrollbar-hide cursor-grab active:cursor-grabbing touch-pan-y">
-                {tools.map((tool) => (
-                  <div key={tool.name} className="flex items-center justify-between py-[5px] px-1 hover:bg-white/5 rounded-md transition-colors duration-150 cursor-default">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-4 h-4 rounded-full ${tool.color} shrink-0`} />
-                      <span className="text-[13px] font-medium text-white">{tool.name}</span>
-                    </div>
-                    <span className="text-[13px] font-medium text-white">-{tool.price}</span>
-                  </div>
-                ))}
-              </div>
+              <InfiniteToolScroll tools={toolsList} height="h-[120px]" textSize="text-[13px]" />
               <div className="border-t border-white/[0.08] my-2" />
               <div className="flex items-center justify-between px-1 mb-2">
                 <span className="text-[11px] text-gray-500">Total si se compran individualmente</span>
@@ -122,17 +170,7 @@ const HeroSection = () => {
           className="md:hidden mt-6 w-full max-w-[320px] mx-auto"
         >
           <div className="bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] rounded-xl px-3 py-3">
-            <div className="h-[110px] overflow-y-auto pr-1 scrollbar-hide cursor-grab active:cursor-grabbing touch-pan-y">
-              {tools.map((tool) => (
-                <div key={`m-${tool.name}`} className="flex items-center justify-between py-[5px] px-1 hover:bg-white/5 rounded-md transition-colors duration-150 cursor-default">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-4 h-4 rounded-full ${tool.color} shrink-0`} />
-                    <span className="text-[12px] font-medium text-white">{tool.name}</span>
-                  </div>
-                  <span className="text-[12px] font-medium text-white">-{tool.price}</span>
-                </div>
-              ))}
-            </div>
+            <InfiniteToolScroll tools={toolsList} height="h-[110px]" textSize="text-[12px]" />
             <div className="border-t border-white/[0.08] my-2" />
             <div className="flex items-center justify-between px-1 mb-2">
               <span className="text-[10px] text-gray-500">Total si se compran individualmente</span>
