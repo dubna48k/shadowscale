@@ -60,7 +60,7 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
   }, [active, searchQuery]);
 
   return (
-    <section id="tools" className="max-w-5xl mx-auto px-8 py-10">
+    <section id="tools" className="max-w-5xl mx-auto px-4 sm:px-8 py-8 sm:py-10">
       {/* Search */}
       <div className="max-w-xl mx-auto mb-5">
         <div className="relative">
