@@ -62,9 +62,19 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
 
   return (
     <section id="tools" className="max-w-5xl mx-auto px-6 py-12">
-      <h2 className="text-white text-lg font-bold text-center mb-6">
-        Explora Herramientas Premium
-      </h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-white text-lg font-bold">Explora Herramientas Premium</h2>
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="inline-flex items-center gap-1.5 bg-white/5 border border-white/10 text-white text-[12px] font-medium px-3 py-1 rounded-full hover:bg-white/10 transition-all duration-200"
+        >
+          {isExpanded ? (
+            <>Mostrar menos <ChevronUp className="w-3 h-3" /></>
+          ) : (
+            <>Mostrar todo <ChevronDown className="w-3 h-3" /></>
+          )}
+        </button>
+      </div>
 
       {/* Search */}
       <div className="max-w-sm mx-auto mb-4">
