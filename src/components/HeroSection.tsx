@@ -87,7 +87,7 @@ const HeroSection = () => {
             className="hidden md:block relative w-[280px] shrink-0 self-center"
           >
             <div className="bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] rounded-xl px-3 py-3">
-              <div className="h-[120px] overflow-y-auto pr-1 [&::-webkit-scrollbar]:w-[2px] [&::-webkit-scrollbar-thumb]:bg-coral [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
+              <div className="h-[120px] overflow-y-auto pr-1 scrollbar-hide cursor-grab active:cursor-grabbing touch-pan-y">
                 {tools.map((tool) => (
                   <div key={tool.name} className="flex items-center justify-between py-[5px] px-1 hover:bg-white/5 rounded-md transition-colors duration-150 cursor-default">
                     <div className="flex items-center gap-2">
@@ -122,7 +122,7 @@ const HeroSection = () => {
           className="md:hidden mt-6 w-full max-w-[320px] mx-auto"
         >
           <div className="bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] rounded-xl px-3 py-3">
-            <div className="h-[110px] overflow-y-auto pr-1 [&::-webkit-scrollbar]:w-[2px] [&::-webkit-scrollbar-thumb]:bg-coral [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
+            <div className="h-[110px] overflow-y-auto pr-1 scrollbar-hide cursor-grab active:cursor-grabbing touch-pan-y">
               {tools.map((tool) => (
                 <div key={`m-${tool.name}`} className="flex items-center justify-between py-[5px] px-1 hover:bg-white/5 rounded-md transition-colors duration-150 cursor-default">
                   <div className="flex items-center gap-2">
