@@ -8,24 +8,20 @@ import {
 
 const faqs = [
   {
-    q: "¿Necesito tarjeta de crédito para la prueba gratuita?",
-    a: "No, puedes descargar Scalboost Browser y probarlo durante 3 días sin ingresar ningún método de pago. La prueba comienza al iniciar sesión en la aplicación, no al descargarla.",
+    q: "¿Cómo funciona la prueba gratuita?",
+    a: "Descarga ScalPass Browser y pruébalo durante 3 días sin costo. La prueba comienza al iniciar sesión en la aplicación, no al descargarla.",
   },
   {
-    q: "¿Cómo funcionan los créditos de herramientas?",
-    a: "Con tu suscripción mensual de $29 tienes acceso ilimitado a todas las herramientas premium incluidas en el catálogo. No hay sistema de créditos ni límites de uso.",
+    q: "¿Necesito tarjeta de crédito?",
+    a: "No, puedes probar la aplicación durante 3 días sin ingresar ningún método de pago.",
   },
   {
-    q: "¿Cuál es la política de reembolsos?",
-    a: "Ofrecemos reembolso completo dentro de los primeros 7 días después de tu primer pago. Si no estás satisfecho, contáctanos y procesaremos tu reembolso sin preguntas.",
+    q: "¿Se acaban los créditos?",
+    a: "No hay sistema de créditos. Con tu suscripción de $29/mes tienes acceso ilimitado a todas las herramientas premium del catálogo.",
   },
   {
-    q: "¿Es seguro usar cuentas compartidas?",
-    a: "Sí. Scalboost Browser gestiona las sesiones de forma aislada. Cada usuario tiene su propio entorno seguro sin compartir datos personales con otros miembros.",
-  },
-  {
-    q: "¿En qué sistemas operativos funciona?",
-    a: "Scalboost Browser está disponible para Windows 10+ y macOS 12+. Próximamente agregaremos soporte para Linux.",
+    q: "¿Puedo cancelar?",
+    a: "Sí, puedes cancelar en cualquier momento desde tu cuenta. Ofrecemos reembolso completo dentro de los primeros 7 días.",
   },
 ];
 
@@ -33,27 +29,28 @@ const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 
 const FAQSection = () => {
   return (
-    <section className="max-w-3xl mx-auto px-4 py-20">
+    <section className="max-w-2xl mx-auto px-6 py-16">
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
+        viewport={{ once: true, margin: "-80px" }}
         transition={spring}
       >
-        <h2 className="text-3xl font-bold text-center mb-2">Preguntas frecuentes</h2>
-        <p className="text-muted-foreground text-center mb-10">Todo lo que necesitas saber</p>
+        <h2 className="text-xl font-bold text-white text-center mb-8">
+          Preguntas frecuentes
+        </h2>
 
-        <Accordion type="single" collapsible className="space-y-3">
+        <Accordion type="single" collapsible className="space-y-0">
           {faqs.map((faq, i) => (
             <AccordionItem
               key={i}
               value={`faq-${i}`}
-              className="glass border border-glass px-6 rounded-2xl"
+              className="border-b border-white/[0.06] last:border-b-0"
             >
-              <AccordionTrigger className="text-left font-medium hover:no-underline py-5">
+              <AccordionTrigger className="text-left text-[14px] font-medium text-white hover:no-underline py-4">
                 {faq.q}
               </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground pb-5">
+              <AccordionContent className="text-[13px] text-gray-400 pb-4">
                 {faq.a}
               </AccordionContent>
             </AccordionItem>
