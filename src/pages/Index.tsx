@@ -4,6 +4,7 @@ import HeroSection from "@/components/HeroSection";
 import ToolsGrid from "@/components/ToolsGrid";
 import BrowserSection from "@/components/BrowserSection";
 import FAQSection from "@/components/FAQSection";
+import FloatingBar from "@/components/FloatingBar";
 import { Download, Globe } from "lucide-react";
 
 const Index = () => {
