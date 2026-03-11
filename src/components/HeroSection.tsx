@@ -16,9 +16,6 @@ const tools = [
   { name: "SimilarWeb", price: "$125" },
 ];
 
-// Duplicate for seamless infinite scroll
-const marqueeTools = [...tools, ...tools];
-
 const HeroSection = () => {
   return (
     <section className="relative min-h-screen flex items-center px-6 pt-24 pb-16 overflow-hidden">
@@ -28,50 +25,45 @@ const HeroSection = () => {
         <div className="absolute bottom-1/3 right-1/4 w-[300px] h-[300px] bg-[hsl(280_40%_25%/0.2)] rounded-full blur-[120px]" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
         {/* Left Column */}
         <div>
           <motion.h1
-            className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] text-foreground mb-6"
+            className="text-3xl sm:text-4xl lg:text-[3.5rem] font-extrabold tracking-tight leading-tight text-foreground mb-3"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ...spring, delay: 0.1 }}
           >
-            Accede a más de{" "}
-            <span className="text-coral">$2,000</span>{" "}
-            en herramientas por{" "}
-            <span className="text-coral">$29/mes</span>
+            Accede a más de $2,000 en herramientas por $29/mes
           </motion.h1>
 
           <motion.p
-            className="text-secondary-foreground text-lg mb-8 flex flex-wrap items-center gap-x-3 gap-y-1"
+            className="text-muted-foreground text-sm mb-6"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ...spring, delay: 0.2 }}
           >
-            <span>• 50+ herramientas premium</span>
-            <span>• Inicio de sesión instantáneo</span>
-            <span>• No hay contraseña</span>
+            • 50+ herramientas premium • Inicio de sesión instantáneo • No hay contraseña
           </motion.p>
 
           <motion.div
-            className="flex flex-wrap items-center gap-4 mb-8"
+            className="flex flex-wrap items-center gap-3 mb-6"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ...spring, delay: 0.3 }}
           >
-            <button className="glow-button inline-flex items-center gap-2 bg-coral text-coral-foreground px-7 py-3.5 rounded-2xl text-base font-semibold">
-              <LayoutGrid className="w-5 h-5" />
+            <button className="glow-button inline-flex items-center gap-2 bg-coral text-coral-foreground px-5 py-2.5 rounded-2xl text-sm font-semibold">
+              <LayoutGrid className="w-4 h-4" />
               Descargar (3 días gratis)
             </button>
-            <button className="inline-flex items-center gap-2 border border-glass-hover text-foreground px-7 py-3.5 rounded-2xl text-base font-semibold hover:bg-secondary/40 transition-all duration-300">
+            <button className="inline-flex items-center gap-2 border border-glass-hover text-foreground px-5 py-2.5 rounded-2xl text-sm font-semibold hover:bg-secondary/40 transition-all duration-300">
               Ver todas las herramientas
               <ChevronRight className="w-4 h-4" />
             </button>
           </motion.div>
 
           <motion.div
-            className="flex items-center gap-2 text-sm text-muted-foreground"
+            className="flex items-center gap-1.5 text-xs text-muted-foreground"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.5 }}
@@ -81,7 +73,7 @@ const HeroSection = () => {
               miembros ahorrando{" "}
               <span className="text-savings-foreground font-semibold">$2,221+/mes</span>
             </span>
-            <ArrowUpRight className="w-4 h-4 text-savings" />
+            <ArrowUpRight className="w-3.5 h-3.5 text-savings" />
           </motion.div>
         </div>
 
@@ -90,7 +82,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ ...spring, delay: 0.25 }}
-          className="relative w-full max-w-md mx-auto lg:ml-auto"
+          className="relative w-full max-w-sm mx-auto lg:ml-auto"
         >
           {/* Glow behind card */}
           <div className="absolute -inset-8 -z-10 pointer-events-none">
@@ -98,51 +90,45 @@ const HeroSection = () => {
             <div className="absolute inset-4 bg-[hsl(220_60%_30%/0.2)] rounded-full blur-[60px]" />
           </div>
 
-          <div className="glass rounded-3xl p-6 marquee-container">
-            {/* Marquee tool list */}
-            <div className="max-h-56 overflow-hidden scrollbar-hide relative">
-              {/* Fade edges */}
-              <div className="absolute top-0 left-0 right-0 h-6 bg-gradient-to-b from-card/80 to-transparent z-10 pointer-events-none rounded-t-xl" />
-              <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-card/80 to-transparent z-10 pointer-events-none" />
-
-              <div className="marquee-track space-y-1">
-                {marqueeTools.map((tool, i) => (
-                  <div
-                    key={`${tool.name}-${i}`}
-                    className="tool-item flex items-center justify-between py-2.5 px-3 rounded-xl cursor-default"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center text-xs font-bold text-muted-foreground">
-                        {tool.name.charAt(0)}
-                      </div>
-                      <span className="text-sm font-medium text-foreground">{tool.name}</span>
+          <div className="glass rounded-3xl p-5">
+            {/* Scrollable tool list */}
+            <div className="max-h-48 overflow-y-auto scrollbar-hide">
+              {tools.map((tool, i) => (
+                <div
+                  key={tool.name}
+                  className="tool-item flex items-center justify-between py-2 px-2.5 rounded-xl cursor-default"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-secondary flex items-center justify-center text-xs font-bold text-muted-foreground">
+                      {tool.name.charAt(0)}
                     </div>
-                    <span className="tool-price text-sm font-semibold text-coral transition-all duration-200">
-                      -{tool.price}
-                    </span>
+                    <span className="text-sm font-medium text-foreground">{tool.name}</span>
                   </div>
-                ))}
-              </div>
+                  <span className="tool-price text-sm font-semibold text-coral transition-all duration-200">
+                    -{tool.price}
+                  </span>
+                </div>
+              ))}
             </div>
 
             {/* Dashed separator */}
-            <div className="border-t border-dashed border-muted my-4" />
+            <div className="border-t border-dashed border-muted my-3" />
 
             {/* Total */}
-            <div className="flex items-center justify-between px-3 mb-4">
-              <span className="text-sm text-muted-foreground">Total si se compran individualmente</span>
-              <span className="text-lg font-bold text-coral">$2,250</span>
+            <div className="flex items-center justify-between px-2.5 mb-3">
+              <span className="text-xs text-muted-foreground">Total si se compran individualmente</span>
+              <span className="text-base font-bold text-coral">$2,250</span>
             </div>
 
             {/* Footer */}
-            <div className="flex items-center justify-between px-3 pt-3 border-t border-[hsl(0_0%_100%/0.08)]">
+            <div className="flex items-center justify-between px-2.5 pt-2.5 border-t border-[hsl(0_0%_100%/0.08)]">
               <div className="flex items-center">
                 <span className="text-sm font-bold text-foreground">Scal</span>
                 <span className="bg-foreground text-background text-sm font-bold px-1 py-0.5 rounded ml-0.5">
                   Pass
                 </span>
               </div>
-              <span className="text-2xl font-extrabold text-foreground">
+              <span className="text-xl font-extrabold text-foreground">
                 29$/mes
               </span>
             </div>
