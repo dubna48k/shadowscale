@@ -4,7 +4,7 @@ import HeroSection from "@/components/HeroSection";
 import ToolsGrid from "@/components/ToolsGrid";
 import BrowserSection from "@/components/BrowserSection";
 import FAQSection from "@/components/FAQSection";
-import FloatingBar from "@/components/FloatingBar";
+import StickyConversionBar from "@/components/StickyConversionBar";
 import { Download, Globe } from "lucide-react";
 
 const Index = () => {
@@ -13,7 +13,7 @@ const Index = () => {
   return (
     <div className="min-h-screen mesh-gradient">
       <Navbar />
-      <FloatingBar />
+      <StickyConversionBar />
       <HeroSection />
       <ToolsGrid searchQuery={searchQuery} onSearchChange={setSearchQuery} />
       <BrowserSection />
