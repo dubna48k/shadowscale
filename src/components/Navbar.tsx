@@ -15,8 +15,8 @@ const Navbar = () => {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center shrink-0">
-          <span className="text-[14px] font-bold text-white">Scal</span>
-          <span className="bg-white text-black text-[14px] font-bold px-1 py-0.5 rounded ml-0.5">Pass</span>
+          <span className="text-[14px] font-bold text-white">Shadow</span>
+          <span className="bg-white text-black text-[14px] font-bold px-1 py-0.5 rounded ml-0.5">Scale</span>
         </div>
 
         {/* Desktop links */}
@@ -39,7 +39,7 @@ const Navbar = () => {
             className="glow-button inline-flex items-center gap-1.5 bg-coral text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[12px] sm:text-[13px] font-medium"
           >
             <LayoutGrid className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Descargar (3 días gratis)</span>
+            <span className="hidden sm:inline">Descargar</span>
             <span className="sm:hidden">Descargar</span>
           </a>
 

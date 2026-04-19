@@ -24,14 +24,14 @@ const FloatingConversionBar = () => {
         >
           <div className="bg-[hsl(var(--background))] border-t border-white/[0.08] px-4 sm:px-8 py-3 flex items-center justify-center gap-4 sm:gap-6">
             <span className="text-[12px] sm:text-[13px] text-muted-foreground">
-              Desbloquea más de 50 herramientas premium – Comienza tu prueba gratuita de 3 días
+              Desbloquea más de 12 herramientas premium
             </span>
             <a
               href="#download"
               className="shrink-0 inline-flex items-center gap-2 bg-coral text-coral-foreground px-4 sm:px-5 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold shadow-[0_0_16px_rgba(255,90,54,0.35)] hover:shadow-[0_0_24px_rgba(255,90,54,0.5)] transition-shadow duration-300"
             >
               <LayoutGrid className="w-3.5 h-3.5" />
-              Descargar (3 días gratis)
+              Descargar
             </a>
           </div>
         </motion.div>

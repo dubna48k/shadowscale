@@ -130,11 +130,11 @@ const HeroSection = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...spring, delay: 0.1 }}
             >
-              <span className="md:whitespace-nowrap">Accede a más de $2,000</span>
+              <span className="md:whitespace-nowrap">Accede a más de $1,400</span>
               <br />
               en herramientas por
               <br />
-              <span className="text-gray-500">$29/mes</span>
+              <span className="text-gray-500">$14.5/mes</span>
             </motion.h1>
 
             <motion.p
@@ -143,7 +143,7 @@ const HeroSection = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...spring, delay: 0.2 }}
             >
-              • 50+ herramientas premium • Inicio de sesión instantáneo • No hay contraseña
+              • 12+ herramientas premium • Inicio de sesión instantáneo • No hay contraseña
             </motion.p>
 
             <motion.div
@@ -154,7 +154,7 @@ const HeroSection = () => {
             >
               <button className="glow-button inline-flex items-center justify-center gap-2 bg-coral text-white px-6 py-2.5 rounded-xl text-[14px] md:text-[15px] font-semibold shadow-[0_0_25px_4px_rgba(255,90,54,0.4)]">
                 <LayoutGrid className="w-4 h-4" />
-                Descargar (3 días gratis)
+                Descargar
               </button>
               <button className="inline-flex items-center justify-center gap-2 border border-white/15 text-white px-6 py-2.5 rounded-xl text-[14px] md:text-[15px] font-medium hover:bg-white/5 transition-all duration-300">
                 Ver todas las herramientas
@@ -167,9 +167,9 @@ const HeroSection = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.4 }}
             >
-              <span className="text-savings-foreground font-semibold">1634</span>
+              <span className="text-savings-foreground font-semibold">3200</span>
               <span>miembros ahorrando</span>
-              <span className="text-savings-foreground font-semibold">$2,221+/mes</span>
+              <span className="text-savings-foreground font-semibold">$1,435+/mes</span>
               <ArrowUpRight className="w-3 md:w-3.5 h-3 md:h-3.5 text-savings" />
             </motion.div>
           </div>
@@ -190,10 +190,10 @@ const HeroSection = () => {
               </div>
               <div className="flex items-center justify-between px-1 pt-2 border-t border-white/[0.06]">
                 <div className="flex items-center">
-                  <span className="text-[14px] font-bold text-white italic">Scal</span>
-                  <span className="bg-white text-black text-[13px] font-bold italic px-1.5 py-0.5 rounded ml-0.5">Pass</span>
+                  <span className="text-[14px] font-bold text-white italic">Shadow</span>
+                  <span className="bg-white text-black text-[13px] font-bold italic px-1.5 py-0.5 rounded ml-0.5">Scale</span>
                 </div>
-                <span className="text-[18px] font-extrabold text-white">29$/mes</span>
+                <span className="text-[18px] font-extrabold text-white">$14.9/mes</span>
               </div>
             </div>
           </motion.div>
@@ -215,10 +215,10 @@ const HeroSection = () => {
             </div>
             <div className="flex items-center justify-between px-1 pt-2 border-t border-white/[0.06]">
               <div className="flex items-center">
-                <span className="text-[13px] font-bold text-white italic">Scal</span>
-                <span className="bg-white text-black text-[12px] font-bold italic px-1 py-0.5 rounded ml-0.5">Pass</span>
+                <span className="text-[13px] font-bold text-white italic">Shadow</span>
+                <span className="bg-white text-black text-[12px] font-bold italic px-1 py-0.5 rounded ml-0.5">Scale</span>
               </div>
-              <span className="text-[16px] font-extrabold text-white">29$/mes</span>
+              <span className="text-[16px] font-extrabold text-white">$14.9/mes</span>
             </div>
           </div>
         </motion.div>
