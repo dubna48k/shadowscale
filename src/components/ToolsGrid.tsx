@@ -12,20 +12,16 @@ interface Tool {
 }
 
 const tools: Tool[] = [
-  // Fila 1
-  { id: "claude", name: "Claude Pro", category: "IA", categoryId: "ia", color: "bg-amber-600", initial: "C" },
   { id: "chatgpt", name: "ChatGPT Plus", category: "IA", categoryId: "ia", color: "bg-emerald-600", initial: "G" },
-  { id: "midjourney", name: "Midjourney", category: "IA", categoryId: "ia", color: "bg-indigo-500", initial: "M" },
   { id: "canva", name: "Canva Pro", category: "Diseño", categoryId: "design", color: "bg-cyan-500", initial: "C" },
-  { id: "capcut", name: "Capcut Pro", category: "Video", categoryId: "video", color: "bg-violet-500", initial: "C" },
-  { id: "kalodata", name: "Kalodata", category: "Ecommerce", categoryId: "ecommerce", color: "bg-blue-600", initial: "K" },
-  // Fila 2
-  { id: "fastmoss", name: "FastMoss", category: "Ecommerce", categoryId: "ecommerce", color: "bg-orange-500", initial: "F" },
-  { id: "elevenlabs", name: "ElevenLabs", category: "IA", categoryId: "ia", color: "bg-gray-700", initial: "E" },
-  { id: "envato", name: "Envato Elements", category: "Diseño", categoryId: "design", color: "bg-green-500", initial: "E" },
+  { id: "capcut", name: "CapCut Pro", category: "Video", categoryId: "video", color: "bg-violet-500", initial: "C" },
   { id: "freepik", name: "Freepik Premium", category: "Diseño", categoryId: "design", color: "bg-blue-700", initial: "F" },
-  { id: "nordvpn", name: "NordVPN", category: "Seguridad", categoryId: "security", color: "bg-blue-500", initial: "N" },
-  { id: "grammarly", name: "Grammarly", category: "Productividad", categoryId: "productivity", color: "bg-emerald-500", initial: "G" },
+  { id: "perplexity", name: "Perplexity Pro", category: "IA", categoryId: "ia", color: "bg-teal-500", initial: "P" },
+  { id: "elevenlabs", name: "ElevenLabs Creator", category: "IA", categoryId: "ia", color: "bg-gray-700", initial: "E" },
+  { id: "higgsfield", name: "Higgsfield Plus", category: "IA", categoryId: "ia", color: "bg-pink-500", initial: "H" },
+  { id: "leonardo", name: "Leonardo AI Pro", category: "IA", categoryId: "ia", color: "bg-purple-500", initial: "L" },
+  { id: "runway", name: "Runway Pro", category: "Video", categoryId: "video", color: "bg-rose-500", initial: "R" },
+  { id: "seedance", name: "Seedance Pro", category: "Video", categoryId: "video", color: "bg-amber-500", initial: "S" },
 ];
 
 const categories = [
@@ -33,9 +29,6 @@ const categories = [
   { id: "ia", label: "IA" },
   { id: "design", label: "Diseño" },
   { id: "video", label: "Video y Edición" },
-  { id: "ecommerce", label: "Ecommerce" },
-  { id: "productivity", label: "Productividad" },
-  { id: "security", label: "Seguridad" },
 ];
 
 interface ToolsGridProps {

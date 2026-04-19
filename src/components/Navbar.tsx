@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LayoutGrid, Menu, X } from "lucide-react";
+
+const links = [
+  { label: "Herramientas", href: "#herramientas" },
+  { label: "Afiliados (próximamente)", href: "#" },
+  { label: "Precios", href: "#pricing" },
+];
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -21,13 +26,13 @@ const Navbar = () => {
 
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-8">
-          {["Herramientas", "Afiliados", "Precios"].map((link) => (
+          {links.map((link) => (
             <a
-              key={link}
-              href={`#${link.toLowerCase()}`}
+              key={link.label}
+              href={link.href}
               className="nav-link text-[14px] font-light text-gray-400 hover:text-white transition-colors duration-200 pb-0.5"
             >
-              {link}
+              {link.label}
             </a>
           ))}
         </div>
@@ -35,20 +40,25 @@ const Navbar = () => {
         {/* Right */}
         <div className="flex items-center gap-2">
           <a
-            href="#download"
-            className="glow-button inline-flex items-center gap-1.5 bg-coral text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[12px] sm:text-[13px] font-medium"
+            href="#pricing"
+            className="glow-button inline-flex items-center justify-center text-white font-bold transition-colors"
+            style={{ background: "#f97316", borderRadius: "10px", padding: "8px 14px", fontSize: "13px" }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "#ea580c")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "#f97316")}
           >
-            <LayoutGrid className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Descargar</span>
-            <span className="sm:hidden">Descargar</span>
+            <span className="hidden sm:inline">Comenzar ahora — $14.9/mes</span>
+            <span className="sm:hidden">Comenzar — $14.9</span>
           </a>
 
           {/* Mobile hamburger */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden p-1.5 text-gray-400 hover:text-white transition-colors"
+            aria-label="Menu"
           >
-            {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            <span className="block w-5 h-0.5 bg-current mb-1" />
+            <span className="block w-5 h-0.5 bg-current mb-1" />
+            <span className="block w-5 h-0.5 bg-current" />
           </button>
         </div>
       </div>
@@ -63,14 +73,14 @@ const Navbar = () => {
             className="md:hidden border-t border-white/[0.06] overflow-hidden"
           >
             <div className="px-4 py-3 flex flex-col gap-3">
-              {["Herramientas", "Afiliados", "Precios"].map((link) => (
+              {links.map((link) => (
                 <a
-                  key={link}
-                  href={`#${link.toLowerCase()}`}
+                  key={link.label}
+                  href={link.href}
                   onClick={() => setMenuOpen(false)}
                   className="text-[14px] text-gray-400 hover:text-white transition-colors"
                 >
-                  {link}
+                  {link.label}
                 </a>
               ))}
             </div>

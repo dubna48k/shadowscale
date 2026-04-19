@@ -23,13 +23,13 @@ const plans: Plan[] = [
     price: "$9.9",
     discount: "LANZAMIENTO -85%",
     features: [
-      "ChatGPT Plus ($22/mes)",
-      "Canva Pro ($13/mes)",
-      "CapCut Pro ($10/mes)",
-      "Freepik Premium ($12/mes)",
+      "ChatGPT Plus",
+      "Canva Pro",
+      "CapCut Pro",
+      "Freepik Premium",
     ],
-    realValue: "Valor real: $57/mes",
-    savings: "Ahorras $47/mes",
+    realValue: "",
+    savings: "",
     cta: "Comenzar con Starter",
     ctaStyle: "outline",
   },
@@ -41,16 +41,16 @@ const plans: Plan[] = [
     discount: "LANZAMIENTO -90%",
     topBadge: "MÁS POPULAR",
     features: [
-      "ChatGPT Plus ($22/mes)",
-      "Canva Pro ($13/mes)",
-      "CapCut Pro ($10/mes)",
-      "Freepik Premium ($12/mes)",
-      "Perplexity Pro ($20/mes)",
-      "ElevenLabs Creator ($22/mes)",
-      "Higgsfield Plus ($39/mes) — incluye Kling AI, Sora",
+      "ChatGPT Plus",
+      "Canva Pro",
+      "CapCut Pro",
+      "Freepik Premium",
+      "Perplexity Pro",
+      "ElevenLabs Creator",
+      "Higgsfield Plus — incluye Kling AI, Sora",
     ],
-    realValue: "Valor real: $138/mes",
-    savings: "Ahorras $123/mes",
+    realValue: "",
+    savings: "",
     cta: "Comenzar con Pro",
     highlighted: true,
     ctaStyle: "solid",
@@ -63,19 +63,19 @@ const plans: Plan[] = [
     discount: "LANZAMIENTO -90%",
     topBadge: "MÁXIMO PODER",
     features: [
-      "ChatGPT Plus ($22/mes)",
-      "Canva Pro ($13/mes)",
-      "CapCut Pro ($10/mes)",
-      "Freepik Premium ($12/mes)",
-      "Perplexity Pro ($20/mes)",
-      "ElevenLabs Creator ($22/mes)",
-      "Higgsfield Plus ($39/mes)",
-      "Leonardo AI Pro ($60/mes)",
-      "Runway Pro ($100/mes)",
-      "Seedance Pro ($16/mes)",
+      "ChatGPT Plus",
+      "Canva Pro",
+      "CapCut Pro",
+      "Freepik Premium",
+      "Perplexity Pro",
+      "ElevenLabs Creator",
+      "Higgsfield Plus",
+      "Leonardo AI Pro",
+      "Runway Pro",
+      "Seedance Pro",
     ],
-    realValue: "Valor real: $304/mes",
-    savings: "Ahorras $274/mes",
+    realValue: "",
+    savings: "",
     cta: "Comenzar con Elite",
     ctaStyle: "gradient",
   },
@@ -177,12 +177,6 @@ const PricingSection = () => {
                 ))}
               </ul>
 
-              <div className="border-t border-white/[0.08] pt-4 mb-5">
-                <p className="text-gray-400 text-[13px]">{plan.realValue}</p>
-                <p className="text-[13px] font-semibold" style={{ color: "#f97316" }}>
-                  {plan.savings}
-                </p>
-              </div>
 
               <a
                 href="https://app.shadowscale.pro/register"
