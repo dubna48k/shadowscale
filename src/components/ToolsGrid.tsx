@@ -150,6 +150,7 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
           </div>
         </div>
       </div>
+      </div>
     </section>
   );
 };
