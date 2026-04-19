@@ -27,11 +27,11 @@ const FloatingConversionBar = () => {
               Desbloquea más de 12 herramientas premium
             </span>
             <a
-              href="#download"
+              href="#pricing"
               className="shrink-0 inline-flex items-center gap-2 bg-coral text-coral-foreground px-4 sm:px-5 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold shadow-[0_0_16px_rgba(255,90,54,0.35)] hover:shadow-[0_0_24px_rgba(255,90,54,0.5)] transition-shadow duration-300"
             >
               <LayoutGrid className="w-3.5 h-3.5" />
-              Descargar
+              Comenzar ahora — $14.9/mes
             </a>
           </div>
         </motion.div>
