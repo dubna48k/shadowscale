@@ -8,20 +8,24 @@ import {
 
 const faqs = [
   {
-    q: "¿Cómo funciona la prueba gratuita?",
-    a: "Descarga ScalPass Browser y pruébalo durante 3 días sin costo. La prueba comienza al iniciar sesión en la aplicación, no al descargarla.",
+    q: "¿Qué pasa si el navegador no funciona?",
+    a: "Nuestro equipo de soporte está disponible para ayudarte a resolver cualquier problema lo antes posible.",
   },
   {
-    q: "¿Necesito tarjeta de crédito?",
-    a: "No, puedes probar la aplicación durante 3 días sin ingresar ningún método de pago.",
+    q: "¿Qué métodos de pago aceptan?",
+    a: "Puedes pagar con tarjetas de crédito o débito, Apple Pay, Amazon Pay, Klarna, Cash App Pay y Link para un proceso rápido y seguro.",
   },
   {
     q: "¿Se acaban los créditos?",
-    a: "No hay sistema de créditos. Con tu suscripción de $29/mes tienes acceso ilimitado a todas las herramientas premium del catálogo.",
+    a: "No. Si una herramienta alcanza su límite diario/mensual, la cambiamos a otra cuenta en minutos, para que sigas trabajando.",
   },
   {
-    q: "¿Puedo cancelar?",
-    a: "Sí, puedes cancelar en cualquier momento desde tu cuenta. Ofrecemos reembolso completo dentro de los primeros 7 días.",
+    q: "¿Ofrecen reembolsos?",
+    a: "No hay reembolsos disponibles. Una vez que pagas, obtienes acceso inmediato.",
+  },
+  {
+    q: "¿Puedo cancelar en cualquier momento?",
+    a: "Sí. Cancela en cualquier momento. Tu acceso permanece activo hasta el final de tu período de prueba/facturación actual.",
   },
 ];
 

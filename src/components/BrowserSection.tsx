@@ -27,7 +27,7 @@ const BrowserSection = () => {
         </div>
 
         <p className="text-[14px] text-gray-400 mb-8 max-w-lg text-left mx-auto">
-          ScalPass Browser es un navegador de escritorio para Windows y macOS que te permite acceder a más de 50 herramientas premium con inicio de sesión instantáneo y sin contraseñas. La prueba gratuita de 3 días comienza al iniciar sesión, no al descargar.
+          ShadowScale Browser es un navegador de escritorio para Windows y macOS que te permite acceder a más de 12 herramientas premium con inicio de sesión instantáneo y sin contraseñas.
         </p>
 
         <div className="grid sm:grid-cols-3 gap-5">
