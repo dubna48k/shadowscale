@@ -161,9 +161,15 @@ const HeroSection = () => {
               >
                 Comenzar ahora — $14.9/mes
               </a>
-              <button className="inline-flex items-center justify-center gap-2 border border-white/15 text-white px-6 py-2.5 rounded-xl text-[14px] md:text-[15px] font-medium hover:bg-white/5 transition-all duration-300">
-                Ver todas las herramientas
-              </button>
+              <a
+                href="#pricing"
+                className="inline-flex items-center justify-center text-white font-bold transition-colors"
+                style={{ background: "#f97316", borderRadius: "12px", padding: "14px 28px", fontSize: "16px" }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "#ea580c")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "#f97316")}
+              >
+                Comenzar ahora — $14.9/mes
+              </a>
             </motion.div>
 
             <motion.div
