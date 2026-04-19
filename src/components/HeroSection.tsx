@@ -130,7 +130,7 @@ const HeroSection = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...spring, delay: 0.1 }}
             >
-              <span className="md:whitespace-nowrap">Accede a +$2,000</span>
+              <span className="md:whitespace-nowrap">Accede a +$1,400</span>
               <br />
               en herramientas premium por
               <br />
