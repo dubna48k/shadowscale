@@ -177,12 +177,6 @@ const PricingSection = () => {
                 ))}
               </ul>
 
-              <div className="border-t border-white/[0.08] pt-4 mb-5">
-                <p className="text-gray-400 text-[13px]">{plan.realValue}</p>
-                <p className="text-[13px] font-semibold" style={{ color: "#f97316" }}>
-                  {plan.savings}
-                </p>
-              </div>
 
               <a
                 href="https://app.shadowscale.pro/register"
