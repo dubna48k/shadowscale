@@ -12,34 +12,30 @@ interface Tool {
 }
 
 const tools: Tool[] = [
-  { id: "elevenlabs", name: "ElevenLabs", category: "IA", categoryId: "ia", color: "bg-gray-700", initial: "E" },
-  { id: "chatgpt", name: "ChatGPT", category: "IA", categoryId: "ia", color: "bg-emerald-600", initial: "G" },
-  { id: "canva", name: "Canva Pro", category: "Diseño", categoryId: "design", color: "bg-cyan-500", initial: "C" },
-  { id: "capcut", name: "Capcut", category: "Video y Edición", categoryId: "video", color: "bg-violet-500", initial: "C" },
-  { id: "claude", name: "Claude", category: "IA", categoryId: "ia", color: "bg-amber-600", initial: "C" },
-  { id: "kalodata", name: "Kalodata", category: "Comercio electrónico", categoryId: "ecommerce", color: "bg-blue-600", initial: "K" },
-  { id: "envato", name: "Envato", category: "Diseño", categoryId: "design", color: "bg-green-500", initial: "E" },
-  { id: "sora", name: "Sora", category: "IA", categoryId: "ia", color: "bg-gray-500", initial: "S" },
-  { id: "minea", name: "Minea", category: "Comercio electrónico", categoryId: "ecommerce", color: "bg-teal-500", initial: "M" },
+  // Fila 1
+  { id: "claude", name: "Claude Pro", category: "IA", categoryId: "ia", color: "bg-amber-600", initial: "C" },
+  { id: "chatgpt", name: "ChatGPT Plus", category: "IA", categoryId: "ia", color: "bg-emerald-600", initial: "G" },
   { id: "midjourney", name: "Midjourney", category: "IA", categoryId: "ia", color: "bg-indigo-500", initial: "M" },
-  { id: "dropkiller", name: "Dropkiller", category: "Comercio electrónico", categoryId: "ecommerce", color: "bg-sky-600", initial: "D" },
-  { id: "junglescout", name: "JungleScout", category: "Espionaje e Investigación", categoryId: "spy", color: "bg-orange-500", initial: "JS" },
-  { id: "grok", name: "Grok", category: "IA", categoryId: "ia", color: "bg-gray-600", initial: "G" },
-  { id: "dropship", name: "dropship.io", category: "Comercio electrónico", categoryId: "ecommerce", color: "bg-blue-500", initial: "D" },
-  { id: "adspy", name: "Adspy", category: "Comercio electrónico", categoryId: "ecommerce", color: "bg-teal-400", initial: "A" },
-  { id: "brainfm", name: "BrainFM", category: "IA", categoryId: "ia", color: "bg-emerald-500", initial: "B" },
-  { id: "perplexity", name: "Perplexity", category: "IA", categoryId: "ia", color: "bg-cyan-600", initial: "P" },
-  { id: "freepik", name: "Freepik", category: "Diseño", categoryId: "design", color: "bg-blue-700", initial: "F" },
+  { id: "canva", name: "Canva Pro", category: "Diseño", categoryId: "design", color: "bg-cyan-500", initial: "C" },
+  { id: "capcut", name: "Capcut Pro", category: "Video", categoryId: "video", color: "bg-violet-500", initial: "C" },
+  { id: "kalodata", name: "Kalodata", category: "Ecommerce", categoryId: "ecommerce", color: "bg-blue-600", initial: "K" },
+  // Fila 2
+  { id: "fastmoss", name: "FastMoss", category: "Ecommerce", categoryId: "ecommerce", color: "bg-orange-500", initial: "F" },
+  { id: "elevenlabs", name: "ElevenLabs", category: "IA", categoryId: "ia", color: "bg-gray-700", initial: "E" },
+  { id: "envato", name: "Envato Elements", category: "Diseño", categoryId: "design", color: "bg-green-500", initial: "E" },
+  { id: "freepik", name: "Freepik Premium", category: "Diseño", categoryId: "design", color: "bg-blue-700", initial: "F" },
+  { id: "nordvpn", name: "NordVPN", category: "Seguridad", categoryId: "security", color: "bg-blue-500", initial: "N" },
+  { id: "grammarly", name: "Grammarly", category: "Productividad", categoryId: "productivity", color: "bg-emerald-500", initial: "G" },
 ];
 
 const categories = [
   { id: "all", label: "Todo" },
   { id: "ia", label: "IA" },
-  { id: "video", label: "Video y Edición" },
   { id: "design", label: "Diseño" },
-  { id: "spy", label: "Espionaje e Investigación" },
-  { id: "ecommerce", label: "Comercio electrónico" },
-  { id: "audio", label: "Audio" },
+  { id: "video", label: "Video y Edición" },
+  { id: "ecommerce", label: "Ecommerce" },
+  { id: "productivity", label: "Productividad" },
+  { id: "security", label: "Seguridad" },
 ];
 
 interface ToolsGridProps {
@@ -60,7 +56,15 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
   }, [active, searchQuery]);
 
   return (
-    <section id="herramientas" className="max-w-5xl mx-auto px-4 sm:px-8 py-8 sm:py-10">
+    <section
+      id="herramientas"
+      className="px-4 sm:px-8 py-8 sm:py-10"
+      style={{
+        background:
+          "radial-gradient(ellipse at 50% 0%, rgba(249,115,22,0.08) 0%, transparent 60%), #0a0a0a",
+      }}
+    >
+      <div className="max-w-5xl mx-auto">
       {/* Search */}
       <div className="max-w-xl mx-auto mb-5">
         <div className="relative">
@@ -93,8 +97,16 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
       </div>
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-white text-[15px] font-medium">Explora Herramientas Premium</h2>
+      <div className="mb-5 text-center">
+        <h2 className="text-white text-[20px] sm:text-[24px] font-bold mb-1.5">
+          Tu arsenal de herramientas premium 🛠️
+        </h2>
+        <p className="text-[13px] text-gray-400">
+          Todas con inicio de sesión instantáneo — sin contraseñas, sin esperas
+        </p>
+      </div>
+
+      <div className="flex items-center justify-end mb-3">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className="inline-flex items-center gap-1 text-[13px] text-gray-400 hover:text-white transition-colors duration-200"
@@ -137,6 +149,7 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
             </AnimatePresence>
           </div>
         </div>
+      </div>
       </div>
     </section>
   );
