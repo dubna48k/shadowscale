@@ -5,16 +5,13 @@ import { LayoutGrid, ArrowUpRight } from "lucide-react";
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 
 const tools = [
-  { name: "Gethookd", price: "$149", color: "bg-emerald-500" },
-  { name: "BrainFM", price: "$7", color: "bg-rose-500" },
-  { name: "Foreplay", price: "$175", color: "bg-indigo-500" },
-  { name: "Hailuo", price: "$199", color: "bg-red-500" },
-  { name: "ChatGPT Pro", price: "$20", color: "bg-emerald-400" },
-  { name: "Dropkiller", price: "$24", color: "bg-cyan-500" },
-  { name: "FishAudio", price: "$11", color: "bg-pink-500" },
-  { name: "Envato", price: "$16.5", color: "bg-green-500" },
-  { name: "Canva Pro", price: "$7", color: "bg-blue-400" },
-  { name: "FastMoss", price: "$20", color: "bg-orange-500" },
+  { name: "Claude Pro", price: "$20", color: "bg-orange-400" },
+  { name: "ChatGPT Plus", price: "$22", color: "bg-emerald-400" },
+  { name: "Canva Pro", price: "$13", color: "bg-blue-400" },
+  { name: "Kalodata", price: "$129", color: "bg-indigo-500" },
+  { name: "FastMoss", price: "$99", color: "bg-orange-500" },
+  { name: "Midjourney", price: "$30", color: "bg-purple-500" },
+  { name: "Capcut Pro", price: "$10", color: "bg-cyan-500" },
 ];
 
 const InfiniteToolScroll = ({ tools, height, textSize }: { tools: typeof toolsList; height: string; textSize: string }) => {
@@ -130,11 +127,11 @@ const HeroSection = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...spring, delay: 0.1 }}
             >
-              <span className="md:whitespace-nowrap">Accede a más de $1,400</span>
+              <span className="md:whitespace-nowrap">Accede a +$2,000</span>
               <br />
-              en herramientas por
+              en herramientas premium por
               <br />
-              <span className="text-gray-500">$14.5/mes</span>
+              <span style={{ color: "#f97316" }}>$14.9/mes</span>
             </motion.h1>
 
             <motion.p
@@ -143,7 +140,7 @@ const HeroSection = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...spring, delay: 0.2 }}
             >
-              • 12+ herramientas premium • Inicio de sesión instantáneo • No hay contraseña
+              • 20+ herramientas premium • Sin contraseñas • Cancela cuando quieras
             </motion.p>
 
             <motion.div
@@ -152,10 +149,15 @@ const HeroSection = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...spring, delay: 0.3 }}
             >
-              <button className="glow-button inline-flex items-center justify-center gap-2 bg-coral text-white px-6 py-2.5 rounded-xl text-[14px] md:text-[15px] font-semibold shadow-[0_0_25px_4px_rgba(255,90,54,0.4)]">
-                <LayoutGrid className="w-4 h-4" />
-                Descargar
-              </button>
+              <a
+                href="#pricing"
+                className="inline-flex items-center justify-center text-white font-bold transition-colors"
+                style={{ background: "#f97316", borderRadius: "12px", padding: "14px 28px", fontSize: "16px" }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "#ea580c")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "#f97316")}
+              >
+                Comenzar ahora — $14.9/mes
+              </a>
               <button className="inline-flex items-center justify-center gap-2 border border-white/15 text-white px-6 py-2.5 rounded-xl text-[14px] md:text-[15px] font-medium hover:bg-white/5 transition-all duration-300">
                 Ver todas las herramientas
               </button>
@@ -167,9 +169,9 @@ const HeroSection = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.4 }}
             >
-              <span className="text-savings-foreground font-semibold">3200</span>
-              <span>miembros ahorrando</span>
-              <span className="text-savings-foreground font-semibold">$1,435+/mes</span>
+              <span className="text-savings-foreground font-semibold">⚡ 850+</span>
+              <span>miembros activos ahorrando</span>
+              <span className="text-savings-foreground font-semibold">$2,000+/mes</span>
               <ArrowUpRight className="w-3 md:w-3.5 h-3 md:h-3.5 text-savings" />
             </motion.div>
           </div>
@@ -185,8 +187,8 @@ const HeroSection = () => {
               <InfiniteToolScroll tools={toolsList} height="h-[120px]" textSize="text-[13px]" />
               <div className="border-t border-white/[0.08] my-2" />
               <div className="flex items-center justify-between px-1 mb-2">
-                <span className="text-[11px] text-gray-500">Total si se compran individualmente</span>
-                <span className="text-[15px] font-bold text-coral">$1435</span>
+                <span className="text-[11px] text-gray-500">Si se compran individualmente</span>
+                <span className="text-[15px] font-bold text-coral">$323/mes</span>
               </div>
               <div className="flex items-center justify-between px-1 pt-2 border-t border-white/[0.06]">
                 <div className="flex items-center">
@@ -210,8 +212,8 @@ const HeroSection = () => {
             <InfiniteToolScroll tools={toolsList} height="h-[110px]" textSize="text-[12px]" />
             <div className="border-t border-white/[0.08] my-2" />
             <div className="flex items-center justify-between px-1 mb-2">
-              <span className="text-[10px] text-gray-500">Total si se compran individualmente</span>
-              <span className="text-[14px] font-bold text-coral">$1435</span>
+              <span className="text-[10px] text-gray-500">Si se compran individualmente</span>
+              <span className="text-[14px] font-bold text-coral">$323/mes</span>
             </div>
             <div className="flex items-center justify-between px-1 pt-2 border-t border-white/[0.06]">
               <div className="flex items-center">
