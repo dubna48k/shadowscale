@@ -5,13 +5,16 @@ import { LayoutGrid, ArrowUpRight } from "lucide-react";
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 
 const tools = [
-  { name: "Claude Pro", price: "$20", color: "bg-orange-400" },
   { name: "ChatGPT Plus", price: "$22", color: "bg-emerald-400" },
   { name: "Canva Pro", price: "$13", color: "bg-blue-400" },
-  { name: "Kalodata", price: "$129", color: "bg-indigo-500" },
-  { name: "FastMoss", price: "$99", color: "bg-orange-500" },
-  { name: "Midjourney", price: "$30", color: "bg-purple-500" },
-  { name: "Capcut Pro", price: "$10", color: "bg-cyan-500" },
+  { name: "CapCut Pro", price: "$10", color: "bg-cyan-500" },
+  { name: "Freepik Premium", price: "$12", color: "bg-blue-700" },
+  { name: "Perplexity Pro", price: "$20", color: "bg-teal-500" },
+  { name: "ElevenLabs Creator", price: "$22", color: "bg-gray-700" },
+  { name: "Higgsfield Plus", price: "$39", color: "bg-pink-500" },
+  { name: "Leonardo AI Pro", price: "$60", color: "bg-purple-500" },
+  { name: "Runway Pro", price: "$100", color: "bg-rose-500" },
+  { name: "Seedance Pro", price: "$16", color: "bg-amber-500" },
 ];
 
 const InfiniteToolScroll = ({ tools, height, textSize }: { tools: typeof toolsList; height: string; textSize: string }) => {
