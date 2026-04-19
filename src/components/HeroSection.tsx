@@ -187,8 +187,8 @@ const HeroSection = () => {
               <InfiniteToolScroll tools={toolsList} height="h-[120px]" textSize="text-[13px]" />
               <div className="border-t border-white/[0.08] my-2" />
               <div className="flex items-center justify-between px-1 mb-2">
-                <span className="text-[11px] text-gray-500">Total si se compran individualmente</span>
-                <span className="text-[15px] font-bold text-coral">$1435</span>
+                <span className="text-[11px] text-gray-500">Si se compran individualmente</span>
+                <span className="text-[15px] font-bold text-coral">$323/mes</span>
               </div>
               <div className="flex items-center justify-between px-1 pt-2 border-t border-white/[0.06]">
                 <div className="flex items-center">
@@ -212,8 +212,8 @@ const HeroSection = () => {
             <InfiniteToolScroll tools={toolsList} height="h-[110px]" textSize="text-[12px]" />
             <div className="border-t border-white/[0.08] my-2" />
             <div className="flex items-center justify-between px-1 mb-2">
-              <span className="text-[10px] text-gray-500">Total si se compran individualmente</span>
-              <span className="text-[14px] font-bold text-coral">$1435</span>
+              <span className="text-[10px] text-gray-500">Si se compran individualmente</span>
+              <span className="text-[14px] font-bold text-coral">$323/mes</span>
             </div>
             <div className="flex items-center justify-between px-1 pt-2 border-t border-white/[0.06]">
               <div className="flex items-center">
