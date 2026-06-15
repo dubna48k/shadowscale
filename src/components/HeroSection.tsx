@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 
@@ -123,26 +123,121 @@ const ToolLogoSmall = ({ tool }: { tool: typeof cardTools[0] }) => {
   );
 };
 
+const ITEM_H = 44; // px por ítem
+const VISIBLE = 5; // ítems visibles
+const STEP = 3;    // ítems que sube cada tick
+
 const PriceCard = () => {
-  const doubled = [...cardTools, ...cardTools];
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const offsetRef = useRef(0);
+  const isDragging = useRef(false);
+  const dragStartY = useRef(0);
+  const dragStartOffset = useRef(0);
+  const animating = useRef(false);
+
+  const total = cardTools.length;
+  const looped = [...cardTools, ...cardTools, ...cardTools]; // triple para loop infinito
+
+  const smoothScrollTo = (target: number) => {
+    if (!scrollRef.current || animating.current) return;
+    animating.current = true;
+    const start = offsetRef.current;
+    const diff = target - start;
+    const duration = 600;
+    const t0 = performance.now();
+    const tick = (now: number) => {
+      const p = Math.min((now - t0) / duration, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      const cur = start + diff * ease;
+      offsetRef.current = cur;
+      if (scrollRef.current) scrollRef.current.style.transform = `translateY(-${cur}px)`;
+      if (p < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        // reset para loop infinito: si pasamos el primer tercio, saltar al segundo
+        if (offsetRef.current >= total * ITEM_H * 2) {
+          offsetRef.current -= total * ITEM_H;
+          if (scrollRef.current) scrollRef.current.style.transform = `translateY(-${offsetRef.current}px)`;
+        }
+        if (offsetRef.current < total * ITEM_H) {
+          offsetRef.current += total * ITEM_H;
+          if (scrollRef.current) scrollRef.current.style.transform = `translateY(-${offsetRef.current}px)`;
+        }
+        animating.current = false;
+      }
+    };
+    requestAnimationFrame(tick);
+  };
+
+  // Inicializar en el segundo tercio para poder scrollear en ambas direcciones
+  useEffect(() => {
+    offsetRef.current = total * ITEM_H;
+    if (scrollRef.current) scrollRef.current.style.transform = `translateY(-${offsetRef.current}px)`;
+  }, []);
+
+  // Auto-scroll por pasos cada 5s
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (!isDragging.current) {
+        smoothScrollTo(offsetRef.current + STEP * ITEM_H);
+      }
+    }, 5000);
+    return () => clearInterval(id);
+  }, []);
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    isDragging.current = true;
+    dragStartY.current = e.clientY;
+    dragStartOffset.current = offsetRef.current;
+    document.body.style.cursor = "grabbing";
+    e.preventDefault();
+  };
+
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging.current || !scrollRef.current) return;
+    const dy = dragStartY.current - e.clientY;
+    let next = dragStartOffset.current + dy;
+    // clamp para loop
+    if (next >= total * ITEM_H * 2) next -= total * ITEM_H;
+    if (next < total * ITEM_H) next += total * ITEM_H;
+    offsetRef.current = next;
+    scrollRef.current.style.transform = `translateY(-${next}px)`;
+  };
+
+  const onMouseUp = () => {
+    isDragging.current = false;
+    document.body.style.cursor = "";
+    // snap al ítem más cercano
+    const snapped = Math.round(offsetRef.current / ITEM_H) * ITEM_H;
+    smoothScrollTo(snapped);
+  };
 
   return (
     <div
       className="w-[240px] rounded-xl overflow-hidden"
       style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)" }}
     >
-      {/* Scrolling list */}
+      {/* Scroll area */}
       <div
-        className="overflow-hidden relative"
+        className="relative overflow-hidden"
         style={{
-          height: "220px",
-          maskImage: "linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)",
-          WebkitMaskImage: "linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)",
+          height: `${VISIBLE * ITEM_H}px`,
+          cursor: "grab",
+          maskImage: "linear-gradient(to bottom, transparent, black 18%, black 82%, transparent)",
+          WebkitMaskImage: "linear-gradient(to bottom, transparent, black 18%, black 82%, transparent)",
         }}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onMouseLeave={onMouseUp}
       >
-        <div className="marquee-vertical">
-          {doubled.map((tool, i) => (
-            <div key={i} className="flex items-center justify-between px-3 py-2">
+        <div ref={scrollRef} style={{ willChange: "transform" }}>
+          {looped.map((tool, i) => (
+            <div
+              key={i}
+              className="flex items-center justify-between px-3 select-none"
+              style={{ height: `${ITEM_H}px` }}
+            >
               <div className="flex items-center gap-2 min-w-0">
                 <ToolLogoSmall tool={tool} />
                 <span className="text-[12px] text-gray-300 truncate">{tool.name}</span>
