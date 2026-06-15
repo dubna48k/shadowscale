@@ -29,7 +29,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t border-white/[0.06] px-6 py-8">
         <div className="max-w-6xl mx-auto flex flex-col gap-4 items-center text-center">
-          <img src={logoAsset.url} alt="ShadowScale" className="h-7 w-auto" />
+          <img src={logoAsset.url} alt="ShadowScale" className="h-14 w-auto" />
           <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[12px] text-gray-500">
             <a href="#" className="hover:text-white transition-colors">Términos y Condiciones</a>
             <span className="text-gray-700">|</span>
