@@ -123,9 +123,10 @@ const ToolLogoSmall = ({ tool }: { tool: typeof cardTools[0] }) => {
   );
 };
 
-const ITEM_H = 44; // px por ítem
-const VISIBLE = 5; // ítems visibles
-const STEP = 3;    // ítems que sube cada tick
+const ITEM_H = 40;
+const VISIBLE = 5;
+const STEP = 3;
+const INTERVAL_MS = 3000;
 
 const PriceCard = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -136,14 +137,14 @@ const PriceCard = () => {
   const animating = useRef(false);
 
   const total = cardTools.length;
-  const looped = [...cardTools, ...cardTools, ...cardTools]; // triple para loop infinito
+  const looped = [...cardTools, ...cardTools, ...cardTools];
 
   const smoothScrollTo = (target: number) => {
     if (!scrollRef.current || animating.current) return;
     animating.current = true;
     const start = offsetRef.current;
     const diff = target - start;
-    const duration = 600;
+    const duration = 500;
     const t0 = performance.now();
     const tick = (now: number) => {
       const p = Math.min((now - t0) / duration, 1);
@@ -154,7 +155,6 @@ const PriceCard = () => {
       if (p < 1) {
         requestAnimationFrame(tick);
       } else {
-        // reset para loop infinito: si pasamos el primer tercio, saltar al segundo
         if (offsetRef.current >= total * ITEM_H * 2) {
           offsetRef.current -= total * ITEM_H;
           if (scrollRef.current) scrollRef.current.style.transform = `translateY(-${offsetRef.current}px)`;
@@ -169,19 +169,15 @@ const PriceCard = () => {
     requestAnimationFrame(tick);
   };
 
-  // Inicializar en el segundo tercio para poder scrollear en ambas direcciones
   useEffect(() => {
     offsetRef.current = total * ITEM_H;
     if (scrollRef.current) scrollRef.current.style.transform = `translateY(-${offsetRef.current}px)`;
   }, []);
 
-  // Auto-scroll por pasos cada 5s
   useEffect(() => {
     const id = setInterval(() => {
-      if (!isDragging.current) {
-        smoothScrollTo(offsetRef.current + STEP * ITEM_H);
-      }
-    }, 5000);
+      if (!isDragging.current) smoothScrollTo(offsetRef.current + STEP * ITEM_H);
+    }, INTERVAL_MS);
     return () => clearInterval(id);
   }, []);
 
@@ -197,7 +193,6 @@ const PriceCard = () => {
     if (!isDragging.current || !scrollRef.current) return;
     const dy = dragStartY.current - e.clientY;
     let next = dragStartOffset.current + dy;
-    // clamp para loop
     if (next >= total * ITEM_H * 2) next -= total * ITEM_H;
     if (next < total * ITEM_H) next += total * ITEM_H;
     offsetRef.current = next;
@@ -207,24 +202,27 @@ const PriceCard = () => {
   const onMouseUp = () => {
     isDragging.current = false;
     document.body.style.cursor = "";
-    // snap al ítem más cercano
     const snapped = Math.round(offsetRef.current / ITEM_H) * ITEM_H;
     smoothScrollTo(snapped);
   };
 
   return (
     <div
-      className="w-[240px] rounded-xl overflow-hidden"
-      style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)" }}
+      className="w-[260px] rounded-2xl overflow-hidden"
+      style={{
+        background: "linear-gradient(135deg, rgba(30,20,50,0.95) 0%, rgba(15,10,30,0.98) 100%)",
+        border: "1px solid rgba(255,255,255,0.1)",
+        boxShadow: "0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)",
+      }}
     >
       {/* Scroll area */}
       <div
-        className="relative overflow-hidden"
+        className="relative overflow-hidden pt-1"
         style={{
-          height: `${VISIBLE * ITEM_H}px`,
+          height: `${VISIBLE * ITEM_H + 8}px`,
           cursor: "grab",
-          maskImage: "linear-gradient(to bottom, transparent, black 18%, black 82%, transparent)",
-          WebkitMaskImage: "linear-gradient(to bottom, transparent, black 18%, black 82%, transparent)",
+          maskImage: "linear-gradient(to bottom, transparent, black 20%, black 80%, transparent)",
+          WebkitMaskImage: "linear-gradient(to bottom, transparent, black 20%, black 80%, transparent)",
         }}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
@@ -235,23 +233,36 @@ const PriceCard = () => {
           {looped.map((tool, i) => (
             <div
               key={i}
-              className="flex items-center justify-between px-3 select-none"
+              className="flex items-center justify-between px-4 select-none"
               style={{ height: `${ITEM_H}px` }}
             >
-              <div className="flex items-center gap-2 min-w-0">
+              <div className="flex items-center gap-2.5 min-w-0">
                 <ToolLogoSmall tool={tool} />
-                <span className="text-[12px] text-gray-300 truncate">{tool.name}</span>
+                <span className="text-[13px] text-gray-200 truncate font-medium">{tool.name}</span>
               </div>
-              <span className="text-[12px] font-bold text-white ml-2 shrink-0">-{tool.price}</span>
+              <span className="text-[13px] font-bold text-white ml-2 shrink-0 tabular-nums">-{tool.price}</span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="border-t border-white/[0.06] px-3 py-2.5 flex items-center justify-between">
-        <span className="text-[10px] text-gray-500 leading-tight max-w-[110px]">Total si se compran individualmente</span>
-        <span className="text-[16px] font-bold" style={{ color: "#f97316" }}>$1,453</span>
+      {/* Divider + Total */}
+      <div
+        className="mx-4 border-t mb-2.5"
+        style={{ borderColor: "rgba(255,255,255,0.08)" }}
+      />
+      <div className="px-4 pb-3 flex items-center justify-between">
+        <span className="text-[10px] text-gray-500 leading-tight max-w-[120px]">Total si se compran individualmente</span>
+        <span className="text-[18px] font-bold tabular-nums" style={{ color: "#f97316" }}>$1,453</span>
+      </div>
+
+      {/* Brand bar */}
+      <div
+        className="px-4 py-3 flex items-center justify-between"
+        style={{ borderTop: "1px solid rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.03)" }}
+      >
+        <img src="/shadowscale-logo.png" alt="ShadowScale" className="h-5 w-auto" />
+        <span className="text-[20px] font-bold text-white tabular-nums">$14.9<span className="text-[13px] font-normal text-gray-400">/mes</span></span>
       </div>
     </div>
   );
