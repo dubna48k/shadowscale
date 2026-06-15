@@ -77,22 +77,21 @@ const ToolLogo = ({ tool }: { tool: Tool }) => {
 
 // Ticker horizontal para la nota de acceso limitado
 const NoteTicker = ({ note, color }: { note: string; color: string }) => {
-  const repeated = `${note}   ·   ${note}   ·   `;
+  const chunk = `${note}  ·  `;
   return (
     <div
-      className="overflow-hidden mt-2 rounded-md"
-      style={{ maskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)" }}
+      className="overflow-hidden mt-2"
+      style={{
+        maskImage: "linear-gradient(to right, transparent, black 15%, black 85%, transparent)",
+        WebkitMaskImage: "linear-gradient(to right, transparent, black 15%, black 85%, transparent)",
+      }}
     >
-      <div
-        className="flex whitespace-nowrap"
-        style={{ animation: "marquee-left 10s linear infinite" }}
-      >
-        <span className="text-[9px] font-medium pr-4" style={{ color }}>
-          {repeated}
-        </span>
-        <span className="text-[9px] font-medium pr-4" style={{ color }}>
-          {repeated}
-        </span>
+      <div style={{ display: "flex", flexWrap: "nowrap", animation: "marquee-left 22s linear infinite", width: "max-content" }}>
+        {Array.from({ length: 8 }).map((_, i) => (
+          <span key={i} className="text-[9px] font-medium shrink-0" style={{ color, whiteSpace: "nowrap", paddingRight: "4px" }}>
+            {chunk}
+          </span>
+        ))}
       </div>
     </div>
   );
