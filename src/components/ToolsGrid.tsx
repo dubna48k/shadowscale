@@ -11,6 +11,7 @@ interface Tool {
   initial: string;
   domain?: string;
   badge?: "nuevo" | "prueba";
+  note?: string; // texto que scrollea en la card
 }
 
 const tools: Tool[] = [
@@ -20,15 +21,15 @@ const tools: Tool[] = [
   { id: "gemini", name: "Gemini Advanced", category: "IA", categoryId: "ia", color: "#0ea5e9", initial: "G", domain: "google.com", badge: "nuevo" },
   { id: "grok", name: "Grok Premium", category: "IA", categoryId: "ia", color: "#737373", initial: "G", domain: "x.ai" },
   { id: "elevenlabs", name: "ElevenLabs Creator", category: "IA", categoryId: "ia", color: "#6b7280", initial: "E", domain: "elevenlabs.io" },
-  { id: "higgsfield", name: "Higgsfield Plus", category: "IA", categoryId: "ia", color: "#ec4899", initial: "H", domain: "higgsfield.ai" },
+  { id: "higgsfield", name: "Higgsfield Plus", category: "IA", categoryId: "ia", color: "#ec4899", initial: "H", domain: "higgsfield.ai", note: "Solo modelos ILIMITADOS · Sin límite de renders" },
   { id: "leonardo", name: "Leonardo AI Pro", category: "IA", categoryId: "ia", color: "#a855f7", initial: "L", domain: "leonardo.ai" },
-  { id: "hailuo", name: "Hailuo AI", category: "IA", categoryId: "ia", color: "#d97706", initial: "H", badge: "nuevo" },
+  { id: "hailuo", name: "Hailuo AI", category: "IA", categoryId: "ia", color: "#d97706", initial: "H", badge: "nuevo", note: "Acceso compartido · Créditos rotativos" },
   { id: "canva", name: "Canva Pro", category: "Diseño", categoryId: "design", color: "#06b6d4", initial: "C", domain: "canva.com" },
   { id: "freepik", name: "Freepik Premium", category: "Diseño", categoryId: "design", color: "#1d4ed8", initial: "F", domain: "freepik.com" },
   { id: "envato", name: "Envato Elements", category: "Diseño", categoryId: "design", color: "#65a30d", initial: "E", domain: "elements.envato.com" },
   { id: "midjourney", name: "Midjourney", category: "Diseño", categoryId: "design", color: "#6366f1", initial: "M", domain: "midjourney.com" },
   { id: "capcut", name: "CapCut Pro", category: "Video y Edición", categoryId: "video", color: "#8b5cf6", initial: "C", domain: "capcut.com" },
-  { id: "runway", name: "Runway Pro", category: "Video y Edición", categoryId: "video", color: "#f43f5e", initial: "R", domain: "runwayml.com" },
+  { id: "runway", name: "Runway Pro", category: "Video y Edición", categoryId: "video", color: "#f43f5e", initial: "R", domain: "runwayml.com", note: "500 créditos/mes · Se renuevan el día 1" },
   { id: "seedance", name: "Seedance Pro", category: "Video y Edición", categoryId: "video", color: "#f59e0b", initial: "S" },
   { id: "adspy", name: "AdSpy", category: "Espionaje", categoryId: "spy", color: "#dc2626", initial: "A", domain: "adspy.com" },
   { id: "minea", name: "Minea", category: "Espionaje", categoryId: "spy", color: "#c026d3", initial: "M", domain: "minea.com" },
@@ -46,6 +47,9 @@ const categories = [
   { id: "spy", label: "Espionaje" },
   { id: "ecommerce", label: "Ecommerce" },
 ];
+
+// Cuántas cards mostrar en collapsed (2 filas de 6 en desktop)
+const COLLAPSED_COUNT = 12;
 
 const ToolLogo = ({ tool }: { tool: Tool }) => {
   const [failed, setFailed] = useState(false);
@@ -71,10 +75,44 @@ const ToolLogo = ({ tool }: { tool: Tool }) => {
   );
 };
 
+// Ticker horizontal para la nota de acceso limitado
+const NoteTicker = ({ note, color }: { note: string; color: string }) => {
+  const repeated = `${note}   ·   ${note}   ·   `;
+  return (
+    <div
+      className="overflow-hidden mt-2 rounded-md"
+      style={{ maskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)" }}
+    >
+      <div
+        className="flex whitespace-nowrap"
+        style={{ animation: "marquee-left 10s linear infinite" }}
+      >
+        <span className="text-[9px] font-medium pr-4" style={{ color }}>
+          {repeated}
+        </span>
+        <span className="text-[9px] font-medium pr-4" style={{ color }}>
+          {repeated}
+        </span>
+      </div>
+    </div>
+  );
+};
+
 interface ToolsGridProps {
   searchQuery: string;
   onSearchChange: (v: string) => void;
 }
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 12, scale: 0.96 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { type: "spring", stiffness: 280, damping: 26, delay: i * 0.025 },
+  }),
+  exit: { opacity: 0, scale: 0.94, transition: { duration: 0.15 } },
+};
 
 const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
   const [active, setActive] = useState("all");
@@ -87,6 +125,10 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
       return matchCat && matchSearch;
     });
   }, [active, searchQuery]);
+
+  // Cuando hay búsqueda activa, mostrar todo
+  const visible = (isExpanded || searchQuery) ? filtered : filtered.slice(0, COLLAPSED_COUNT);
+  const hasMore = !searchQuery && filtered.length > COLLAPSED_COUNT;
 
   return (
     <section
@@ -145,59 +187,59 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
           </p>
         </div>
 
-        <div className="flex items-center justify-end mb-3">
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="inline-flex items-center gap-1 text-[13px] text-gray-400 hover:text-white transition-colors duration-200"
-          >
-            {isExpanded ? "Mostrar menos" : "Mostrar todo"}
-            {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-          </button>
-        </div>
+        {hasMore && (
+          <div className="flex items-center justify-end mb-3">
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="inline-flex items-center gap-1 text-[13px] text-gray-400 hover:text-white transition-colors duration-200"
+            >
+              {isExpanded ? "Mostrar menos" : "Mostrar todo"}
+              {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            </button>
+          </div>
+        )}
 
         {/* Grid */}
-        <div className="relative">
-          <div
-            className="overflow-hidden transition-[max-height] duration-500 ease-in-out"
-            style={{ maxHeight: isExpanded ? "2000px" : "136px" }}
-          >
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-2.5">
-              <AnimatePresence mode="popLayout">
-                {filtered.map((tool) => (
-                  <motion.div
-                    key={tool.id}
-                    layout
-                    layoutId={tool.id}
-                    initial={{ opacity: 0, scale: 0.97 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.97 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    className="relative bg-[#161618] rounded-xl p-3 cursor-pointer hover:bg-[#1e1e22] transition-colors duration-150"
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-2.5">
+          <AnimatePresence mode="popLayout">
+            {visible.map((tool, i) => (
+              <motion.div
+                key={tool.id}
+                layout
+                layoutId={tool.id}
+                custom={i}
+                variants={cardVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                whileHover={{ scale: 1.04, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                className="relative bg-[#161618] rounded-xl p-3 cursor-pointer hover:bg-[#1e1e22] transition-colors duration-150"
+                style={{ transformOrigin: "center" }}
+              >
+                {tool.badge && (
+                  <span
+                    className="absolute -top-1.5 -right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full"
+                    style={{
+                      background: tool.badge === "nuevo" ? "#f97316" : "#7c3aed",
+                      color: "#fff",
+                      letterSpacing: "0.3px",
+                    }}
                   >
-                    {tool.badge && (
-                      <span
-                        className="absolute -top-1.5 -right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full"
-                        style={{
-                          background: tool.badge === "nuevo" ? "#f97316" : "#7c3aed",
-                          color: "#fff",
-                          letterSpacing: "0.3px",
-                        }}
-                      >
-                        {tool.badge === "nuevo" ? "NUEVO" : "BETA"}
-                      </span>
-                    )}
-                    <div className="flex items-center gap-2.5">
-                      <ToolLogo tool={tool} />
-                      <div className="min-w-0">
-                        <h3 className="text-[13px] font-semibold text-white truncate">{tool.name}</h3>
-                        <p className="text-[11px] text-gray-500 truncate">{tool.category}</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
-          </div>
+                    {tool.badge === "nuevo" ? "NUEVO" : "PRUEBA"}
+                  </span>
+                )}
+                <div className="flex items-center gap-2.5">
+                  <ToolLogo tool={tool} />
+                  <div className="min-w-0">
+                    <h3 className="text-[13px] font-semibold text-white truncate">{tool.name}</h3>
+                    <p className="text-[11px] text-gray-500 truncate">{tool.category}</p>
+                  </div>
+                </div>
+                {tool.note && <NoteTicker note={tool.note} color={tool.color} />}
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       </div>
     </section>
