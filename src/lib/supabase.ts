@@ -1,9 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
 
-const url = import.meta.env.VITE_SUPABASE_URL as string;
-const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+const url = import.meta.env.VITE_SUPABASE_URL as string ?? "https://placeholder.supabase.co";
+const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string ?? "placeholder";
 
 export const supabase = createClient(url, key);
+export const supabaseConfigured = !!(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY);
 
 export type ToolStatus = "active" | "inactive" | "sold_out" | "coming_soon";
 export type BadgeType = "nuevo" | "prueba" | null;
