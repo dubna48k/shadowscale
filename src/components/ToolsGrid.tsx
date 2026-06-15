@@ -9,32 +9,33 @@ interface Tool {
   categoryId: string;
   color: string;
   initial: string;
+  domain?: string;
   badge?: "nuevo" | "prueba";
 }
 
 const tools: Tool[] = [
-  { id: "chatgpt", name: "ChatGPT Plus", category: "IA", categoryId: "ia", color: "bg-emerald-600", initial: "G" },
-  { id: "claude", name: "Claude Pro", category: "IA", categoryId: "ia", color: "bg-orange-500", initial: "C", badge: "nuevo" },
-  { id: "perplexity", name: "Perplexity Pro", category: "IA", categoryId: "ia", color: "bg-teal-500", initial: "P" },
-  { id: "gemini", name: "Gemini Advanced", category: "IA", categoryId: "ia", color: "bg-sky-500", initial: "G", badge: "nuevo" },
-  { id: "grok", name: "Grok Premium", category: "IA", categoryId: "ia", color: "bg-neutral-500", initial: "G" },
-  { id: "elevenlabs", name: "ElevenLabs Creator", category: "IA", categoryId: "ia", color: "bg-gray-700", initial: "E" },
-  { id: "higgsfield", name: "Higgsfield Plus", category: "IA", categoryId: "ia", color: "bg-pink-500", initial: "H" },
-  { id: "leonardo", name: "Leonardo AI Pro", category: "IA", categoryId: "ia", color: "bg-purple-500", initial: "L" },
-  { id: "hailuo", name: "Hailuo AI", category: "IA", categoryId: "ia", color: "bg-yellow-600", initial: "H", badge: "nuevo" },
-  { id: "canva", name: "Canva Pro", category: "Diseño", categoryId: "design", color: "bg-cyan-500", initial: "C" },
-  { id: "freepik", name: "Freepik Premium", category: "Diseño", categoryId: "design", color: "bg-blue-700", initial: "F" },
-  { id: "envato", name: "Envato Elements", category: "Diseño", categoryId: "design", color: "bg-lime-600", initial: "E" },
-  { id: "midjourney", name: "Midjourney", category: "Diseño", categoryId: "design", color: "bg-indigo-500", initial: "M" },
-  { id: "capcut", name: "CapCut Pro", category: "Video y Edición", categoryId: "video", color: "bg-violet-500", initial: "C" },
-  { id: "runway", name: "Runway Pro", category: "Video y Edición", categoryId: "video", color: "bg-rose-500", initial: "R" },
-  { id: "seedance", name: "Seedance Pro", category: "Video y Edición", categoryId: "video", color: "bg-amber-500", initial: "S" },
-  { id: "adspy", name: "AdSpy", category: "Espionaje", categoryId: "spy", color: "bg-red-600", initial: "A" },
-  { id: "minea", name: "Minea", category: "Espionaje", categoryId: "spy", color: "bg-fuchsia-600", initial: "M" },
-  { id: "similarweb", name: "SimilarWeb", category: "Espionaje", categoryId: "spy", color: "bg-cyan-700", initial: "S" },
-  { id: "kalodata", name: "Kalodata", category: "Ecommerce", categoryId: "ecommerce", color: "bg-violet-600", initial: "K" },
-  { id: "dropkiller", name: "Dropkiller", category: "Ecommerce", categoryId: "ecommerce", color: "bg-green-700", initial: "D", badge: "nuevo" },
-  { id: "fastmoss", name: "FastMoss", category: "Ecommerce", categoryId: "ecommerce", color: "bg-emerald-700", initial: "F" },
+  { id: "chatgpt", name: "ChatGPT Plus", category: "IA", categoryId: "ia", color: "#10b981", initial: "G", domain: "openai.com" },
+  { id: "claude", name: "Claude Pro", category: "IA", categoryId: "ia", color: "#f97316", initial: "C", domain: "anthropic.com", badge: "nuevo" },
+  { id: "perplexity", name: "Perplexity Pro", category: "IA", categoryId: "ia", color: "#14b8a6", initial: "P", domain: "perplexity.ai" },
+  { id: "gemini", name: "Gemini Advanced", category: "IA", categoryId: "ia", color: "#0ea5e9", initial: "G", domain: "google.com", badge: "nuevo" },
+  { id: "grok", name: "Grok Premium", category: "IA", categoryId: "ia", color: "#737373", initial: "G", domain: "x.ai" },
+  { id: "elevenlabs", name: "ElevenLabs Creator", category: "IA", categoryId: "ia", color: "#6b7280", initial: "E", domain: "elevenlabs.io" },
+  { id: "higgsfield", name: "Higgsfield Plus", category: "IA", categoryId: "ia", color: "#ec4899", initial: "H", domain: "higgsfield.ai" },
+  { id: "leonardo", name: "Leonardo AI Pro", category: "IA", categoryId: "ia", color: "#a855f7", initial: "L", domain: "leonardo.ai" },
+  { id: "hailuo", name: "Hailuo AI", category: "IA", categoryId: "ia", color: "#d97706", initial: "H", badge: "nuevo" },
+  { id: "canva", name: "Canva Pro", category: "Diseño", categoryId: "design", color: "#06b6d4", initial: "C", domain: "canva.com" },
+  { id: "freepik", name: "Freepik Premium", category: "Diseño", categoryId: "design", color: "#1d4ed8", initial: "F", domain: "freepik.com" },
+  { id: "envato", name: "Envato Elements", category: "Diseño", categoryId: "design", color: "#65a30d", initial: "E", domain: "elements.envato.com" },
+  { id: "midjourney", name: "Midjourney", category: "Diseño", categoryId: "design", color: "#6366f1", initial: "M", domain: "midjourney.com" },
+  { id: "capcut", name: "CapCut Pro", category: "Video y Edición", categoryId: "video", color: "#8b5cf6", initial: "C", domain: "capcut.com" },
+  { id: "runway", name: "Runway Pro", category: "Video y Edición", categoryId: "video", color: "#f43f5e", initial: "R", domain: "runwayml.com" },
+  { id: "seedance", name: "Seedance Pro", category: "Video y Edición", categoryId: "video", color: "#f59e0b", initial: "S" },
+  { id: "adspy", name: "AdSpy", category: "Espionaje", categoryId: "spy", color: "#dc2626", initial: "A", domain: "adspy.com" },
+  { id: "minea", name: "Minea", category: "Espionaje", categoryId: "spy", color: "#c026d3", initial: "M", domain: "minea.com" },
+  { id: "similarweb", name: "SimilarWeb", category: "Espionaje", categoryId: "spy", color: "#0891b2", initial: "S", domain: "similarweb.com" },
+  { id: "kalodata", name: "Kalodata", category: "Ecommerce", categoryId: "ecommerce", color: "#7c3aed", initial: "K", domain: "kalodata.com" },
+  { id: "dropkiller", name: "Dropkiller", category: "Ecommerce", categoryId: "ecommerce", color: "#16a34a", initial: "D", badge: "nuevo" },
+  { id: "fastmoss", name: "FastMoss", category: "Ecommerce", categoryId: "ecommerce", color: "#059669", initial: "F", domain: "fastmoss.com" },
 ];
 
 const categories = [
@@ -45,6 +46,30 @@ const categories = [
   { id: "spy", label: "Espionaje" },
   { id: "ecommerce", label: "Ecommerce" },
 ];
+
+const ToolLogo = ({ tool }: { tool: Tool }) => {
+  const [failed, setFailed] = useState(false);
+
+  if (tool.domain && !failed) {
+    return (
+      <img
+        src={`https://logo.clearbit.com/${tool.domain}`}
+        alt={tool.name}
+        className="w-9 h-9 rounded-xl object-contain bg-white p-1 shrink-0"
+        onError={() => setFailed(true)}
+      />
+    );
+  }
+
+  return (
+    <div
+      className="w-9 h-9 shrink-0 rounded-xl flex items-center justify-center text-[11px] font-bold text-white"
+      style={{ background: tool.color }}
+    >
+      {tool.initial}
+    </div>
+  );
+};
 
 interface ToolsGridProps {
   searchQuery: string;
@@ -106,9 +131,15 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
 
         {/* Header */}
         <div className="mb-5 text-center">
-          <h2 className="text-white text-[20px] sm:text-[24px] font-bold mb-1.5">
+          <motion.h2
+            className="text-white text-[20px] sm:text-[24px] font-bold mb-1.5"
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ type: "spring", stiffness: 100, damping: 20 }}
+          >
             Tu arsenal de herramientas premium 🛠️
-          </h2>
+          </motion.h2>
           <p className="text-[13px] text-gray-400">
             Todas con inicio de sesión instantáneo — sin contraseñas, sin esperas
           </p>
@@ -156,9 +187,7 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
                       </span>
                     )}
                     <div className="flex items-center gap-2.5">
-                      <div className={`w-9 h-9 shrink-0 rounded-xl ${tool.color} flex items-center justify-center text-[11px] font-bold text-white`}>
-                        {tool.initial}
-                      </div>
+                      <ToolLogo tool={tool} />
                       <div className="min-w-0">
                         <h3 className="text-[13px] font-semibold text-white truncate">{tool.name}</h3>
                         <p className="text-[11px] text-gray-500 truncate">{tool.category}</p>
