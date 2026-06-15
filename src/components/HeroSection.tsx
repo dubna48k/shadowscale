@@ -4,28 +4,30 @@ import { ArrowUpRight } from "lucide-react";
 
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 
-const tools = [
-  { name: "ChatGPT Plus", price: "$22", color: "#10b981" },
-  { name: "Canva Pro", price: "$13", color: "#06b6d4" },
-  { name: "CapCut Pro", price: "$10", color: "#8b5cf6" },
-  { name: "Freepik Premium", price: "$12", color: "#1d4ed8" },
-  { name: "Perplexity Pro", price: "$20", color: "#14b8a6" },
-  { name: "ElevenLabs", price: "$22", color: "#6b7280" },
-  { name: "Higgsfield", price: "$39", color: "#ec4899" },
-  { name: "Leonardo AI", price: "$60", color: "#a855f7" },
-  { name: "Runway Pro", price: "$100", color: "#f43f5e" },
-  { name: "Seedance Pro", price: "$16", color: "#f59e0b" },
-  { name: "Midjourney", price: "$30", color: "#6366f1" },
-  { name: "Claude Pro", price: "$20", color: "#f97316" },
-  { name: "Gemini Advanced", price: "$20", color: "#0ea5e9" },
-  { name: "Grok Premium", price: "$16", color: "#737373" },
-  { name: "Kalodata", price: "$99", color: "#7c3aed" },
-  { name: "SimilarWeb", price: "$125", color: "#0891b2" },
-  { name: "AdSpy", price: "$149", color: "#dc2626" },
-  { name: "Minea", price: "$99", color: "#c026d3" },
-  { name: "Envato Elements", price: "$17", color: "#65a30d" },
-  { name: "Hailuo AI", price: "$199", color: "#d97706" },
+const cardTools = [
+  { name: "ChatGPT Plus", price: "$22", domain: "openai.com", color: "#10b981" },
+  { name: "Canva Pro", price: "$13", domain: "canva.com", color: "#06b6d4" },
+  { name: "CapCut Pro", price: "$10", domain: "capcut.com", color: "#8b5cf6" },
+  { name: "Freepik Premium", price: "$12", domain: "freepik.com", color: "#1d4ed8" },
+  { name: "Perplexity Pro", price: "$20", domain: "perplexity.ai", color: "#14b8a6" },
+  { name: "ElevenLabs", price: "$22", domain: "elevenlabs.io", color: "#6b7280" },
+  { name: "Higgsfield", price: "$39", domain: "higgsfield.ai", color: "#ec4899" },
+  { name: "Leonardo AI", price: "$60", domain: "leonardo.ai", color: "#a855f7" },
+  { name: "Runway Pro", price: "$100", domain: "runwayml.com", color: "#f43f5e" },
+  { name: "Seedance Pro", price: "$16", domain: null, color: "#f59e0b" },
+  { name: "Midjourney", price: "$30", domain: "midjourney.com", color: "#6366f1" },
+  { name: "Claude Pro", price: "$20", domain: "anthropic.com", color: "#f97316" },
+  { name: "Gemini Advanced", price: "$20", domain: "google.com", color: "#0ea5e9" },
+  { name: "Grok Premium", price: "$16", domain: "x.ai", color: "#737373" },
+  { name: "Kalodata", price: "$99", domain: "kalodata.com", color: "#7c3aed" },
+  { name: "SimilarWeb", price: "$125", domain: "similarweb.com", color: "#0891b2" },
+  { name: "AdSpy", price: "$149", domain: "adspy.com", color: "#dc2626" },
+  { name: "Minea", price: "$99", domain: "minea.com", color: "#c026d3" },
+  { name: "Envato Elements", price: "$17", domain: "elements.envato.com", color: "#65a30d" },
+  { name: "Hailuo AI", price: "$199", domain: null, color: "#d97706" },
 ];
+
+const tools = cardTools.map(t => ({ name: t.name, price: t.price, color: t.color }));
 
 const row1 = tools.slice(0, 10);
 const row2 = tools.slice(10);
@@ -94,6 +96,67 @@ const MarqueeRow = ({ items, direction }: MarqueeRowProps) => {
             <span className="text-[12px] font-bold whitespace-nowrap" style={{ color: "#f97316" }}>-{tool.price}</span>
           </div>
         ))}
+      </div>
+    </div>
+  );
+};
+
+const ToolLogoSmall = ({ tool }: { tool: typeof cardTools[0] }) => {
+  const [failed, setFailed] = useState(false);
+  if (tool.domain && !failed) {
+    return (
+      <img
+        src={`https://logo.clearbit.com/${tool.domain}`}
+        alt={tool.name}
+        className="w-7 h-7 rounded-lg object-contain bg-white p-0.5 shrink-0"
+        onError={() => setFailed(true)}
+      />
+    );
+  }
+  return (
+    <div
+      className="w-7 h-7 shrink-0 rounded-lg flex items-center justify-center text-[9px] font-bold text-white"
+      style={{ background: tool.color }}
+    >
+      {tool.name[0]}
+    </div>
+  );
+};
+
+const PriceCard = () => {
+  const doubled = [...cardTools, ...cardTools];
+
+  return (
+    <div
+      className="w-[240px] rounded-xl overflow-hidden"
+      style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)" }}
+    >
+      {/* Scrolling list */}
+      <div
+        className="overflow-hidden relative"
+        style={{
+          height: "220px",
+          maskImage: "linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)",
+          WebkitMaskImage: "linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)",
+        }}
+      >
+        <div className="marquee-vertical">
+          {doubled.map((tool, i) => (
+            <div key={i} className="flex items-center justify-between px-3 py-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <ToolLogoSmall tool={tool} />
+                <span className="text-[12px] text-gray-300 truncate">{tool.name}</span>
+              </div>
+              <span className="text-[12px] font-bold text-white ml-2 shrink-0">-{tool.price}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="border-t border-white/[0.06] px-3 py-2.5 flex items-center justify-between">
+        <span className="text-[10px] text-gray-500 leading-tight max-w-[110px]">Total si se compran individualmente</span>
+        <span className="text-[16px] font-bold" style={{ color: "#f97316" }}>$1,453</span>
       </div>
     </div>
   );
@@ -173,26 +236,14 @@ const HeroSection = () => {
             </motion.div>
           </div>
 
-          {/* Right: price card */}
+          {/* Right: vertical scroll price card */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ ...spring, delay: 0.25 }}
-            className="hidden md:block relative w-[280px] shrink-0 self-center"
+            className="hidden md:block shrink-0 self-center"
           >
-            <div className="bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] rounded-xl px-3 py-3">
-              <div className="flex items-center justify-between px-1 mb-2">
-                <span className="text-[11px] text-gray-500">Si se compran individualmente</span>
-                <span className="text-[15px] font-bold text-coral">$1,453/mes</span>
-              </div>
-              <div className="flex items-center justify-between px-1 pt-2 border-t border-white/[0.06]">
-                <div className="flex items-center">
-                  <span className="text-[14px] font-bold text-white italic">Shadow</span>
-                  <span className="bg-white text-black text-[13px] font-bold italic px-1.5 py-0.5 rounded ml-0.5">Scale</span>
-                </div>
-                <span className="text-[18px] font-extrabold text-white">$14.9/mes</span>
-              </div>
-            </div>
+            <PriceCard />
           </motion.div>
         </div>
 
@@ -201,21 +252,9 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...spring, delay: 0.4 }}
-          className="md:hidden mt-6 max-w-[320px] mx-auto"
+          className="md:hidden mt-6 mx-auto"
         >
-          <div className="bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] rounded-xl px-3 py-3">
-            <div className="flex items-center justify-between px-1 mb-2">
-              <span className="text-[10px] text-gray-500">Si se compran individualmente</span>
-              <span className="text-[14px] font-bold text-coral">$1,453/mes</span>
-            </div>
-            <div className="flex items-center justify-between px-1 pt-2 border-t border-white/[0.06]">
-              <div className="flex items-center">
-                <span className="text-[13px] font-bold text-white italic">Shadow</span>
-                <span className="bg-white text-black text-[12px] font-bold italic px-1 py-0.5 rounded ml-0.5">Scale</span>
-              </div>
-              <span className="text-[16px] font-extrabold text-white">$14.9/mes</span>
-            </div>
-          </div>
+          <PriceCard />
         </motion.div>
       </div>
 
