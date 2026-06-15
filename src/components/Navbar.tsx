@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import logoAsset from "@/assets/shadowscale-logo.png.asset.json";
+
 
 const links = [
   { label: "Herramientas", href: "#herramientas" },
@@ -21,7 +21,7 @@ const Navbar = () => {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
         {/* Logo */}
         <a href="/" className="flex items-center shrink-0">
-          <img src={logoAsset.url} alt="ShadowScale" className="h-18 sm:h-20 w-auto" />
+          <img src="/shadowscale-logo.png" alt="ShadowScale" className="h-18 sm:h-20 w-auto" />
         </a>
 
         {/* Desktop links */}
