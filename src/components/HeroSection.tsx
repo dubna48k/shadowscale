@@ -15,6 +15,16 @@ const tools = [
   { name: "Leonardo AI Pro", price: "$60", color: "bg-purple-500" },
   { name: "Runway Pro", price: "$100", color: "bg-rose-500" },
   { name: "Seedance Pro", price: "$16", color: "bg-amber-500" },
+  { name: "Midjourney", price: "$30", color: "bg-indigo-500" },
+  { name: "Claude Pro", price: "$20", color: "bg-orange-400" },
+  { name: "Gemini Advanced", price: "$20", color: "bg-sky-500" },
+  { name: "Grok Premium", price: "$16", color: "bg-neutral-500" },
+  { name: "Kalodata", price: "$99", color: "bg-violet-600" },
+  { name: "SimilarWeb", price: "$125", color: "bg-cyan-700" },
+  { name: "Envato Elements", price: "$17", color: "bg-lime-600" },
+  { name: "AdSpy", price: "$149", color: "bg-red-600" },
+  { name: "Minea", price: "$99", color: "bg-fuchsia-600" },
+  { name: "Hailuo AI", price: "$199", color: "bg-yellow-600" },
 ];
 
 const InfiniteToolScroll = ({ tools, height, textSize }: { tools: typeof toolsList; height: string; textSize: string }) => {
@@ -153,22 +163,22 @@ const HeroSection = () => {
               transition={{ ...spring, delay: 0.3 }}
             >
               <a
-                href="#pricing"
+                href="https://app.shadowscale.pro/register"
                 className="inline-flex items-center justify-center text-white font-bold transition-colors"
                 style={{ background: "#f97316", borderRadius: "12px", padding: "14px 28px", fontSize: "16px" }}
                 onMouseEnter={(e) => (e.currentTarget.style.background = "#ea580c")}
                 onMouseLeave={(e) => (e.currentTarget.style.background = "#f97316")}
               >
-                Comenzar ahora — $14.9/mes
+                Comenzar gratis — 3 días
               </a>
               <a
-                href="#pricing"
-                className="inline-flex items-center justify-center text-white font-bold transition-colors"
-                style={{ background: "#f97316", borderRadius: "12px", padding: "14px 28px", fontSize: "16px" }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "#ea580c")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "#f97316")}
+                href="#herramientas"
+                className="inline-flex items-center justify-center font-semibold transition-colors"
+                style={{ background: "transparent", border: "1.5px solid rgba(255,255,255,0.15)", borderRadius: "12px", padding: "14px 24px", fontSize: "15px", color: "#ccc" }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)"; e.currentTarget.style.color = "#fff"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)"; e.currentTarget.style.color = "#ccc"; }}
               >
-                Comenzar ahora — $14.9/mes
+                Ver herramientas
               </a>
             </motion.div>
 
@@ -178,9 +188,9 @@ const HeroSection = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.4 }}
             >
-              <span className="text-savings-foreground font-semibold">⚡ 850+</span>
+              <span className="text-savings-foreground font-semibold">⚡ 1,634</span>
               <span>miembros activos ahorrando</span>
-              <span className="text-savings-foreground font-semibold">$2,000+/mes</span>
+              <span className="text-savings-foreground font-semibold">$2,200+/mes</span>
               <ArrowUpRight className="w-3 md:w-3.5 h-3 md:h-3.5 text-savings" />
             </motion.div>
           </div>

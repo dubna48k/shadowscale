@@ -2,7 +2,7 @@ const TopBanner = () => {
   return (
     <div className="w-full py-2 text-center border-b border-white/[0.06]" style={{ background: "linear-gradient(90deg, #f97316, #ea580c)" }}>
       <span className="text-[12px] sm:text-[13px] font-semibold text-white">
-        🔥 Oferta de lanzamiento activa — Precios suben en 72h
+        🎁 Prueba gratis 3 días — Sin tarjeta requerida · Precios suben en 72h 🔥
       </span>
     </div>
   );

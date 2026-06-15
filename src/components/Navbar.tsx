@@ -40,14 +40,14 @@ const Navbar = () => {
         {/* Right */}
         <div className="flex items-center gap-2">
           <a
-            href="#pricing"
+            href="https://app.shadowscale.pro/register"
             className="glow-button inline-flex items-center justify-center text-white font-bold transition-colors"
             style={{ background: "#f97316", borderRadius: "10px", padding: "8px 14px", fontSize: "13px" }}
             onMouseEnter={(e) => (e.currentTarget.style.background = "#ea580c")}
             onMouseLeave={(e) => (e.currentTarget.style.background = "#f97316")}
           >
-            <span className="hidden sm:inline">Comenzar ahora — $14.9/mes</span>
-            <span className="sm:hidden">Comenzar — $14.9</span>
+            <span className="hidden sm:inline">Comenzar gratis — 3 días</span>
+            <span className="sm:hidden">3 días gratis</span>
           </a>
 
           {/* Mobile hamburger */}
