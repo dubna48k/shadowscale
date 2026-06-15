@@ -21,7 +21,7 @@ const Navbar = () => {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
         {/* Logo */}
         <a href="/" className="flex items-center shrink-0">
-          <img src={logoAsset.url} alt="ShadowScale" className="h-7 w-auto" />
+          <img src={logoAsset.url} alt="ShadowScale" className="h-9 sm:h-10 w-auto" />
         </a>
 
         {/* Desktop links */}
