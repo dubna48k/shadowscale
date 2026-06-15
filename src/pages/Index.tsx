@@ -9,6 +9,7 @@ import TopBanner from "@/components/TopBanner";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import PricingSection from "@/components/PricingSection";
 import { Globe } from "lucide-react";
+import logoAsset from "@/assets/shadowscale-logo.png.asset.json";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -28,10 +29,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t border-white/[0.06] px-6 py-8">
         <div className="max-w-6xl mx-auto flex flex-col gap-4 items-center text-center">
-          <div className="flex items-center">
-            <span className="text-[13px] font-bold text-white">Shadow</span>
-            <span className="bg-white text-black text-[13px] font-bold px-1 py-0.5 rounded ml-0.5">Scale</span>
-          </div>
+          <img src={logoAsset.url} alt="ShadowScale" className="h-7 w-auto" />
           <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[12px] text-gray-500">
             <a href="#" className="hover:text-white transition-colors">Términos y Condiciones</a>
             <span className="text-gray-700">|</span>
