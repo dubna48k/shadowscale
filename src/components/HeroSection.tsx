@@ -102,14 +102,18 @@ const MarqueeRow = ({ items, direction }: MarqueeRowProps) => {
 };
 
 const ToolLogoSmall = ({ tool }: { tool: typeof cardTools[0] }) => {
-  const [failed, setFailed] = useState(false);
-  if (tool.domain && !failed) {
+  const sources = tool.domain ? [
+    `https://logo.clearbit.com/${tool.domain}`,
+    `https://www.google.com/s2/favicons?domain=${tool.domain}&sz=64`,
+  ] : [];
+  const [idx, setIdx] = useState(0);
+  if (idx < sources.length) {
     return (
       <img
-        src={`https://logo.clearbit.com/${tool.domain}`}
+        src={sources[idx]}
         alt={tool.name}
         className="w-7 h-7 rounded-lg object-contain bg-white p-0.5 shrink-0"
-        onError={() => setFailed(true)}
+        onError={() => setIdx(i => i + 1)}
       />
     );
   }

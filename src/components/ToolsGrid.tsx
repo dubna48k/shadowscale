@@ -255,21 +255,20 @@ const ToolsGrid = ({ searchQuery, onSearchChange, supabaseTools, supabaseCategor
                 className="relative bg-[#161618] rounded-xl p-3 cursor-pointer hover:bg-[#1e1e22] transition-colors duration-150"
                 style={{ transformOrigin: "center" }}
               >
+                {/* Badge — absoluto para no romper el alto */}
                 {tool.badge && (
-                  <div className="mb-1.5">
-                    <span
-                      className="inline-flex items-center gap-1 text-[9px] font-semibold px-1.5 py-0.5 rounded-md leading-tight"
-                      style={tool.badge === "nuevo"
-                        ? { background: "rgba(16,185,129,0.12)", color: "#34d399", border: "1px solid rgba(16,185,129,0.25)" }
-                        : { background: "rgba(255,255,255,0.06)", color: "#9ca3af", border: "1px solid rgba(255,255,255,0.1)" }
-                      }
-                    >
-                      <span className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: tool.badge === "nuevo" ? "#34d399" : "#9ca3af" }} />
-                      {tool.badge === "nuevo" ? "Nuevo" : "En prueba"}
-                    </span>
-                  </div>
+                  <span
+                    className="absolute top-2 left-2 inline-flex items-center gap-1 text-[8px] font-semibold px-1.5 py-0.5 rounded-md leading-tight z-10"
+                    style={tool.badge === "nuevo"
+                      ? { background: "rgba(16,185,129,0.15)", color: "#34d399", border: "1px solid rgba(16,185,129,0.3)" }
+                      : { background: "rgba(255,255,255,0.06)", color: "#9ca3af", border: "1px solid rgba(255,255,255,0.1)" }
+                    }
+                  >
+                    <span className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: tool.badge === "nuevo" ? "#34d399" : "#9ca3af" }} />
+                    {tool.badge === "nuevo" ? "Nuevo" : "En prueba"}
+                  </span>
                 )}
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2.5" style={{ paddingTop: tool.badge ? "14px" : "0" }}>
                   <ToolLogo tool={tool} />
                   <div className="min-w-0">
                     <h3 className="text-[13px] font-semibold text-white truncate">{tool.name}</h3>
