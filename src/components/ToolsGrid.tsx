@@ -203,15 +203,16 @@ const ToolsGrid = ({ searchQuery, onSearchChange, supabaseTools, supabaseCategor
 
         {/* Header */}
         <div className="mb-5 text-center">
-          <motion.h2
-            className="text-white text-[20px] sm:text-[24px] font-bold mb-1.5"
+          <motion.div
+            className="inline-flex items-center justify-center gap-2.5 mb-2"
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ type: "spring", stiffness: 100, damping: 20 }}
           >
-            {title}
-          </motion.h2>
+            <img src="/shadowscale-logo.png" alt="ShadowScale" className="h-7 w-auto" />
+            <h2 className="text-white text-[20px] sm:text-[24px] font-bold">{title}</h2>
+          </motion.div>
           <p className="text-[13px] text-gray-400">{subtitle}</p>
         </div>
 
@@ -246,17 +247,18 @@ const ToolsGrid = ({ searchQuery, onSearchChange, supabaseTools, supabaseCategor
                 style={{ transformOrigin: "center" }}
               >
                 {tool.badge && (
-                  <span
-                    className="absolute -top-1.5 -right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-tight"
-                    style={{
-                      background: tool.badge === "nuevo" ? "#f97316" : "rgba(124,58,237,0.15)",
-                      color: tool.badge === "nuevo" ? "#fff" : "#a78bfa",
-                      border: tool.badge === "prueba" ? "1px solid rgba(124,58,237,0.4)" : "none",
-                      letterSpacing: "0.3px",
-                    }}
-                  >
-                    {tool.badge === "nuevo" ? "NUEVO" : "EN PRUEBA"}
-                  </span>
+                  <div className="mb-1.5">
+                    <span
+                      className="inline-flex items-center gap-1 text-[9px] font-semibold px-1.5 py-0.5 rounded-md leading-tight"
+                      style={tool.badge === "nuevo"
+                        ? { background: "rgba(16,185,129,0.12)", color: "#34d399", border: "1px solid rgba(16,185,129,0.25)" }
+                        : { background: "rgba(255,255,255,0.06)", color: "#9ca3af", border: "1px solid rgba(255,255,255,0.1)" }
+                      }
+                    >
+                      <span className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: tool.badge === "nuevo" ? "#34d399" : "#9ca3af" }} />
+                      {tool.badge === "nuevo" ? "Nuevo" : "En prueba"}
+                    </span>
+                  </div>
                 )}
                 <div className="flex items-center gap-2.5">
                   <ToolLogo tool={tool} />
