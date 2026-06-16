@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, ChevronDown, ChevronUp } from "lucide-react";
+import type { Tool as SupabaseTool, Category as SupabaseCategory } from "@/lib/supabase";
 
 interface Tool {
   id: string;
@@ -11,10 +12,10 @@ interface Tool {
   initial: string;
   domain?: string;
   badge?: "nuevo" | "prueba";
-  note?: string; // texto que scrollea en la card
+  note?: string;
 }
 
-const tools: Tool[] = [
+const FALLBACK_TOOLS: Tool[] = [
   { id: "chatgpt", name: "ChatGPT Plus", category: "IA", categoryId: "ia", color: "#10b981", initial: "G", domain: "openai.com" },
   { id: "claude", name: "Claude Pro", category: "IA", categoryId: "ia", color: "#f97316", initial: "C", domain: "anthropic.com", badge: "nuevo" },
   { id: "perplexity", name: "Perplexity Pro", category: "IA", categoryId: "ia", color: "#14b8a6", initial: "P", domain: "perplexity.ai" },
@@ -39,7 +40,7 @@ const tools: Tool[] = [
   { id: "fastmoss", name: "FastMoss", category: "Ecommerce", categoryId: "ecommerce", color: "#059669", initial: "F", domain: "fastmoss.com" },
 ];
 
-const categories = [
+const FALLBACK_CATS = [
   { id: "all", label: "Todo" },
   { id: "ia", label: "IA" },
   { id: "design", label: "Diseño" },
@@ -48,12 +49,10 @@ const categories = [
   { id: "ecommerce", label: "Ecommerce" },
 ];
 
-// Cuántas cards mostrar en collapsed (2 filas de 6 en desktop)
 const COLLAPSED_COUNT = 12;
 
 const ToolLogo = ({ tool }: { tool: Tool }) => {
   const [failed, setFailed] = useState(false);
-
   if (tool.domain && !failed) {
     return (
       <img
@@ -64,7 +63,6 @@ const ToolLogo = ({ tool }: { tool: Tool }) => {
       />
     );
   }
-
   return (
     <div
       className="w-9 h-9 shrink-0 rounded-xl flex items-center justify-center text-[11px] font-bold text-white"
@@ -75,7 +73,6 @@ const ToolLogo = ({ tool }: { tool: Tool }) => {
   );
 };
 
-// Ticker horizontal para la nota de acceso limitado
 const NoteTicker = ({ note, color }: { note: string; color: string }) => {
   const chunk = `${note}  ·  `;
   return (
@@ -100,22 +97,60 @@ const NoteTicker = ({ note, color }: { note: string; color: string }) => {
 interface ToolsGridProps {
   searchQuery: string;
   onSearchChange: (v: string) => void;
+  supabaseTools?: SupabaseTool[];
+  supabaseCategories?: SupabaseCategory[];
+  settings?: Record<string, string>;
 }
 
 const cardVariants = {
   hidden: { opacity: 0, y: 12, scale: 0.96 },
   visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    scale: 1,
+    opacity: 1, y: 0, scale: 1,
     transition: { type: "spring", stiffness: 280, damping: 26, delay: i * 0.025 },
   }),
   exit: { opacity: 0, scale: 0.94, transition: { duration: 0.15 } },
 };
 
-const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
+const ToolsGrid = ({ searchQuery, onSearchChange, supabaseTools, supabaseCategories, settings = {} }: ToolsGridProps) => {
   const [active, setActive] = useState("all");
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const title = settings["tools_title"] ?? "Tu arsenal de herramientas premium 🛠️";
+  const subtitle = settings["tools_subtitle"] ?? "Todas con inicio de sesión instantáneo — sin contraseñas, sin esperas";
+
+  // Build category label map for Supabase tools
+  const catLabelMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    (supabaseCategories ?? []).forEach(c => { map[c.id] = c.label; });
+    return map;
+  }, [supabaseCategories]);
+
+  // Convert Supabase tools → local Tool shape; filter active only
+  const tools: Tool[] = useMemo(() => {
+    if (supabaseTools && supabaseTools.length > 0) {
+      return supabaseTools
+        .filter(t => t.status === "active")
+        .map(t => ({
+          id: t.id,
+          name: t.name,
+          category: catLabelMap[t.category_id] ?? t.category_id,
+          categoryId: t.category_id,
+          color: t.color,
+          initial: t.initial,
+          domain: t.domain ?? undefined,
+          badge: t.badge ?? undefined,
+          note: t.note ?? undefined,
+        }));
+    }
+    return FALLBACK_TOOLS;
+  }, [supabaseTools, catLabelMap]);
+
+  const categories = useMemo(() => {
+    if (supabaseCategories && supabaseCategories.length > 0) {
+      return supabaseCategories.map(c => ({ id: c.id, label: c.label }));
+    }
+    return FALLBACK_CATS;
+  }, [supabaseCategories]);
 
   const filtered = useMemo(() => {
     return tools.filter((t) => {
@@ -123,9 +158,8 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
       const matchSearch = t.name.toLowerCase().includes(searchQuery.toLowerCase());
       return matchCat && matchSearch;
     });
-  }, [active, searchQuery]);
+  }, [tools, active, searchQuery]);
 
-  // Cuando hay búsqueda activa, mostrar todo
   const visible = (isExpanded || searchQuery) ? filtered : filtered.slice(0, COLLAPSED_COUNT);
   const hasMore = !searchQuery && filtered.length > COLLAPSED_COUNT;
 
@@ -134,8 +168,7 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
       id="herramientas"
       className="px-4 sm:px-8 py-8 sm:py-10"
       style={{
-        background:
-          "radial-gradient(ellipse at 50% 0%, rgba(249,115,22,0.08) 0%, transparent 60%), #0a0a0a",
+        background: "radial-gradient(ellipse at 50% 0%, rgba(249,115,22,0.08) 0%, transparent 60%), #0a0a0a",
       }}
     >
       <div className="max-w-5xl mx-auto">
@@ -160,9 +193,7 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
               key={cat.id}
               onClick={() => setActive(cat.id)}
               className={`px-3.5 py-1 rounded-full text-[13px] font-medium transition-all duration-200 ${
-                active === cat.id
-                  ? "bg-white text-black"
-                  : "text-gray-500 hover:text-gray-300"
+                active === cat.id ? "bg-white text-black" : "text-gray-500 hover:text-gray-300"
               }`}
             >
               {cat.label}
@@ -179,11 +210,9 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
             viewport={{ once: true }}
             transition={{ type: "spring", stiffness: 100, damping: 20 }}
           >
-            Tu arsenal de herramientas premium 🛠️
+            {title}
           </motion.h2>
-          <p className="text-[13px] text-gray-400">
-            Todas con inicio de sesión instantáneo — sin contraseñas, sin esperas
-          </p>
+          <p className="text-[13px] text-gray-400">{subtitle}</p>
         </div>
 
         {hasMore && (
@@ -218,14 +247,15 @@ const ToolsGrid = ({ searchQuery, onSearchChange }: ToolsGridProps) => {
               >
                 {tool.badge && (
                   <span
-                    className="absolute -top-1.5 -right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full"
+                    className="absolute -top-1.5 -right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-tight"
                     style={{
-                      background: tool.badge === "nuevo" ? "#f97316" : "#7c3aed",
-                      color: "#fff",
+                      background: tool.badge === "nuevo" ? "#f97316" : "rgba(124,58,237,0.15)",
+                      color: tool.badge === "nuevo" ? "#fff" : "#a78bfa",
+                      border: tool.badge === "prueba" ? "1px solid rgba(124,58,237,0.4)" : "none",
                       letterSpacing: "0.3px",
                     }}
                   >
-                    {tool.badge === "nuevo" ? "NUEVO" : "PRUEBA"}
+                    {tool.badge === "nuevo" ? "NUEVO" : "EN PRUEBA"}
                   </span>
                 )}
                 <div className="flex items-center gap-2.5">

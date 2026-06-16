@@ -444,6 +444,24 @@ const SettingsSection = ({ settings, onRefresh }: { settings: Record<string, str
         <Field label="Footer — Copyright">
           <input className={inputCls} {...s("footer_copyright")} placeholder="© 2025 ShadowScale" />
         </Field>
+        <Field label="Herramientas — Título sección">
+          <input className={inputCls} {...s("tools_title")} placeholder="Tu arsenal de herramientas premium 🛠️" />
+        </Field>
+        <Field label="Herramientas — Subtítulo">
+          <input className={inputCls} {...s("tools_subtitle")} placeholder="Todas con inicio de sesión instantáneo..." />
+        </Field>
+        <Field label="Browser — Título">
+          <input className={inputCls} {...s("browser_title")} placeholder="Descarga la aplicación" />
+        </Field>
+        <Field label="Browser — Descripción">
+          <textarea className={inputCls} {...s("browser_desc")} rows={2} placeholder="ShadowScale Browser es un navegador..." />
+        </Field>
+        <Field label="Browser — Texto del botón">
+          <input className={inputCls} {...s("browser_download_text")} placeholder="Descargar aquí" />
+        </Field>
+        <Field label="Browser — Link de descarga">
+          <input className={inputCls} {...s("browser_download_link")} placeholder="https://app.shadowscale.pro/download" />
+        </Field>
       </div>
       <div className="mt-4 flex justify-end">
         <button onClick={save} disabled={saving} className="px-6 py-2.5 rounded-xl text-sm font-bold text-white hover:opacity-90 disabled:opacity-50 transition-opacity"

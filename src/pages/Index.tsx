@@ -8,11 +8,13 @@ import FloatingConversionBar from "@/components/FloatingConversionBar";
 import TopBanner from "@/components/TopBanner";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import PricingSection from "@/components/PricingSection";
+import { useSiteData } from "@/hooks/useSiteData";
 import { Globe } from "lucide-react";
 
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const { tools, categories, settings } = useSiteData();
 
   return (
     <div className="min-h-screen mesh-gradient">
@@ -20,8 +22,14 @@ const Index = () => {
       <Navbar />
       <FloatingConversionBar />
       <HeroSection />
-      <ToolsGrid searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-      <BrowserSection />
+      <ToolsGrid
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        supabaseTools={tools}
+        supabaseCategories={categories}
+        settings={settings}
+      />
+      <BrowserSection settings={settings} />
       <TestimonialsSection />
       <PricingSection />
       <FAQSection />
