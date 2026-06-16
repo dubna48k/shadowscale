@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase, Tool, Category, Plan, ToolStatus, BadgeType, PlanStatus } from "@/lib/supabase";
 import { useSiteData } from "@/hooks/useSiteData";
-import { Plus, Trash2, Save, Eye, EyeOff, LogOut, RefreshCw, ExternalLink, ChevronDown, ChevronUp } from "lucide-react";
+import { Plus, Trash2, Save, Eye, EyeOff, LogOut, RefreshCw, ExternalLink, ChevronDown, ChevronUp, Upload, Film, ImageIcon, X } from "lucide-react";
 
 const ADMIN_PASSWORD = "Agencia2032**";
 
@@ -396,6 +396,137 @@ const PlansSection = ({ plans, onRefresh }: { plans: Plan[]; onRefresh: () => vo
   );
 };
 
+// ─── Media Section ────────────────────────────────────────────────────────────
+type MediaKey = "browser_video_url" | "browser_image_url";
+
+const MediaUploader = ({
+  label, icon: Icon, settingKey, accept, currentUrl, onUploaded,
+}: {
+  label: string;
+  icon: React.ElementType;
+  settingKey: MediaKey;
+  accept: string;
+  currentUrl: string;
+  onUploaded: (url: string) => void;
+}) => {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState("");
+
+  const upload = async (file: File) => {
+    setUploading(true); setError("");
+    const ext = file.name.split(".").pop();
+    const path = `${settingKey}-${Date.now()}.${ext}`;
+    const { error: upErr } = await supabase.storage.from("media").upload(path, file, { upsert: true });
+    if (upErr) { setError(upErr.message); setUploading(false); return; }
+    const { data } = supabase.storage.from("media").getPublicUrl(path);
+    await supabase.from("site_settings").upsert({ key: settingKey, value: data.publicUrl }, { onConflict: "key" });
+    onUploaded(data.publicUrl);
+    setUploading(false);
+  };
+
+  const remove = async () => {
+    await supabase.from("site_settings").upsert({ key: settingKey, value: "" }, { onConflict: "key" });
+    onUploaded("");
+  };
+
+  const isVideo = accept.includes("video");
+  const hasMedia = !!currentUrl;
+
+  return (
+    <div className="flex flex-col gap-2">
+      <label className="text-[11px] text-gray-500 font-medium uppercase tracking-wide flex items-center gap-1.5">
+        <Icon className="w-3.5 h-3.5" /> {label}
+      </label>
+
+      {hasMedia ? (
+        <div className="relative rounded-xl overflow-hidden bg-[#0f0f0f] border border-white/[0.08]">
+          {isVideo
+            ? <video src={currentUrl} controls muted className="w-full max-h-40 object-contain" />
+            : <img src={currentUrl} alt={label} className="w-full max-h-40 object-contain" />
+          }
+          <button
+            onClick={remove}
+            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/70 flex items-center justify-center text-red-400 hover:text-red-300 transition-colors"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+          <div className="px-3 py-1.5 text-[10px] text-gray-500 truncate">{currentUrl}</div>
+        </div>
+      ) : (
+        <button
+          onClick={() => fileRef.current?.click()}
+          disabled={uploading}
+          className="flex flex-col items-center justify-center gap-2 h-24 rounded-xl border-2 border-dashed transition-colors disabled:opacity-50"
+          style={{ borderColor: "rgba(255,255,255,0.1)", background: "#0f0f0f" }}
+        >
+          {uploading
+            ? <RefreshCw className="w-5 h-5 text-gray-500 animate-spin" />
+            : <Upload className="w-5 h-5 text-gray-500" />
+          }
+          <span className="text-[12px] text-gray-500">
+            {uploading ? "Subiendo..." : `Seleccionar ${isVideo ? "video" : "imagen"}`}
+          </span>
+        </button>
+      )}
+
+      {error && <p className="text-red-400 text-[11px]">{error}</p>}
+
+      <input ref={fileRef} type="file" accept={accept} className="hidden"
+        onChange={e => { const f = e.target.files?.[0]; if (f) upload(f); }} />
+
+      {!hasMedia && (
+        <p className="text-[10px] text-gray-600">
+          O pega una URL directamente en Configuración del Sitio
+        </p>
+      )}
+    </div>
+  );
+};
+
+const MediaSection = ({ settings, onRefresh }: { settings: Record<string, string>; onRefresh: () => void }) => {
+  const [videoUrl, setVideoUrl] = useState(settings["browser_video_url"] ?? "");
+  const [imageUrl, setImageUrl] = useState(settings["browser_image_url"] ?? "");
+
+  useEffect(() => {
+    setVideoUrl(settings["browser_video_url"] ?? "");
+    setImageUrl(settings["browser_image_url"] ?? "");
+  }, [settings]);
+
+  const handleUploaded = (key: MediaKey, url: string) => {
+    if (key === "browser_video_url") setVideoUrl(url);
+    else setImageUrl(url);
+    onRefresh();
+  };
+
+  return (
+    <Section title="Media — Video e Imágenes">
+      <div className="grid sm:grid-cols-2 gap-5">
+        <MediaUploader
+          label="Video del Browser (MP4/WebM)"
+          icon={Film}
+          settingKey="browser_video_url"
+          accept="video/mp4,video/webm"
+          currentUrl={videoUrl}
+          onUploaded={url => handleUploaded("browser_video_url", url)}
+        />
+        <MediaUploader
+          label="Imagen del Browser (JPG/PNG/WebP)"
+          icon={ImageIcon}
+          settingKey="browser_image_url"
+          accept="image/jpeg,image/png,image/webp,image/gif"
+          currentUrl={imageUrl}
+          onUploaded={url => handleUploaded("browser_image_url", url)}
+        />
+      </div>
+      <p className="text-[11px] text-gray-600 mt-3">
+        El video tiene prioridad sobre la imagen. Tamaño máximo: 50MB.
+        Requiere bucket "media" en Supabase Storage (ejecuta create-bucket.mjs si aún no lo hiciste).
+      </p>
+    </Section>
+  );
+};
+
 // ─── Settings Section ─────────────────────────────────────────────────────────
 const SettingsSection = ({ settings, onRefresh }: { settings: Record<string, string>; onRefresh: () => void }) => {
   const [vals, setVals] = useState<Record<string, string>>(settings);
@@ -524,6 +655,7 @@ const AdminPanel = () => {
 
       {/* Content */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 flex flex-col gap-4">
+        <MediaSection settings={settings} onRefresh={refetch} />
         <SettingsSection settings={settings} onRefresh={refetch} />
         <PlansSection plans={plans} onRefresh={refetch} />
         <CategoriesSection categories={categories} onRefresh={refetch} />
