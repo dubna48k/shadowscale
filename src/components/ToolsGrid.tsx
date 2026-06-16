@@ -11,6 +11,7 @@ interface Tool {
   color: string;
   initial: string;
   domain?: string;
+  logoUrl?: string;
   badge?: "nuevo" | "prueba";
   note?: string;
 }
@@ -53,10 +54,12 @@ const COLLAPSED_COUNT = 12;
 
 const ToolLogo = ({ tool }: { tool: Tool }) => {
   const [failed, setFailed] = useState(false);
-  if (tool.domain && !failed) {
+  const src = tool.logoUrl || (tool.domain ? `https://logo.clearbit.com/${tool.domain}` : null);
+
+  if (src && !failed) {
     return (
       <img
-        src={`https://logo.clearbit.com/${tool.domain}`}
+        src={src}
         alt={tool.name}
         className="w-9 h-9 rounded-xl object-contain bg-white p-1 shrink-0"
         onError={() => setFailed(true)}
@@ -138,6 +141,7 @@ const ToolsGrid = ({ searchQuery, onSearchChange, supabaseTools, supabaseCategor
           color: t.color,
           initial: t.initial,
           domain: t.domain ?? undefined,
+          logoUrl: t.logo_url ?? undefined,
           badge: t.badge ?? undefined,
           note: t.note ?? undefined,
         }));

@@ -18,8 +18,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen mesh-gradient">
-      <TopBanner />
-      <Navbar />
+      <TopBanner settings={settings} />
+      <Navbar settings={settings} />
       <FloatingConversionBar />
       <HeroSection />
       <ToolsGrid
@@ -48,7 +48,7 @@ const Index = () => {
             <a href="#" className="hover:text-white transition-colors">Afiliados</a>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-[12px] text-gray-600">© 2025 ShadowScale · Todos los derechos reservados</span>
+            <span className="text-[12px] text-gray-600">{settings["footer_copyright"] ?? "© 2025 ShadowScale · Todos los derechos reservados"}</span>
             <button className="inline-flex items-center gap-1.5 text-[12px] text-gray-500 hover:text-gray-300 transition-colors">
               <Globe className="w-3.5 h-3.5" />
               Español

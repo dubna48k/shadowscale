@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase, Tool, Category, Plan, ToolStatus, BadgeType, PlanStatus } from "@/lib/supabase";
 import { useSiteData } from "@/hooks/useSiteData";
-import { Plus, Trash2, Save, Eye, EyeOff, LogOut, RefreshCw, ExternalLink, ChevronDown, ChevronUp, Upload, Film, ImageIcon, X } from "lucide-react";
+import { Plus, Trash2, Pencil, Eye, EyeOff, LogOut, RefreshCw, ExternalLink, ChevronDown, ChevronUp, Upload, Film, ImageIcon, X } from "lucide-react";
 
 const ADMIN_PASSWORD = "Agencia2032**";
 
@@ -79,6 +79,72 @@ const Field = ({ label, children }: { label: string; children: React.ReactNode }
   </div>
 );
 
+// ─── Tool Logo Uploader ───────────────────────────────────────────────────────
+const ToolLogoUploader = ({
+  currentLogoUrl, domain, initial, color, onUploaded,
+}: {
+  currentLogoUrl: string | null;
+  domain: string | null;
+  initial: string;
+  color: string;
+  onUploaded: (url: string) => void;
+}) => {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [err, setErr] = useState("");
+  const [failed, setFailed] = useState(false);
+
+  const preview = currentLogoUrl || (domain && !failed ? `https://logo.clearbit.com/${domain}` : null);
+
+  const upload = async (file: File) => {
+    setUploading(true); setErr("");
+    const ext = file.name.split(".").pop() ?? "png";
+    const path = `tool-logo-${Date.now()}.${ext}`;
+    const { error: upErr } = await supabase.storage.from("media").upload(path, file, { upsert: true });
+    if (upErr) { setErr(upErr.message); setUploading(false); return; }
+    const { data } = supabase.storage.from("media").getPublicUrl(path);
+    onUploaded(data.publicUrl);
+    setUploading(false);
+  };
+
+  return (
+    <div className="flex items-center gap-4 p-3 rounded-xl bg-[#0f0f0f] border border-white/[0.08]">
+      {/* Preview */}
+      <div className="shrink-0">
+        {preview
+          ? <img src={preview} alt="logo" className="w-12 h-12 rounded-xl object-contain bg-white p-1" onError={() => setFailed(true)} />
+          : <div className="w-12 h-12 rounded-xl flex items-center justify-center text-lg font-bold text-white" style={{ background: color }}>{initial}</div>
+        }
+      </div>
+      <div className="flex flex-col gap-1.5 flex-1">
+        <p className="text-[11px] text-gray-500 uppercase tracking-wide font-medium">Logo personalizado</p>
+        <div className="flex gap-2">
+          <button
+            onClick={() => fileRef.current?.click()}
+            disabled={uploading}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white transition-opacity hover:opacity-80 disabled:opacity-50"
+            style={{ background: "#f97316" }}
+          >
+            <Upload className="w-3 h-3" />
+            {uploading ? "Subiendo..." : "Subir PNG/WebP"}
+          </button>
+          {currentLogoUrl && (
+            <button onClick={() => onUploaded("")} className="px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white transition-colors border border-white/10">
+              Quitar
+            </button>
+          )}
+        </div>
+        {err && <p className="text-red-400 text-[10px]">{err}</p>}
+        <p className="text-[10px] text-gray-600">
+          {currentLogoUrl ? "Logo personalizado activo" : domain ? `Usando logo de ${domain}` : "Sin logo — mostrando inicial"}
+        </p>
+      </div>
+      <input ref={fileRef} type="file" accept="image/png,image/webp,image/jpeg,image/gif" className="hidden"
+        onChange={e => { const f = e.target.files?.[0]; if (f) upload(f); }} />
+    </div>
+  );
+};
+
 // ─── Tools Section ────────────────────────────────────────────────────────────
 const ToolsSection = ({ tools, categories, onRefresh }: { tools: Tool[]; categories: Category[]; onRefresh: () => void }) => {
   const [editing, setEditing] = useState<Partial<Tool> | null>(null);
@@ -129,6 +195,16 @@ const ToolsSection = ({ tools, categories, onRefresh }: { tools: Tool[]; categor
           <div className="w-full max-w-lg rounded-2xl p-6 flex flex-col gap-4 max-h-[90vh] overflow-y-auto"
             style={{ background: "#1a1a1c", border: "1px solid rgba(255,255,255,0.1)" }}>
             <h3 className="text-white font-bold">{editing.id ? "Editar herramienta" : "Nueva herramienta"}</h3>
+
+            {/* Logo uploader */}
+            <ToolLogoUploader
+              currentLogoUrl={(editing as any).logo_url ?? null}
+              domain={editing.domain ?? null}
+              initial={editing.initial ?? "?"}
+              color={editing.color ?? "#6366f1"}
+              onUploaded={url => setEditing(v => ({ ...v, logo_url: url } as any))}
+            />
+
             <div className="grid grid-cols-2 gap-3">
               <Field label="Nombre">
                 <input className={inputCls} value={editing.name ?? ""} onChange={e => setEditing(v => ({ ...v, name: e.target.value }))} />
@@ -136,7 +212,7 @@ const ToolsSection = ({ tools, categories, onRefresh }: { tools: Tool[]; categor
               <Field label="Inicial (fallback logo)">
                 <input className={inputCls} maxLength={2} value={editing.initial ?? ""} onChange={e => setEditing(v => ({ ...v, initial: e.target.value.toUpperCase() }))} />
               </Field>
-              <Field label="Dominio (para logo)">
+              <Field label="Dominio (para logo automático)">
                 <input className={inputCls} placeholder="openai.com" value={editing.domain ?? ""} onChange={e => setEditing(v => ({ ...v, domain: e.target.value }))} />
               </Field>
               <Field label="Color">
@@ -221,8 +297,8 @@ const ToolsSection = ({ tools, categories, onRefresh }: { tools: Tool[]; categor
                     <button onClick={() => toggleStatus(t)} className="p-1.5 rounded-lg text-gray-500 hover:text-white transition-colors hover:bg-white/[0.05]">
                       {t.status === "active" ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                     </button>
-                    <button onClick={() => setEditing(t)} className="p-1.5 rounded-lg text-gray-500 hover:text-white transition-colors hover:bg-white/[0.05]">
-                      <Save className="w-3.5 h-3.5" />
+                    <button onClick={() => setEditing(t)} title="Editar" className="p-1.5 rounded-lg text-gray-500 hover:text-white transition-colors hover:bg-white/[0.05]">
+                      <Pencil className="w-3.5 h-3.5" />
                     </button>
                     <button onClick={() => remove(t.id)} className="p-1.5 rounded-lg text-gray-500 hover:text-red-400 transition-colors hover:bg-white/[0.05]">
                       <Trash2 className="w-3.5 h-3.5" />

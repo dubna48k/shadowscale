@@ -1,15 +1,21 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-
 const links = [
   { label: "Herramientas", href: "#herramientas" },
   { label: "Afiliados (próximamente)", href: "#" },
   { label: "Precios", href: "#pricing" },
 ];
 
-const Navbar = () => {
+interface NavbarProps {
+  settings?: Record<string, string>;
+}
+
+const Navbar = ({ settings = {} }: NavbarProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const ctaText = settings["cta_text"] ?? "Comenzar gratis — 3 días";
+  const ctaLink = settings["cta_link"] ?? "https://app.shadowscale.pro/register";
 
   return (
     <motion.nav
@@ -19,12 +25,10 @@ const Navbar = () => {
       transition={{ duration: 0.4 }}
     >
       <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-        {/* Logo */}
         <a href="/" className="flex items-center shrink-0">
           <img src="/shadowscale-logo.png" alt="ShadowScale" className="h-18 sm:h-20 w-auto" />
         </a>
 
-        {/* Desktop links */}
         <div className="hidden md:flex items-center gap-8">
           {links.map((link) => (
             <a
@@ -37,20 +41,18 @@ const Navbar = () => {
           ))}
         </div>
 
-        {/* Right */}
         <div className="flex items-center gap-2">
           <a
-            href="https://app.shadowscale.pro/register"
+            href={ctaLink}
             className="glow-button inline-flex items-center justify-center text-white font-bold transition-colors"
             style={{ background: "#f97316", borderRadius: "10px", padding: "8px 14px", fontSize: "13px" }}
             onMouseEnter={(e) => (e.currentTarget.style.background = "#ea580c")}
             onMouseLeave={(e) => (e.currentTarget.style.background = "#f97316")}
           >
-            <span className="hidden sm:inline">Comenzar gratis — 3 días</span>
-            <span className="sm:hidden">3 días gratis</span>
+            <span className="hidden sm:inline">{ctaText}</span>
+            <span className="sm:hidden">{ctaText.split("—")[0].trim()}</span>
           </a>
 
-          {/* Mobile hamburger */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden p-1.5 text-gray-400 hover:text-white transition-colors"
@@ -63,7 +65,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -83,6 +84,7 @@ const Navbar = () => {
                   {link.label}
                 </a>
               ))}
+              <a href={ctaLink} className="text-[14px] font-bold text-orange-400">{ctaText}</a>
             </div>
           </motion.div>
         )}

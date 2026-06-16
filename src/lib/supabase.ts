@@ -17,6 +17,7 @@ export interface Tool {
   color: string;
   initial: string;
   domain: string | null;
+  logo_url: string | null;
   badge: BadgeType;
   note: string | null;
   individual_price: number;

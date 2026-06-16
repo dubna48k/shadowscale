@@ -69,8 +69,7 @@ const BrowserMockup = ({ videoUrl, imageUrl }: { videoUrl: string; imageUrl: str
               className="absolute inset-0 w-full h-full object-cover"
             />
           ) : (
-            // Placeholder
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+            <div className="absolute inset-0 flex items-center justify-center">
               <div className="flex items-center gap-3">
                 {["#10b981","#f97316","#14b8a6","#0ea5e9","#a855f7","#ec4899","#06b6d4"].map((color, i) => (
                   <motion.div
@@ -82,7 +81,6 @@ const BrowserMockup = ({ videoUrl, imageUrl }: { videoUrl: string; imageUrl: str
                   />
                 ))}
               </div>
-              <p className="text-[12px] text-gray-600 mt-2">Sube un video o imagen desde el CMS</p>
             </div>
           )}
         </div>
