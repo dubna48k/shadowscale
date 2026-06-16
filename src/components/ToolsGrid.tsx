@@ -53,16 +53,21 @@ const FALLBACK_CATS = [
 const COLLAPSED_COUNT = 12;
 
 const ToolLogo = ({ tool }: { tool: Tool }) => {
-  const [failed, setFailed] = useState(false);
-  const src = tool.logoUrl || (tool.domain ? `https://logo.clearbit.com/${tool.domain}` : null);
+  const sources = [
+    tool.logoUrl,
+    tool.domain ? `https://logo.clearbit.com/${tool.domain}` : null,
+    tool.domain ? `https://www.google.com/s2/favicons?domain=${tool.domain}&sz=128` : null,
+  ].filter(Boolean) as string[];
 
-  if (src && !failed) {
+  const [idx, setIdx] = useState(0);
+
+  if (idx < sources.length) {
     return (
       <img
-        src={src}
+        src={sources[idx]}
         alt={tool.name}
         className="w-9 h-9 rounded-xl object-contain bg-white p-1 shrink-0"
-        onError={() => setFailed(true)}
+        onError={() => setIdx(i => i + 1)}
       />
     );
   }

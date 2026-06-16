@@ -268,7 +268,7 @@ const PriceCard = () => {
   );
 };
 
-const HeroSection = () => {
+const HeroSection = ({ settings = {} }: { settings?: Record<string, string> }) => {
   return (
     <section className="relative pt-20 md:pt-14 pb-0 overflow-hidden">
       {/* Background glow */}
@@ -310,13 +310,13 @@ const HeroSection = () => {
               transition={{ ...spring, delay: 0.3 }}
             >
               <a
-                href="https://app.shadowscale.pro/register"
+                href={settings["cta_link"] ?? "https://app.shadowscale.pro/register"}
                 className="glow-button inline-flex items-center justify-center text-white font-bold transition-colors"
                 style={{ background: "#f97316", borderRadius: "12px", padding: "14px 28px", fontSize: "16px" }}
                 onMouseEnter={(e) => (e.currentTarget.style.background = "#ea580c")}
                 onMouseLeave={(e) => (e.currentTarget.style.background = "#f97316")}
               >
-                Comenzar gratis — 3 días
+                {settings["cta_text"] ?? "Comenzar gratis — 3 días"}
               </a>
               <a
                 href="#herramientas"

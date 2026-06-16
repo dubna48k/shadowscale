@@ -21,7 +21,7 @@ const Index = () => {
       <TopBanner settings={settings} />
       <Navbar settings={settings} />
       <FloatingConversionBar />
-      <HeroSection />
+      <HeroSection settings={settings} />
       <ToolsGrid
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
