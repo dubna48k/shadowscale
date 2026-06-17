@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { supabase, Tool, Category, Plan, ToolStatus, BadgeType, PlanStatus, Affiliate } from "@/lib/supabase";
 import { useSiteData } from "@/hooks/useSiteData";
 import { useAuth } from "@/hooks/useAuth";
+import { sendEmail } from "@/lib/email";
 import {
   Plus, Trash2, Pencil, Eye, EyeOff, LogOut, RefreshCw, ExternalLink,
   Upload, Film, ImageIcon, X, LayoutDashboard, Package, FolderOpen,
@@ -488,7 +489,7 @@ const PagesSection = ({ settings, onRefresh }: { settings: Record<string, string
   useEffect(() => { setVals(settings); }, [settings]);
   const save = async () => {
     setSaving(true);
-    const keys = ["page_terminos_content", "page_politica_content", "soporte_email", "soporte_whatsapp", "soporte_horario"];
+    const keys = ["page_terminos_content", "page_politica_content", "soporte_email", "soporte_whatsapp", "soporte_discord", "soporte_horario"];
     await Promise.all(keys.map(key => supabase.from("site_settings").upsert({ key, value: vals[key] ?? "" }, { onConflict: "key" })));
     setSaving(false); onRefresh();
   };
@@ -506,7 +507,7 @@ const PagesSection = ({ settings, onRefresh }: { settings: Record<string, string
       <Card>
         {tab === "terminos" && <Field label="Contenido (## para títulos, párrafos separados por línea en blanco)"><textarea className={inputCls} rows={16} {...s("page_terminos_content")} /></Field>}
         {tab === "politica" && <Field label="Contenido (## para títulos, párrafos separados por línea en blanco)"><textarea className={inputCls} rows={16} {...s("page_politica_content")} /></Field>}
-        {tab === "soporte" && <div className="grid sm:grid-cols-2 gap-4"><Field label="Email de soporte"><input className={inputCls} {...s("soporte_email")} placeholder="soporte@shadowscale.pro" /></Field><Field label="WhatsApp"><input className={inputCls} {...s("soporte_whatsapp")} placeholder="+57 300 000 0000" /></Field><Field label="Horario"><input className={inputCls} {...s("soporte_horario")} placeholder="Lunes a Viernes · 9am – 8pm" /></Field></div>}
+        {tab === "soporte" && <div className="grid sm:grid-cols-2 gap-4"><Field label="Invitación de Discord (URL)"><input className={inputCls} {...s("soporte_discord")} placeholder="https://discord.gg/tucanal" /></Field><Field label="Email de soporte"><input className={inputCls} {...s("soporte_email")} placeholder="soporte@shadowscale.pro" /></Field><Field label="WhatsApp"><input className={inputCls} {...s("soporte_whatsapp")} placeholder="+57 300 000 0000" /></Field><Field label="Horario"><input className={inputCls} {...s("soporte_horario")} placeholder="Lunes a Viernes · 9am – 8pm" /></Field></div>}
       </Card>
       <div className="flex justify-end"><button onClick={save} disabled={saving} className="px-8 py-2.5 rounded-xl text-sm font-bold text-white hover:opacity-90 disabled:opacity-50" style={{ background: "#f97316" }}>{saving ? "Guardando..." : "Guardar"}</button></div>
     </div>
@@ -545,6 +546,15 @@ const AffiliatesSection = ({ settings, onRefresh }: { settings: Record<string, s
 
   const setStatus = async (id: string, status: Affiliate["status"]) => {
     await supabase.from("affiliates").update({ status }).eq("id", id);
+    if (status === "approved") {
+      const aff = affiliates.find(a => a.id === id);
+      if (aff?.email) {
+        sendEmail(aff.email, "affiliate_approved", {
+          name: aff.name, rate: String(aff.commission_rate),
+          link: `${window.location.origin}/?ref=${aff.code}`,
+        });
+      }
+    }
     loadAffiliates();
   };
 

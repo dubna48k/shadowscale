@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase, Affiliate, Referral } from "@/lib/supabase";
+import { sendEmail } from "@/lib/email";
 import { useAuth } from "@/hooks/useAuth";
 import {
   LogOut, Copy, Check, MousePointerClick, Users, DollarSign,
@@ -38,7 +39,11 @@ const CreateAffiliate = ({ onCreated }: { onCreated: () => void }) => {
         user_id: user.id, code, name, email: user.email,
         status: "pending", payout_method: payoutMethod, payout_details: payoutDetails || null,
       });
-      if (!error) { onCreated(); return; }
+      if (!error) {
+        if (user.email) sendEmail(user.email, "affiliate_welcome", { name });
+        onCreated();
+        return;
+      }
       lastErr = error;
       if (!error.message?.includes("duplicate") && !error.message?.includes("unique")) break;
     }

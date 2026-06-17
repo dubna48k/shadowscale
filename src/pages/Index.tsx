@@ -49,7 +49,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t border-white/[0.06] px-6 py-8">
         <div className="max-w-6xl mx-auto flex flex-col gap-4 items-center text-center">
-          <img src="/shadowscale-logo.png" alt="ShadowScale" className="h-20 w-auto" />
+          <img src="/shadowscale-logo.png" alt="ShadowScale" className="h-28 w-auto" />
           <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[12px] text-gray-500">
             {[
               { label: settings["footer_link_1_label"] ?? "Términos y Condiciones", href: settings["footer_link_1_href"] ?? "/terminos" },
