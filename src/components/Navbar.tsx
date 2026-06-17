@@ -26,7 +26,7 @@ const Navbar = ({ settings = {} }: NavbarProps) => {
     >
       <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
         <a href="/" className="flex items-center shrink-0">
-          <img src="/shadowscale-logo.png" alt="ShadowScale" className="h-18 sm:h-20 w-auto" />
+          <img src="/shadowscale-logo.png" alt="ShadowScale" className="h-8 sm:h-9 w-auto" />
         </a>
 
         <div className="hidden md:flex items-center gap-8">

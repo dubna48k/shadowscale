@@ -27,7 +27,7 @@ const cardTools = [
   { name: "Hailuo AI", price: "$199", domain: null, color: "#d97706" },
 ];
 
-const tools = cardTools.map(t => ({ name: t.name, price: t.price, color: t.color }));
+const tools = cardTools.map(t => ({ name: t.name, price: t.price, color: t.color, domain: t.domain }));
 
 const row1 = tools.slice(0, 10);
 const row2 = tools.slice(10);
@@ -36,6 +36,25 @@ interface MarqueeRowProps {
   items: typeof tools;
   direction: "left" | "right";
 }
+
+const MarqueeLogo = ({ domain, color, name }: { domain?: string | null; color: string; name: string }) => {
+  const sources = domain ? [
+    `https://logo.clearbit.com/${domain}`,
+    `https://www.google.com/s2/favicons?domain=${domain}&sz=32`,
+  ] : [];
+  const [idx, setIdx] = useState(0);
+  if (idx < sources.length) {
+    return (
+      <img
+        src={sources[idx]}
+        alt={name}
+        className="w-4 h-4 rounded object-contain bg-white p-[1px] shrink-0"
+        onError={() => setIdx(i => i + 1)}
+      />
+    );
+  }
+  return <div className="w-2 h-2 rounded-full shrink-0" style={{ background: color }} />;
+};
 
 const MarqueeRow = ({ items, direction }: MarqueeRowProps) => {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -88,10 +107,10 @@ const MarqueeRow = ({ items, direction }: MarqueeRowProps) => {
         {tripled.map((tool, i) => (
           <div
             key={i}
-            className="flex items-center gap-1.5 mx-1.5 px-3 py-1.5 rounded-full shrink-0"
+            className="flex items-center gap-1.5 mx-1.5 px-2.5 py-1.5 rounded-full shrink-0"
             style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.07)" }}
           >
-            <div className="w-2 h-2 rounded-full shrink-0" style={{ background: tool.color }} />
+            <MarqueeLogo domain={tool.domain} color={tool.color} name={tool.name} />
             <span className="text-[12px] text-gray-300 font-medium whitespace-nowrap">{tool.name}</span>
             <span className="text-[12px] font-bold whitespace-nowrap" style={{ color: "#f97316" }}>-{tool.price}</span>
           </div>
