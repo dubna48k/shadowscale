@@ -17,6 +17,12 @@ const Navbar = ({ settings = {} }: NavbarProps) => {
   const ctaText = settings["cta_text"] ?? "Comenzar gratis — 3 días";
   const ctaLink = settings["cta_link"] ?? "https://app.shadowscale.pro/register";
 
+  const navLinks = [
+    { label: settings["nav_1_label"] ?? "Herramientas", href: settings["nav_1_href"] ?? "#herramientas" },
+    { label: settings["nav_2_label"] ?? "Afiliados", href: settings["nav_2_href"] ?? "/afiliados" },
+    { label: settings["nav_3_label"] ?? "Precios", href: settings["nav_3_href"] ?? "#pricing" },
+  ];
+
   return (
     <motion.nav
       className="relative z-50 bg-background/80 backdrop-blur-xl border-b border-white/[0.06]"
@@ -24,13 +30,13 @@ const Navbar = ({ settings = {} }: NavbarProps) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
     >
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
         <a href="/" className="flex items-center shrink-0">
-          <img src="/shadowscale-logo.png" alt="ShadowScale" className="h-8 sm:h-9 w-auto" />
+          <img src="/shadowscale-logo.png" alt="ShadowScale" className="h-14 sm:h-16 w-auto" />
         </a>
 
         <div className="hidden md:flex items-center gap-8">
-          {links.map((link) => (
+          {navLinks.map((link) => (
             <a
               key={link.label}
               href={link.href}
@@ -74,7 +80,7 @@ const Navbar = ({ settings = {} }: NavbarProps) => {
             className="md:hidden border-t border-white/[0.06] overflow-hidden"
           >
             <div className="px-4 py-3 flex flex-col gap-3">
-              {links.map((link) => (
+              {navLinks.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
