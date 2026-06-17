@@ -1,15 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { supabase, Tool, Category, Plan, ToolStatus, BadgeType, PlanStatus } from "@/lib/supabase";
+import { supabase, Tool, Category, Plan, ToolStatus, BadgeType, PlanStatus, Affiliate } from "@/lib/supabase";
 import { useSiteData } from "@/hooks/useSiteData";
+import { useAuth } from "@/hooks/useAuth";
 import {
   Plus, Trash2, Pencil, Eye, EyeOff, LogOut, RefreshCw, ExternalLink,
   Upload, Film, ImageIcon, X, LayoutDashboard, Package, FolderOpen,
   CreditCard, Settings, FileText, Users, BarChart2, Globe, ChevronRight,
-  TrendingUp, Link2, DollarSign,
+  TrendingUp, DollarSign, ShieldCheck, Check, Ban, Clock,
 } from "lucide-react";
-
-const ADMIN_PASSWORD = "Agencia2032**";
 
 // ─── Shared styles ─────────────────────────────────────────────────────────────
 const inputCls = "w-full bg-[#0a0a0a] border border-white/[0.08] rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-white/20 transition-colors";
@@ -30,32 +29,53 @@ const pageVariants = {
   exit: { opacity: 0, y: -8, transition: { duration: 0.15 } },
 };
 
-// ─── Login ─────────────────────────────────────────────────────────────────────
-const LoginScreen = ({ onLogin }: { onLogin: () => void }) => {
+// ─── Login (Supabase Auth) ──────────────────────────────────────────────────────
+const LoginScreen = () => {
+  const { signInWithEmail } = useAuth();
+  const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
-  const [err, setErr] = useState(false);
-  const submit = (e: React.FormEvent) => {
+  const [err, setErr] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (pw === ADMIN_PASSWORD) { localStorage.setItem("ss_admin", "1"); onLogin(); }
-    else { setErr(true); setTimeout(() => setErr(false), 1500); }
+    setBusy(true); setErr("");
+    const { error } = await signInWithEmail(email, pw);
+    if (error) setErr(error);
+    setBusy(false);
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center" style={{ background: "#0a0a0a" }}>
       <motion.form onSubmit={submit} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="w-80 rounded-2xl p-8 flex flex-col gap-4"
+        className="w-80 rounded-2xl p-8 flex flex-col gap-3"
         style={{ background: "#161618", border: "1px solid rgba(255,255,255,0.08)" }}>
-        <img src="/shadowscale-logo.png" alt="ShadowScale" className="h-10 w-auto mx-auto mb-2" />
+        <img src="/shadowscale-logo.png" alt="ShadowScale" className="h-12 w-auto mx-auto mb-1" />
         <h1 className="text-white text-lg font-bold text-center">Admin CMS</h1>
-        <input type="password" placeholder="Contraseña" value={pw} onChange={e => setPw(e.target.value)} autoFocus
-          className="w-full bg-[#0f0f0f] border rounded-lg px-4 py-2.5 text-white text-sm outline-none transition-colors"
-          style={{ borderColor: err ? "#ef4444" : "rgba(255,255,255,0.1)" }} />
-        {err && <p className="text-red-400 text-xs text-center">Contraseña incorrecta</p>}
-        <button type="submit" className="w-full py-2.5 rounded-lg font-bold text-white text-sm hover:opacity-90 transition-opacity"
-          style={{ background: "#f97316" }}>Entrar</button>
+        <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} autoFocus required
+          className="w-full bg-[#0f0f0f] border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-white/25 transition-colors" />
+        <input type="password" placeholder="Contraseña" value={pw} onChange={e => setPw(e.target.value)} required
+          className="w-full bg-[#0f0f0f] border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-white/25 transition-colors" />
+        {err && <p className="text-red-400 text-xs text-center">{err}</p>}
+        <button type="submit" disabled={busy} className="w-full py-2.5 rounded-lg font-bold text-white text-sm hover:opacity-90 disabled:opacity-50 transition-opacity"
+          style={{ background: "#f97316" }}>{busy ? "Entrando..." : "Entrar"}</button>
+        <p className="text-[11px] text-gray-600 text-center mt-1">Acceso restringido. Solo administradores.</p>
       </motion.form>
     </div>
   );
 };
+
+const NoAccessScreen = ({ onSignOut, email }: { onSignOut: () => void; email?: string | null }) => (
+  <div className="min-h-screen flex items-center justify-center p-6" style={{ background: "#0a0a0a" }}>
+    <div className="max-w-sm w-full rounded-2xl p-8 text-center" style={{ background: "#161618", border: "1px solid rgba(255,255,255,0.08)" }}>
+      <Ban className="w-10 h-10 text-red-400 mx-auto mb-3" />
+      <h1 className="text-white font-bold mb-2">Sin acceso de administrador</h1>
+      <p className="text-gray-500 text-sm mb-1">Tu cuenta ({email}) no tiene rol admin.</p>
+      <p className="text-gray-600 text-xs mb-5">Pide que te asignen el rol o corre el UPDATE de rol en Supabase.</p>
+      <button onClick={onSignOut} className="px-4 py-2 rounded-lg text-sm font-medium text-white" style={{ background: "#f97316" }}>Cerrar sesión</button>
+    </div>
+  </div>
+);
 
 // ─── Status badge ─────────────────────────────────────────────────────────────
 const statusColors: Record<string, string> = { active: "#10b981", inactive: "#6b7280", sold_out: "#ef4444", coming_soon: "#f59e0b" };
@@ -494,40 +514,130 @@ const PagesSection = ({ settings, onRefresh }: { settings: Record<string, string
 };
 
 // ─── Affiliates Section ───────────────────────────────────────────────────────
+const affStatusMeta: Record<string, { label: string; color: string }> = {
+  pending: { label: "Pendiente", color: "#f59e0b" },
+  approved: { label: "Aprobado", color: "#10b981" },
+  rejected: { label: "Rechazado", color: "#ef4444" },
+  suspended: { label: "Suspendido", color: "#6b7280" },
+};
+
 const AffiliatesSection = ({ settings, onRefresh }: { settings: Record<string, string>; onRefresh: () => void }) => {
   const [vals, setVals] = useState<Record<string, string>>(settings);
   const [saving, setSaving] = useState(false);
+  const [affiliates, setAffiliates] = useState<Affiliate[]>([]);
+  const [refCounts, setRefCounts] = useState<Record<string, { clicks: number; conv: number }>>({});
+  const [tab, setTab] = useState<"list" | "config">("list");
   useEffect(() => { setVals(settings); }, [settings]);
+
+  const loadAffiliates = async () => {
+    const { data } = await supabase.from("affiliates").select("*").order("created_at", { ascending: false });
+    setAffiliates((data as Affiliate[]) ?? []);
+    const { data: refs } = await supabase.from("referrals").select("affiliate_id, status");
+    const counts: Record<string, { clicks: number; conv: number }> = {};
+    (refs ?? []).forEach((r: any) => {
+      if (!counts[r.affiliate_id]) counts[r.affiliate_id] = { clicks: 0, conv: 0 };
+      if (r.status === "click") counts[r.affiliate_id].clicks++;
+      if (r.status === "converted") counts[r.affiliate_id].conv++;
+    });
+    setRefCounts(counts);
+  };
+  useEffect(() => { loadAffiliates(); }, []);
+
+  const setStatus = async (id: string, status: Affiliate["status"]) => {
+    await supabase.from("affiliates").update({ status }).eq("id", id);
+    loadAffiliates();
+  };
+
   const save = async () => { setSaving(true); const keys = ["affiliate_commission", "affiliate_min_payout", "affiliate_ref_base", "affiliate_apply_link", "affiliate_intro"]; await Promise.all(keys.map(key => supabase.from("site_settings").upsert({ key, value: vals[key] ?? "" }, { onConflict: "key" }))); setSaving(false); onRefresh(); };
   const s = (key: string) => ({ value: vals[key] ?? "", onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setVals(v => ({ ...v, [key]: e.target.value })) });
-  const commission = vals["affiliate_commission"] ?? "30";
+
+  const pending = affiliates.filter(a => a.status === "pending").length;
+  const approved = affiliates.filter(a => a.status === "approved").length;
+
   return (
     <div className="flex flex-col gap-5">
       <div className="flex items-center justify-between">
-        <div><h1 className="text-xl font-bold text-white">Programa de Afiliados</h1><p className="text-gray-500 text-sm">Configura la página pública y los parámetros del programa</p></div>
+        <div><h1 className="text-xl font-bold text-white">Programa de Afiliados</h1><p className="text-gray-500 text-sm">Gestiona afiliados y configura el programa</p></div>
         <a href="/afiliados" target="_blank" className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs text-gray-400 hover:text-white border border-white/[0.08]"><ExternalLink className="w-3.5 h-3.5" /> Ver página</a>
       </div>
+
       <div className="grid grid-cols-3 gap-3">
-        {[{ label: "Comisión activa", value: `${commission}%`, icon: DollarSign, color: "#f97316" }, { label: "Página pública", value: "Activa", icon: Globe, color: "#10b981" }, { label: "Solicitudes", value: "Por email", icon: Users, color: "#6366f1" }].map((s, i) => (
-          <Card key={i}><div className="flex items-center gap-3"><div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: s.color + "22" }}><s.icon className="w-4 h-4" style={{ color: s.color }} /></div><div><div className="text-white font-bold text-lg leading-tight">{s.value}</div><div className="text-gray-500 text-xs">{s.label}</div></div></div></Card>
+        {[
+          { label: "Total afiliados", value: affiliates.length, icon: Users, color: "#6366f1" },
+          { label: "Pendientes", value: pending, icon: Clock, color: "#f59e0b" },
+          { label: "Aprobados", value: approved, icon: ShieldCheck, color: "#10b981" },
+        ].map((st, i) => (
+          <Card key={i}><div className="flex items-center gap-3"><div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: st.color + "22" }}><st.icon className="w-4 h-4" style={{ color: st.color }} /></div><div><div className="text-white font-bold text-lg leading-tight">{st.value}</div><div className="text-gray-500 text-xs">{st.label}</div></div></div></Card>
         ))}
       </div>
-      <Card>
-        <h2 className="text-white font-semibold text-sm mb-4">Parámetros del programa</h2>
-        <div className="grid sm:grid-cols-2 gap-4">
-          <Field label="Comisión (%)"><input className={inputCls} {...s("affiliate_commission")} placeholder="30" /></Field>
-          <Field label="Mínimo de retiro"><input className={inputCls} {...s("affiliate_min_payout")} placeholder="$50" /></Field>
-          <Field label="Link base de referidos"><input className={inputCls} {...s("affiliate_ref_base")} placeholder="https://shadowscale.pro/?ref=CODIGO" /></Field>
-          <Field label="Link para aplicar"><input className={inputCls} {...s("affiliate_apply_link")} placeholder="mailto:afiliados@shadowscale.pro" /></Field>
-        </div>
-        <div className="mt-4"><Field label="Descripción del programa"><textarea className={inputCls} rows={3} {...s("affiliate_intro")} /></Field></div>
-      </Card>
-      <div className="flex justify-end"><button onClick={save} disabled={saving} className="px-8 py-2.5 rounded-xl text-sm font-bold text-white hover:opacity-90 disabled:opacity-50" style={{ background: "#f97316" }}>{saving ? "Guardando..." : "Guardar programa"}</button></div>
+
+      <div className="flex gap-1 p-1 rounded-xl w-fit" style={{ background: "#161618", border: "1px solid rgba(255,255,255,0.07)" }}>
+        {[{ id: "list", label: "Afiliados" }, { id: "config", label: "Configuración" }].map(t => (
+          <button key={t.id} onClick={() => setTab(t.id as any)} className="px-5 py-2 rounded-lg text-sm font-medium transition-all" style={tab === t.id ? { background: "#f97316", color: "#fff" } : { color: "#9ca3af" }}>{t.label}</button>
+        ))}
+      </div>
+
+      {tab === "list" ? (
+        affiliates.length > 0 ? (
+          <Card className="p-0 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead><tr className="text-left text-gray-500 text-[11px] uppercase" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                  <th className="px-5 py-3">Afiliado</th><th className="px-3 py-3">Código</th><th className="px-3 py-3">Clicks</th><th className="px-3 py-3">Conv.</th><th className="px-3 py-3">Estado</th><th className="px-3 py-3"></th>
+                </tr></thead>
+                <tbody>
+                  {affiliates.map(a => {
+                    const c = refCounts[a.id] ?? { clicks: 0, conv: 0 };
+                    const meta = affStatusMeta[a.status];
+                    return (
+                      <tr key={a.id} className="hover:bg-white/[0.02]" style={{ borderTop: "1px solid rgba(255,255,255,0.03)" }}>
+                        <td className="px-5 py-3"><div className="text-white font-medium">{a.name}</div><div className="text-gray-600 text-xs">{a.email}</div></td>
+                        <td className="px-3 py-3"><span className="font-mono text-xs text-gray-300 bg-white/[0.05] px-2 py-0.5 rounded">{a.code}</span></td>
+                        <td className="px-3 py-3 text-white font-mono">{c.clicks}</td>
+                        <td className="px-3 py-3 text-white font-mono">{c.conv}</td>
+                        <td className="px-3 py-3"><span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: meta.color + "22", color: meta.color }}>{meta.label}</span></td>
+                        <td className="px-3 py-3">
+                          <div className="flex items-center gap-1 justify-end">
+                            {a.status !== "approved" && <button onClick={() => setStatus(a.id, "approved")} title="Aprobar" className="p-1.5 rounded-lg text-gray-500 hover:text-emerald-400 hover:bg-white/[0.05]"><Check className="w-3.5 h-3.5" /></button>}
+                            {a.status !== "suspended" && <button onClick={() => setStatus(a.id, "suspended")} title="Suspender" className="p-1.5 rounded-lg text-gray-500 hover:text-yellow-400 hover:bg-white/[0.05]"><Ban className="w-3.5 h-3.5" /></button>}
+                            {a.status !== "rejected" && <button onClick={() => setStatus(a.id, "rejected")} title="Rechazar" className="p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-white/[0.05]"><X className="w-3.5 h-3.5" /></button>}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        ) : (
+          <Card><div className="text-center py-10"><Users className="w-10 h-10 text-gray-700 mx-auto mb-3" /><p className="text-gray-500 text-sm">Aún no hay afiliados registrados</p><p className="text-gray-700 text-xs mt-1">Aparecerán aquí cuando se registren en /afiliados/registro</p></div></Card>
+        )
+      ) : (
+        <>
+          <Card>
+            <h2 className="text-white font-semibold text-sm mb-4">Parámetros del programa</h2>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <Field label="Comisión (%)"><input className={inputCls} {...s("affiliate_commission")} placeholder="30" /></Field>
+              <Field label="Mínimo de retiro"><input className={inputCls} {...s("affiliate_min_payout")} placeholder="$50" /></Field>
+              <Field label="Link base de referidos"><input className={inputCls} {...s("affiliate_ref_base")} placeholder="https://shadowscale.pro/?ref=CODIGO" /></Field>
+              <Field label="Link para aplicar"><input className={inputCls} {...s("affiliate_apply_link")} placeholder="/afiliados/registro" /></Field>
+            </div>
+            <div className="mt-4"><Field label="Descripción del programa"><textarea className={inputCls} rows={3} {...s("affiliate_intro")} /></Field></div>
+          </Card>
+          <div className="flex justify-end"><button onClick={save} disabled={saving} className="px-8 py-2.5 rounded-xl text-sm font-bold text-white hover:opacity-90 disabled:opacity-50" style={{ background: "#f97316" }}>{saving ? "Guardando..." : "Guardar programa"}</button></div>
+        </>
+      )}
     </div>
   );
 };
 
 // ─── Analytics Section ────────────────────────────────────────────────────────
+const flagEmoji = (code?: string | null): string => {
+  if (!code || code.length !== 2) return "🌐";
+  return code.toUpperCase().replace(/./g, c => String.fromCodePoint(127397 + c.charCodeAt(0)));
+};
+
 const AnalyticsSection = () => {
   const [range, setRange] = useState<"today" | "week" | "all">("today");
   const [visits, setVisits] = useState<any[]>([]);
@@ -552,7 +662,12 @@ const AnalyticsSection = () => {
   useEffect(() => { load(); }, [range]);
 
   const mobile = visits.filter(v => v.device === "Móvil").length;
-  const countries = Object.entries(visits.reduce((acc: Record<string,number>, v) => { if (v.country) acc[v.country] = (acc[v.country] || 0) + 1; return acc; }, {})).sort((a, b) => b[1] - a[1]);
+  const countriesRaw = visits.reduce((acc: Record<string, { count: number; code: string }>, v) => {
+    if (v.country) { if (!acc[v.country]) acc[v.country] = { count: 0, code: v.country_code ?? "" }; acc[v.country].count++; }
+    return acc;
+  }, {});
+  const countries = Object.entries(countriesRaw).sort((a, b) => b[1].count - a[1].count);
+  const maxCountry = countries[0]?.[1].count ?? 1;
   const evsByVisit = events.reduce((acc: Record<string, any[]>, e) => { if (!acc[e.visit_id]) acc[e.visit_id] = []; acc[e.visit_id].push(e); return acc; }, {});
   const eventColor: Record<string, string> = { inicio: "#6366f1", scroll: "#10b981", pestaña: "#f59e0b", cta_click: "#f97316", lightbox_abrir: "#0ea5e9", video_click: "#ec4899", lightbox_tiempo: "#8b5cf6" };
 
@@ -571,31 +686,76 @@ const AnalyticsSection = () => {
         <>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { label: "Visitas", value: visits.length, color: "#f97316" },
-              { label: "Móvil", value: `${visits.length ? Math.round(mobile / visits.length * 100) : 0}%`, color: "#10b981" },
-              { label: "Desktop", value: `${visits.length ? Math.round((visits.length - mobile) / visits.length * 100) : 0}%`, color: "#6366f1" },
-              { label: "País #1", value: countries[0]?.[0] ?? "—", color: "#0ea5e9" },
-            ].map((s, i) => <Card key={i}><div className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</div><div className="text-gray-500 text-xs mt-1">{s.label}</div></Card>)}
+              { label: "Visitas", value: visits.length, color: "#f97316", grad: "linear-gradient(135deg, rgba(249,115,22,0.18), rgba(249,115,22,0))" },
+              { label: "Móvil", value: `${visits.length ? Math.round(mobile / visits.length * 100) : 0}%`, color: "#10b981", grad: "linear-gradient(135deg, rgba(16,185,129,0.18), rgba(16,185,129,0))" },
+              { label: "Desktop", value: `${visits.length ? Math.round((visits.length - mobile) / visits.length * 100) : 0}%`, color: "#6366f1", grad: "linear-gradient(135deg, rgba(99,102,241,0.18), rgba(99,102,241,0))" },
+              { label: "Países", value: countries.length, color: "#0ea5e9", grad: "linear-gradient(135deg, rgba(14,165,233,0.18), rgba(14,165,233,0))" },
+            ].map((s, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}>
+                <div className="rounded-2xl p-5 relative overflow-hidden" style={{ background: "#161618", border: "1px solid rgba(255,255,255,0.07)" }}>
+                  <div className="absolute inset-0" style={{ background: s.grad }} />
+                  <div className="relative">
+                    <div className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</div>
+                    <div className="text-gray-500 text-xs mt-1">{s.label}</div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </div>
+
+          {/* Mapa de calor de países */}
+          {countries.length > 0 && (
+            <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
+              <Card>
+                <div className="flex items-center gap-2 mb-4">
+                  <Globe className="w-4 h-4 text-orange-400" />
+                  <h2 className="text-white font-semibold text-sm">Visitas por país</h2>
+                </div>
+                <div className="flex flex-col gap-2.5">
+                  {countries.slice(0, 10).map(([name, { count, code }], i) => (
+                    <motion.div key={name} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04 }}
+                      className="flex items-center gap-3">
+                      <span className="text-xl shrink-0 w-7 text-center">{flagEmoji(code)}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-white text-sm font-medium truncate">{name}</span>
+                          <span className="text-gray-400 text-xs font-mono ml-2">{count} · {Math.round(count / visits.length * 100)}%</span>
+                        </div>
+                        <div className="h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.05)" }}>
+                          <motion.div className="h-full rounded-full"
+                            initial={{ width: 0 }} animate={{ width: `${(count / maxCountry) * 100}%` }}
+                            transition={{ delay: i * 0.04 + 0.1, type: "spring", stiffness: 80, damping: 18 }}
+                            style={{ background: "linear-gradient(90deg, #f97316, #fb923c)", boxShadow: "0 0 12px rgba(249,115,22,0.5)" }} />
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </Card>
+            </motion.div>
+          )}
+
           {visits.length > 0 ? (
             <Card className="p-0 overflow-hidden">
               <div className="px-5 py-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
                 <span className="text-white font-semibold text-sm">Sesiones recientes ({visits.length})</span>
               </div>
               <div>
-                {visits.slice(0, 20).map(v => {
+                {visits.slice(0, 25).map(v => {
                   const vEvents = evsByVisit[v.id] ?? [];
                   const isOpen = expanded === v.id;
                   return (
                     <div key={v.id} style={{ borderTop: "1px solid rgba(255,255,255,0.03)" }}>
                       <button onClick={() => setExpanded(isOpen ? null : v.id)} className="w-full flex items-center gap-3 px-5 py-3 hover:bg-white/[0.02] transition-colors text-left">
-                        <div className="w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold text-white shrink-0" style={{ background: "#f9731622", color: "#f97316" }}>{v.device?.[0] ?? "?"}</div>
+                        <span className="text-2xl shrink-0 w-8 text-center">{flagEmoji(v.country_code)}</span>
                         <div className="flex-1 min-w-0">
-                          <div className="text-white text-sm font-medium truncate">{v.device ?? "Desktop"} · {v.browser ?? "—"} · {v.screen ?? ""}</div>
-                          <div className="flex items-center gap-2 text-xs mt-0.5">
-                            <span className="text-gray-500">{v.lang ?? ""}</span>
+                          <div className="text-white text-sm font-medium truncate">
+                            {v.city ? `${v.city}, ` : ""}{v.country ?? "Desconocido"}
+                          </div>
+                          <div className="flex items-center gap-2 text-xs mt-0.5 flex-wrap">
+                            <span className="text-gray-500">{v.device ?? "Desktop"} · {v.browser ?? "—"}</span>
                             {v.ip && <span className="font-mono text-gray-400 bg-white/[0.05] px-1.5 py-0.5 rounded">{v.ip}</span>}
-                            {v.referrer && <span className="text-gray-600 truncate max-w-[140px]">← {v.referrer}</span>}
+                            {v.referrer && <span className="text-gray-600 truncate max-w-[120px]">← {v.referrer}</span>}
                           </div>
                         </div>
                         <div className="text-right shrink-0">
@@ -651,10 +811,10 @@ const SIDEBAR_ITEMS: { id: SectionId; label: string; icon: React.ElementType }[]
 ];
 
 // ─── Main Admin ───────────────────────────────────────────────────────────────
-const AdminPanel = () => {
+const AdminPanel = ({ onSignOut }: { onSignOut: () => void }) => {
   const [section, setSection] = useState<SectionId>("overview");
   const { tools, categories, plans, settings, loading, error, refetch } = useSiteData();
-  const logout = () => { localStorage.removeItem("ss_admin"); window.location.reload(); };
+  const logout = onSignOut;
 
   if (loading) return <div className="min-h-screen flex items-center justify-center" style={{ background: "#0a0a0a" }}><div className="flex items-center gap-3 text-gray-400"><RefreshCw className="w-4 h-4 animate-spin" /> Cargando...</div></div>;
   if (error) return <div className="min-h-screen flex items-center justify-center p-6" style={{ background: "#0a0a0a" }}><div className="max-w-md w-full rounded-2xl p-6 text-center" style={{ background: "#161618", border: "1px solid rgba(239,68,68,0.3)" }}><p className="text-red-400 font-medium mb-2">Error de conexión</p><p className="text-gray-500 text-sm mb-4">{error}</p><button onClick={refetch} className="mt-4 px-4 py-2 rounded-lg text-sm font-medium text-white" style={{ background: "#f97316" }}>Reintentar</button></div></div>;
@@ -721,7 +881,14 @@ const AdminPanel = () => {
 
 // ─── Export ───────────────────────────────────────────────────────────────────
 export default function Admin() {
-  const [authed, setAuthed] = useState(() => localStorage.getItem("ss_admin") === "1");
-  if (!authed) return <LoginScreen onLogin={() => setAuthed(true)} />;
-  return <AdminPanel />;
+  const { session, profile, loading, isAdmin, signOut } = useAuth();
+
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center" style={{ background: "#0a0a0a" }}>
+      <div className="flex items-center gap-3 text-gray-400"><RefreshCw className="w-4 h-4 animate-spin" /> Cargando...</div>
+    </div>
+  );
+  if (!session) return <LoginScreen />;
+  if (!isAdmin) return <NoAccessScreen onSignOut={signOut} email={profile?.email ?? session.user.email} />;
+  return <AdminPanel onSignOut={signOut} />;
 }

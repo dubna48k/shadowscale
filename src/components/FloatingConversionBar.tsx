@@ -2,7 +2,11 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LayoutGrid } from "lucide-react";
 
-const FloatingConversionBar = () => {
+interface FloatingConversionBarProps {
+  settings?: Record<string, string>;
+}
+
+const FloatingConversionBar = ({ settings = {} }: FloatingConversionBarProps) => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -10,6 +14,10 @@ const FloatingConversionBar = () => {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const text = settings["floatbar_text"] ?? "Desbloquea todas las herramientas premium";
+  const ctaText = settings["floatbar_cta_text"] ?? settings["cta_text"] ?? "Comenzar ahora";
+  const ctaLink = settings["floatbar_cta_link"] ?? settings["cta_link"] ?? "#pricing";
 
   return (
     <AnimatePresence>
@@ -24,14 +32,14 @@ const FloatingConversionBar = () => {
         >
           <div className="bg-[hsl(var(--background))] border-t border-white/[0.08] px-4 sm:px-8 py-3 flex items-center justify-center gap-4 sm:gap-6">
             <span className="text-[12px] sm:text-[13px] text-muted-foreground">
-              Desbloquea más de 12 herramientas premium
+              {text}
             </span>
             <a
-              href="#pricing"
+              href={ctaLink}
               className="shrink-0 inline-flex items-center gap-2 bg-coral text-coral-foreground px-4 sm:px-5 py-2 rounded-lg text-[12px] sm:text-[13px] font-semibold shadow-[0_0_16px_rgba(255,90,54,0.35)] hover:shadow-[0_0_24px_rgba(255,90,54,0.5)] transition-shadow duration-300"
             >
               <LayoutGrid className="w-3.5 h-3.5" />
-              Comenzar ahora — $14.9/mes
+              {ctaText}
             </a>
           </div>
         </motion.div>

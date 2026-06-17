@@ -1,4 +1,5 @@
 import { Check } from "lucide-react";
+import type { Plan as SupabasePlan } from "@/lib/supabase";
 
 type Plan = {
   name: string;
@@ -11,11 +12,12 @@ type Plan = {
   realValue: string;
   savings: string;
   cta: string;
+  ctaLink?: string;
   highlighted?: boolean;
   ctaStyle: "outline" | "solid" | "gradient";
 };
 
-const plans: Plan[] = [
+const FALLBACK_PLANS: Plan[] = [
   {
     name: "Starter",
     subtitle: "Creación de contenido esencial",
@@ -98,15 +100,43 @@ const getCtaStyle = (style: Plan["ctaStyle"]): React.CSSProperties => {
   return { background: "#f97316", color: "#fff" };
 };
 
-const PricingSection = () => {
+const ctaStyleByIndex = (i: number, highlight: boolean): Plan["ctaStyle"] =>
+  highlight ? "solid" : i === 0 ? "outline" : "gradient";
+
+interface PricingSectionProps {
+  supabasePlans?: SupabasePlan[];
+  settings?: Record<string, string>;
+}
+
+const PricingSection = ({ supabasePlans, settings = {} }: PricingSectionProps) => {
+  const activePlans = (supabasePlans ?? []).filter(p => p.status === "active");
+
+  const plans: Plan[] = activePlans.length > 0
+    ? activePlans.map((p, i) => ({
+        name: p.name,
+        subtitle: p.subtitle ?? "",
+        oldPrice: p.old_price ?? "",
+        price: p.price ? `$${p.price}` : "",
+        discount: p.discount ?? "",
+        topBadge: p.top_badge ?? undefined,
+        features: p.features ?? [],
+        realValue: "",
+        savings: "",
+        cta: p.cta_text ?? "Comenzar",
+        ctaLink: p.cta_link,
+        highlighted: p.highlight,
+        ctaStyle: ctaStyleByIndex(i, p.highlight),
+      }))
+    : FALLBACK_PLANS;
+
   return (
     <section id="pricing" className="px-4 sm:px-6 py-20">
       <div className="max-w-[1100px] mx-auto text-center">
         <h2 className="text-white text-[28px] sm:text-[34px] font-bold mb-3">
-          Elige tu plan ShadowScale
+          {settings["pricing_title"] ?? "Elige tu plan ShadowScale"}
         </h2>
         <p className="text-gray-400 text-[14px] sm:text-[16px] mb-12">
-          Sin sorpresas, sin contratos. Cancela cuando quieras.
+          {settings["pricing_subtitle"] ?? "Sin sorpresas, sin contratos. Cancela cuando quieras."}
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 justify-center items-start">
@@ -179,7 +209,7 @@ const PricingSection = () => {
 
 
               <a
-                href="https://app.shadowscale.pro/register"
+                href={plan.ctaLink ?? "https://app.shadowscale.pro/register"}
                 className="block w-full text-center transition-colors"
                 style={{
                   ...getCtaStyle(plan.ctaStyle),

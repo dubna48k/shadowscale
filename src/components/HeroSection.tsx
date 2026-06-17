@@ -151,7 +151,7 @@ const VISIBLE = 5;
 const STEP = 3;
 const INTERVAL_MS = 3000;
 
-const PriceCard = () => {
+const PriceCard = ({ settings = {} }: { settings?: Record<string, string> }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const offsetRef = useRef(0);
   const isDragging = useRef(false);
@@ -276,7 +276,7 @@ const PriceCard = () => {
       />
       <div className="px-4 pb-3 flex items-center justify-between">
         <span className="text-[10px] text-gray-500 leading-tight max-w-[120px]">Total si se compran individualmente</span>
-        <span className="text-[18px] font-bold tabular-nums" style={{ color: "#f97316" }}>$1,453</span>
+        <span className="text-[18px] font-bold tabular-nums" style={{ color: "#f97316" }}>{settings["price_card_total"] ?? "$1,453"}</span>
       </div>
 
       {/* Brand bar */}
@@ -285,7 +285,7 @@ const PriceCard = () => {
         style={{ borderTop: "1px solid rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.03)" }}
       >
         <img src="/shadowscale-logo.png" alt="ShadowScale" className="h-5 w-auto" />
-        <span className="text-[20px] font-bold text-white tabular-nums">$14.9<span className="text-[13px] font-normal text-gray-400">/mes</span></span>
+        <span className="text-[20px] font-bold text-white tabular-nums">{settings["price_card_monthly"] ?? "$14.9"}<span className="text-[13px] font-normal text-gray-400">/mes</span></span>
       </div>
     </div>
   );
@@ -358,9 +358,9 @@ const HeroSection = ({ settings = {} }: { settings?: Record<string, string> }) =
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.4 }}
             >
-              <span className="text-savings-foreground font-semibold">⚡ 1,634</span>
+              <span className="text-savings-foreground font-semibold">⚡ {settings["hero_members"] ?? "1,634"}</span>
               <span>miembros activos ahorrando</span>
-              <span className="text-savings-foreground font-semibold">$2,200+/mes</span>
+              <span className="text-savings-foreground font-semibold">{settings["hero_savings"] ?? "$2,200+/mes"}</span>
               <ArrowUpRight className="w-3 md:w-3.5 h-3 md:h-3.5 text-savings" />
             </motion.div>
           </div>
@@ -372,7 +372,7 @@ const HeroSection = ({ settings = {} }: { settings?: Record<string, string> }) =
             transition={{ ...spring, delay: 0.25 }}
             className="hidden md:block shrink-0 self-center"
           >
-            <PriceCard />
+            <PriceCard settings={settings} />
           </motion.div>
         </div>
 
@@ -383,7 +383,7 @@ const HeroSection = ({ settings = {} }: { settings?: Record<string, string> }) =
           transition={{ ...spring, delay: 0.4 }}
           className="md:hidden mt-6 mx-auto"
         >
-          <PriceCard />
+          <PriceCard settings={settings} />
         </motion.div>
       </div>
 

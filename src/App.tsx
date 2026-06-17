@@ -9,6 +9,8 @@ import Terminos from "./pages/Terminos.tsx";
 import Politica from "./pages/Politica.tsx";
 import Soporte from "./pages/Soporte.tsx";
 import Afiliados from "./pages/Afiliados.tsx";
+import AfiliadoAuth from "./pages/AfiliadoAuth.tsx";
+import AfiliadoDashboard from "./pages/AfiliadoDashboard.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -26,6 +28,9 @@ const App = () => (
           <Route path="/politica" element={<Politica />} />
           <Route path="/soporte" element={<Soporte />} />
           <Route path="/afiliados" element={<Afiliados />} />
+          <Route path="/afiliados/registro" element={<AfiliadoAuth />} />
+          <Route path="/afiliados/login" element={<AfiliadoAuth />} />
+          <Route path="/afiliados/dashboard" element={<AfiliadoDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

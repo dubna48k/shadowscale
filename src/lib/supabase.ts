@@ -42,6 +42,32 @@ export interface Plan {
   cta_text: string;
   cta_link: string;
   sort_order: number;
+  subtitle: string | null;
+  old_price: string | null;
+  discount: string | null;
+  top_badge: string | null;
+}
+
+export interface Affiliate {
+  id: string;
+  user_id: string;
+  code: string;
+  name: string;
+  email: string;
+  status: "pending" | "approved" | "rejected" | "suspended";
+  commission_rate: number;
+  payout_method: string | null;
+  payout_details: string | null;
+  created_at: string;
+}
+
+export interface Referral {
+  id: string;
+  affiliate_id: string;
+  visitor_ip: string | null;
+  status: "click" | "signup" | "converted";
+  amount: number | null;
+  created_at: string;
 }
 
 export interface SiteSettings {

@@ -10,7 +10,7 @@ const Afiliados = () => {
   const commission = settings["affiliate_commission"] ?? "30";
   const minPayout = settings["affiliate_min_payout"] ?? "$50";
   const refLink = settings["affiliate_ref_base"] ?? "https://shadowscale.pro/?ref=TU_CÓDIGO";
-  const applyLink = settings["affiliate_apply_link"] ?? "mailto:afiliados@shadowscale.pro";
+  const applyLink = settings["affiliate_apply_link"] ?? "/afiliados/registro";
   const intro = settings["affiliate_intro"] ?? "Gana dinero recurrente recomendando ShadowScale. Sin inventario, sin inversión.";
 
   const steps = [

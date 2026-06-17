@@ -1,10 +1,11 @@
 import { useEffect, useRef } from 'react';
-import { initVisit, trackEvent } from '@/lib/analytics';
+import { initVisit, trackEvent, trackReferral } from '@/lib/analytics';
 
 export function useAnalytics() {
   const vidRef = useRef<string | null>(null);
 
   useEffect(() => {
+    trackReferral().catch(() => {});
     initVisit()
       .then(id => {
         vidRef.current = id;

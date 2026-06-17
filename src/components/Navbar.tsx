@@ -30,9 +30,9 @@ const Navbar = ({ settings = {} }: NavbarProps) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
     >
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 h-24 flex items-center justify-between">
         <a href="/" className="flex items-center shrink-0">
-          <img src="/shadowscale-logo.png" alt="ShadowScale" className="h-14 sm:h-16 w-auto" />
+          <img src="/shadowscale-logo.png" alt="ShadowScale" className="h-20 sm:h-24 w-auto" />
         </a>
 
         <div className="hidden md:flex items-center gap-8">
