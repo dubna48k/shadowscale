@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import ToolsGrid from "@/components/ToolsGrid";
@@ -9,12 +9,24 @@ import TopBanner from "@/components/TopBanner";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import PricingSection from "@/components/PricingSection";
 import { useSiteData } from "@/hooks/useSiteData";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import { Globe } from "lucide-react";
 
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { tools, categories, settings } = useSiteData();
+  useAnalytics();
+
+  useEffect(() => {
+    const clarityId = settings["clarity_id"];
+    if (!clarityId || document.getElementById("clarity-script")) return;
+    const s = document.createElement("script");
+    s.id = "clarity-script";
+    s.async = true;
+    s.src = `https://www.clarity.ms/tag/${clarityId}`;
+    document.head.appendChild(s);
+  }, [settings]);
 
   return (
     <div className="min-h-screen mesh-gradient">

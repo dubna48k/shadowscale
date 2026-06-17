@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase, Tool, Category, Plan, ToolStatus, BadgeType, PlanStatus } from "@/lib/supabase";
 import { useSiteData } from "@/hooks/useSiteData";
-import { Plus, Trash2, Pencil, Eye, EyeOff, LogOut, RefreshCw, ExternalLink, ChevronDown, ChevronUp, Upload, Film, ImageIcon, X } from "lucide-react";
+import { Plus, Trash2, Pencil, Eye, EyeOff, LogOut, RefreshCw, ExternalLink, ChevronDown, ChevronUp, Upload, Film, ImageIcon, X, BarChart2 } from "lucide-react";
 
 const ADMIN_PASSWORD = "Agencia2032**";
 
@@ -92,9 +92,17 @@ const ToolLogoUploader = ({
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [err, setErr] = useState("");
-  const [failed, setFailed] = useState(false);
+  const [srcIdx, setSrcIdx] = useState(0);
 
-  const preview = currentLogoUrl || (domain && !failed ? `https://logo.clearbit.com/${domain}` : null);
+  const sources = [
+    currentLogoUrl || null,
+    domain ? `https://logo.clearbit.com/${domain}` : null,
+    domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=128` : null,
+  ].filter(Boolean) as string[];
+
+  useEffect(() => { setSrcIdx(0); }, [currentLogoUrl, domain]);
+
+  const preview = srcIdx < sources.length ? sources[srcIdx] : null;
 
   const upload = async (file: File) => {
     setUploading(true); setErr("");
@@ -112,7 +120,7 @@ const ToolLogoUploader = ({
       {/* Preview */}
       <div className="shrink-0">
         {preview
-          ? <img src={preview} alt="logo" className="w-12 h-12 rounded-xl object-contain bg-white p-1" onError={() => setFailed(true)} />
+          ? <img src={preview} alt="logo" className="w-12 h-12 rounded-xl object-contain bg-white p-1" onError={() => setSrcIdx(i => i + 1)} />
           : <div className="w-12 h-12 rounded-xl flex items-center justify-center text-lg font-bold text-white" style={{ background: color }}>{initial}</div>
         }
       </div>
@@ -142,6 +150,189 @@ const ToolLogoUploader = ({
       <input ref={fileRef} type="file" accept="image/png,image/webp,image/jpeg,image/gif" className="hidden"
         onChange={e => { const f = e.target.files?.[0]; if (f) upload(f); }} />
     </div>
+  );
+};
+
+// ─── Tool table logo with fallback ───────────────────────────────────────────
+const ToolTableLogo = ({ tool }: { tool: Tool }) => {
+  const srcs = [
+    (tool as any).logo_url || null,
+    tool.domain ? `https://logo.clearbit.com/${tool.domain}` : null,
+    tool.domain ? `https://www.google.com/s2/favicons?domain=${tool.domain}&sz=64` : null,
+  ].filter(Boolean) as string[];
+  const [idx, setIdx] = useState(0);
+  if (idx < srcs.length) {
+    return <img src={srcs[idx]} className="w-6 h-6 rounded-md bg-white object-contain p-0.5 shrink-0" onError={() => setIdx(i => i + 1)} />;
+  }
+  return <div className="w-6 h-6 rounded-md flex items-center justify-center text-[9px] font-bold text-white shrink-0" style={{ background: tool.color }}>{tool.initial}</div>;
+};
+
+// ─── Analytics Section ────────────────────────────────────────────────────────
+type AnalyticsRange = 'today' | 'week' | 'all';
+
+interface Visit { id: string; created_at: string; device: string; browser: string; screen: string; lang: string; referrer: string | null; utm_source: string | null; utm_medium: string | null; utm_campaign: string | null; }
+interface AnalyticsEvent { id: number; visit_id: string; event: string; value: string | null; ts: string; }
+
+const AnalyticsSection = () => {
+  const [range, setRange] = useState<AnalyticsRange>('today');
+  const [loading, setLoading] = useState(true);
+  const [visits, setVisits] = useState<Visit[]>([]);
+  const [events, setEvents] = useState<AnalyticsEvent[]>([]);
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [tablesExist, setTablesExist] = useState(true);
+
+  const load = async () => {
+    setLoading(true);
+    try {
+      let q = supabase.from('analytics_visits').select('*').order('created_at', { ascending: false }).limit(50);
+      if (range === 'today') {
+        const start = new Date(); start.setHours(0, 0, 0, 0);
+        q = q.gte('created_at', start.toISOString());
+      } else if (range === 'week') {
+        const start = new Date(); start.setDate(start.getDate() - 7);
+        q = q.gte('created_at', start.toISOString());
+      }
+      const { data: v, error: vErr } = await q;
+      if (vErr?.code === '42P01') { setTablesExist(false); setLoading(false); return; }
+      const ids = (v ?? []).map((vv: Visit) => vv.id);
+      const { data: e } = ids.length > 0
+        ? await supabase.from('analytics_events').select('*').in('visit_id', ids).order('ts', { ascending: false })
+        : { data: [] };
+      setVisits(v ?? []);
+      setEvents(e ?? []);
+      setTablesExist(true);
+    } catch { setTablesExist(false); }
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); }, [range]);
+
+  const total = visits.length;
+  const mobile = visits.filter(v => v.device === 'Móvil').length;
+  const desktop = visits.filter(v => v.device === 'Desktop').length;
+  const browserCounts: Record<string, number> = {};
+  visits.forEach(v => { browserCounts[v.browser] = (browserCounts[v.browser] ?? 0) + 1; });
+  const topBrowser = Object.entries(browserCounts).sort((a, b) => b[1] - a[1])[0];
+
+  return (
+    <Section title="Analytics de Visitas" action={<BarChart2 className="w-4 h-4 text-gray-500" />}>
+      {!tablesExist ? (
+        <div className="rounded-xl p-4 bg-[#0f0f0f] border border-amber-500/20">
+          <p className="text-amber-400 text-sm font-medium mb-2">Tablas no encontradas</p>
+          <p className="text-gray-500 text-xs mb-3">Ejecuta este SQL en Supabase → SQL Editor:</p>
+          <pre className="text-[10px] text-gray-400 bg-black/40 rounded-lg p-3 overflow-x-auto whitespace-pre-wrap">{`create table if not exists analytics_visits (
+  id text primary key,
+  created_at timestamptz default now(),
+  device text, browser text, screen text,
+  lang text, referrer text,
+  utm_source text, utm_medium text, utm_campaign text
+);
+create table if not exists analytics_events (
+  id bigserial primary key,
+  visit_id text not null,
+  event text not null,
+  value text,
+  ts timestamptz default now()
+);
+alter table analytics_visits enable row level security;
+alter table analytics_events enable row level security;
+create policy "anon_insert_visits" on analytics_visits for insert with check (true);
+create policy "anon_insert_events" on analytics_events for insert with check (true);
+create policy "read_visits" on analytics_visits for select using (true);
+create policy "read_events" on analytics_events for select using (true);`}</pre>
+        </div>
+      ) : (
+        <>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex gap-1">
+              {(['today', 'week', 'all'] as const).map(r => (
+                <button key={r} onClick={() => setRange(r)}
+                  className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${range === r ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+                  style={range === r ? { background: '#f97316' } : {}}>
+                  {r === 'today' ? 'Hoy' : r === 'week' ? 'Esta semana' : 'Todo'}
+                </button>
+              ))}
+            </div>
+            <button onClick={load} className="p-1.5 text-gray-500 hover:text-white transition-colors">
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+            {[
+              { label: 'Visitas', value: total.toString(), sub: '' },
+              { label: 'Móvil', value: total ? `${Math.round(mobile / total * 100)}%` : '0%', sub: `${mobile} sesiones` },
+              { label: 'Desktop', value: total ? `${Math.round(desktop / total * 100)}%` : '0%', sub: `${desktop} sesiones` },
+              { label: 'Navegador #1', value: topBrowser?.[0] ?? '-', sub: topBrowser ? `${topBrowser[1]} visitas` : '' },
+            ].map(({ label, value, sub }) => (
+              <div key={label} className="rounded-xl p-4 bg-[#0f0f0f] border border-white/[0.06]">
+                <p className="text-[11px] text-gray-500 uppercase tracking-wide mb-1">{label}</p>
+                <p className="text-white font-bold text-xl leading-tight">{value}</p>
+                {sub && <p className="text-[10px] text-gray-600 mt-0.5">{sub}</p>}
+              </div>
+            ))}
+          </div>
+
+          {Object.keys(browserCounts).length > 0 && (
+            <div className="mb-4 flex flex-wrap gap-3">
+              <span className="text-[11px] text-gray-500 uppercase tracking-wide w-full">Navegadores</span>
+              {Object.entries(browserCounts).sort((a, b) => b[1] - a[1]).map(([br, n]) => (
+                <span key={br} className="text-xs text-gray-300">{br} <span className="text-gray-600">{n}</span></span>
+              ))}
+            </div>
+          )}
+
+          <p className="text-[11px] text-gray-500 uppercase tracking-wide mb-2">Sesiones recientes ({visits.length})</p>
+          <div className="flex flex-col gap-1.5">
+            {visits.slice(0, 30).map(v => {
+              const vEvents = events.filter(e => e.visit_id === v.id);
+              const isExp = expanded === v.id;
+              const maxScroll = vEvents.filter(e => e.event === 'scroll').reduce((mx, e) => {
+                const n = parseInt(e.value ?? '0'); return n > mx ? n : mx;
+              }, 0);
+              const hasCta = vEvents.some(e => e.event === 'cta_click');
+              return (
+                <div key={v.id} className="rounded-xl overflow-hidden" style={{ background: '#0f0f0f', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div className="flex items-center justify-between px-4 py-2.5 cursor-pointer hover:bg-white/[0.02] transition-colors" onClick={() => setExpanded(isExp ? null : v.id)}>
+                    <div className="flex items-center gap-2.5">
+                      <div className={`w-2 h-2 rounded-full shrink-0 ${hasCta ? 'bg-green-400' : 'bg-gray-600'}`} />
+                      <div>
+                        <span className="text-white text-xs font-medium">{v.device} · {v.browser} · {v.screen}</span>
+                        <p className="text-[10px] text-gray-500">{v.lang}{v.referrer ? ` · ${v.referrer.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}` : ' · directo'}{v.utm_source ? ` · utm: ${v.utm_source}` : ''}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2.5 shrink-0">
+                      {maxScroll > 0 && <span className="text-[10px] font-medium" style={{ color: '#f97316' }}>scroll {maxScroll}%</span>}
+                      {hasCta && <span className="text-[10px] text-green-400 font-medium">CTA ✓</span>}
+                      <span className="text-[10px] text-gray-600">{vEvents.length} ev</span>
+                      <span className="text-[10px] text-gray-600">{new Date(v.created_at).toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' })}</span>
+                      {isExp ? <ChevronUp className="w-3.5 h-3.5 text-gray-500" /> : <ChevronDown className="w-3.5 h-3.5 text-gray-500" />}
+                    </div>
+                  </div>
+                  {isExp && (
+                    <div className="px-4 pb-3 border-t border-white/[0.06]">
+                      <div className="flex flex-col gap-0.5 mt-2">
+                        {vEvents.map((e, i) => (
+                          <div key={i} className="flex items-center gap-3 py-0.5">
+                            <span className="text-[10px] font-medium w-28 shrink-0" style={{ color: '#f97316' }}>{e.event}</span>
+                            <span className="text-[10px] text-gray-400 flex-1">{e.value ?? ''}</span>
+                            <span className="text-[10px] text-gray-600 shrink-0">{new Date(e.ts).toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' })}</span>
+                          </div>
+                        ))}
+                        {vEvents.length === 0 && <p className="text-[10px] text-gray-600">Sin eventos registrados</p>}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+            {visits.length === 0 && !loading && (
+              <p className="text-sm text-gray-500 text-center py-8">Sin visitas en este período. La analítica se registra en el sitio público.</p>
+            )}
+          </div>
+        </>
+      )}
+    </Section>
   );
 };
 
@@ -280,11 +471,7 @@ const ToolsSection = ({ tools, categories, onRefresh }: { tools: Tool[]; categor
               <tr key={t.id} className="hover:bg-white/[0.02] transition-colors">
                 <td className="py-2.5 pr-4">
                   <div className="flex items-center gap-2.5">
-                    {t.domain ? (
-                      <img src={`https://logo.clearbit.com/${t.domain}`} className="w-6 h-6 rounded-md bg-white object-contain p-0.5" onError={e => { e.currentTarget.style.display = "none"; }} />
-                    ) : (
-                      <div className="w-6 h-6 rounded-md flex items-center justify-center text-[9px] font-bold text-white" style={{ background: t.color }}>{t.initial}</div>
-                    )}
+                    <ToolTableLogo tool={t} />
                     <span className="text-white font-medium">{t.name}</span>
                     {t.badge && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: t.badge === "nuevo" ? "#f97316" : "#7c3aed", color: "#fff" }}>{t.badge.toUpperCase()}</span>}
                   </div>
@@ -669,6 +856,9 @@ const SettingsSection = ({ settings, onRefresh }: { settings: Record<string, str
         <Field label="Browser — Link de descarga">
           <input className={inputCls} {...s("browser_download_link")} placeholder="https://app.shadowscale.pro/download" />
         </Field>
+        <Field label="Microsoft Clarity ID (heatmap)">
+          <input className={inputCls} {...s("clarity_id")} placeholder="xxxxxxxxxx (ID de tu proyecto en clarity.microsoft.com)" />
+        </Field>
       </div>
       <div className="mt-4 flex justify-end">
         <button onClick={save} disabled={saving} className="px-6 py-2.5 rounded-xl text-sm font-bold text-white hover:opacity-90 disabled:opacity-50 transition-opacity"
@@ -731,6 +921,7 @@ const AdminPanel = () => {
 
       {/* Content */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 flex flex-col gap-4">
+        <AnalyticsSection />
         <MediaSection settings={settings} onRefresh={refetch} />
         <SettingsSection settings={settings} onRefresh={refetch} />
         <PlansSection plans={plans} onRefresh={refetch} />
