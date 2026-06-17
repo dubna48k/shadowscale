@@ -17,6 +17,16 @@ function getDevice(): string {
   return 'Desktop';
 }
 
+async function getIP(): Promise<string | null> {
+  try {
+    const res = await fetch('https://api.ipify.org?format=json', { signal: AbortSignal.timeout(3000) });
+    const data = await res.json();
+    return data.ip ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export async function initVisit(): Promise<string> {
   const existing = sessionStorage.getItem(VISIT_KEY);
   if (existing) return existing;
@@ -25,6 +35,8 @@ export async function initVisit(): Promise<string> {
   sessionStorage.setItem(VISIT_KEY, id);
 
   const params = new URLSearchParams(window.location.search);
+  const ip = await getIP();
+
   await supabase.from('analytics_visits').insert({
     id,
     device: getDevice(),
@@ -35,6 +47,7 @@ export async function initVisit(): Promise<string> {
     utm_source: params.get('utm_source'),
     utm_medium: params.get('utm_medium'),
     utm_campaign: params.get('utm_campaign'),
+    ip,
   });
 
   return id;

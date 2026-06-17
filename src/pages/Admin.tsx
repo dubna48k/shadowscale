@@ -591,8 +591,12 @@ const AnalyticsSection = () => {
                       <button onClick={() => setExpanded(isOpen ? null : v.id)} className="w-full flex items-center gap-3 px-5 py-3 hover:bg-white/[0.02] transition-colors text-left">
                         <div className="w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold text-white shrink-0" style={{ background: "#f9731622", color: "#f97316" }}>{v.device?.[0] ?? "?"}</div>
                         <div className="flex-1 min-w-0">
-                          <div className="text-white text-sm font-medium truncate">{v.country ?? "Desconocido"} · {v.browser ?? "—"}</div>
-                          <div className="text-gray-600 text-xs">{v.screen ?? ""} · {v.lang ?? ""}</div>
+                          <div className="text-white text-sm font-medium truncate">{v.device ?? "Desktop"} · {v.browser ?? "—"} · {v.screen ?? ""}</div>
+                          <div className="flex items-center gap-2 text-xs mt-0.5">
+                            <span className="text-gray-500">{v.lang ?? ""}</span>
+                            {v.ip && <span className="font-mono text-gray-400 bg-white/[0.05] px-1.5 py-0.5 rounded">{v.ip}</span>}
+                            {v.referrer && <span className="text-gray-600 truncate max-w-[140px]">← {v.referrer}</span>}
+                          </div>
                         </div>
                         <div className="text-right shrink-0">
                           <div className="text-gray-400 text-xs">{new Date(v.created_at).toLocaleString("es-CO", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}</div>
