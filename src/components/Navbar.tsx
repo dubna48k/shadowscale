@@ -14,7 +14,7 @@ interface NavbarProps {
 const Navbar = ({ settings = {} }: NavbarProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const ctaText = settings["cta_text"] ?? "Comenzar gratis — 3 días";
+  const ctaText = settings["cta_text"] ?? "Comenzar gratis — 1 día";
   const ctaLink = settings["cta_link"] ?? "https://app.shadowscale.pro/register";
 
   const navLinks = [
@@ -30,9 +30,9 @@ const Navbar = ({ settings = {} }: NavbarProps) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
     >
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 h-28 flex items-center justify-between">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 h-24 flex items-center justify-between">
         <a href="/" className="flex items-center shrink-0">
-          <img src="/shadowscale-logo.png" alt="ShadowScale" className="h-24 sm:h-28 w-auto -my-2" />
+          <img src="/shadowscale-logo.png" alt="ShadowScale" className="h-16 sm:h-20 w-auto" />
         </a>
 
         <div className="hidden md:flex items-center gap-8">

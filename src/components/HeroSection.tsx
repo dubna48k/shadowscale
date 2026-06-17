@@ -339,7 +339,7 @@ const HeroSection = ({ settings = {} }: { settings?: Record<string, string> }) =
                 onMouseEnter={(e) => (e.currentTarget.style.background = "#ea580c")}
                 onMouseLeave={(e) => (e.currentTarget.style.background = "#f97316")}
               >
-                {settings["cta_text"] ?? "Comenzar gratis — 3 días"}
+                {settings["cta_text"] ?? "Comenzar gratis — 1 día"}
               </a>
               <a
                 href="#herramientas"

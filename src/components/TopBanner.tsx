@@ -3,10 +3,10 @@ interface TopBannerProps {
 }
 
 const TopBanner = ({ settings = {} }: TopBannerProps) => {
-  const visible = settings["banner_visible"] !== "false";
+  const visible = settings["banner_visible"] === "true";
   if (!visible) return null;
 
-  const text = settings["banner_text"] ?? "🎁 Prueba gratis 3 días — Sin tarjeta requerida · Precios suben en 72h 🔥";
+  const text = settings["banner_text"] ?? "Prueba 1 día gratis — Sin tarjeta de crédito";
   const link = settings["banner_link"] ?? "#";
 
   const content = (

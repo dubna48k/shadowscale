@@ -103,7 +103,7 @@ const BrowserMockup = ({ videoUrl, imageUrl }: { videoUrl: string; imageUrl: str
 };
 
 const BrowserSection = ({ settings = {} }: BrowserSectionProps) => {
-  const title = settings["browser_title"] ?? "Descarga la aplicación y accede al instante";
+  const title = settings["browser_title"] ?? "Descarga la aplicación";
   const desc = settings["browser_desc"] ?? "ShadowScale Browser es un navegador de escritorio para Windows y macOS que te permite acceder a todas tus herramientas premium con inicio de sesión instantáneo. Sin contraseñas, sin configuración.";
   const downloadText = settings["browser_download_text"] ?? "Descargar aquí";
   const downloadLink = settings["browser_download_link"] ?? "";
