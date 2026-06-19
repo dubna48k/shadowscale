@@ -192,22 +192,30 @@ const PricingSection = ({ supabasePlans, settings = {} }: PricingSectionProps) =
   const toolsValue = settings["pricing_tools_value"] ?? "$2,000";
   const showSocialProof = settings["pricing_show_social_proof"] !== "false";
 
-  const pricingFaqs = Array.from({ length: 6 }, (_, i) => ({
+  const pricingFaqs = Array.from({ length: 10 }, (_, i) => ({
     q: settings[`pricing_faq${i + 1}_q`] ?? [
-      "¿Qué incluye cada plan?",
+      "¿Cómo funciona la prueba gratuita de 1 día?",
+      "¿Necesito crear una cuenta por separado en cada herramienta?",
+      "¿Qué pasa si el navegador no funciona?",
+      "¿Se acaban los créditos o el uso?",
+      "¿Para quién es ShadowScale?",
+      "¿Qué métodos de pago aceptan?",
+      "¿Puedo cancelar en cualquier momento?",
+      "¿Cuántas herramientas están incluidas?",
       "¿Puedo cambiar de plan después?",
       "¿Cómo funciona el acceso compartido?",
-      "¿Hay contratos o compromisos?",
-      "¿Qué métodos de pago aceptan?",
-      "¿Qué pasa si cancelo?",
     ][i],
     a: settings[`pricing_faq${i + 1}_a`] ?? [
-      "Cada plan incluye acceso a las herramientas listadas en su tier. Pro y Elite incluyen todas las del plan anterior más herramientas adicionales de IA profesional.",
-      "Sí. Puedes actualizar tu plan en cualquier momento desde tu panel. El cambio aplica en el siguiente ciclo de facturación.",
+      "Obtienes acceso completo a todas las herramientas de tu plan durante 1 día sin costo. Al finalizar, se activa tu suscripción mensual. Puedes cancelar antes si no quieres continuar.",
+      "No. ShadowScale gestiona el acceso por ti. Abres la app, seleccionas la herramienta y entras directamente — sin contraseñas, sin configuraciones.",
+      "Nuestro equipo de soporte está disponible por WhatsApp y Discord para ayudarte a resolver cualquier problema lo antes posible, normalmente en menos de 1 hora.",
+      "No. Si una herramienta alcanza su límite diario o mensual, la rotamos a otra cuenta en minutos para que sigas trabajando sin interrupciones.",
+      "Para emprendedores, marketers, creadores de contenido, freelancers, agencias y estudiantes de LATAM que quieren acceder a las mejores herramientas de IA sin pagar múltiples suscripciones.",
+      "Procesamos pagos con Efipay: tarjetas débito/crédito, PSE y efectivo (Efecty, Baloto). Todos los pagos son seguros y en pesos colombianos.",
+      "Sí. Cancelas cuando quieras sin penalización. Tu acceso permanece activo hasta el final del período pagado.",
+      "Depende del plan: Starter incluye 4 herramientas, Pro incluye 7 y Elite incluye 10+. Seguimos agregando nuevas herramientas regularmente.",
+      "Sí. Puedes actualizar tu plan en cualquier momento desde tu panel de cuenta. El cambio aplica en el siguiente ciclo de facturación.",
       "Las cuentas son personales. Cada miembro activa su acceso con su propio correo. Compartir credenciales viola los términos de servicio.",
-      "No hay contratos ni compromisos. Las suscripciones son mes a mes y puedes cancelar cuando quieras desde tu panel.",
-      "Aceptamos pagos con tarjeta de crédito, débito y métodos locales a través de nuestra pasarela de pagos segura.",
-      "Tu acceso se mantiene activo hasta el final del período pagado. Después no se renueva automáticamente y pierdes acceso.",
     ][i],
   })).filter(f => f.q && f.a);
 
