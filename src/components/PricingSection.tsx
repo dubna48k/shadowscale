@@ -1,5 +1,29 @@
-import { Check } from "lucide-react";
+import { Check, Lock, RefreshCw, Zap, ChevronDown, Users } from "lucide-react";
+import { useState, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import type { Plan as SupabasePlan } from "@/lib/supabase";
+
+// Countdown — fecha fija de fin de oferta
+const LAUNCH_END = new Date("2026-07-15T23:59:59");
+
+const useCountdown = () => {
+  const calc = () => {
+    const diff = LAUNCH_END.getTime() - Date.now();
+    if (diff <= 0) return { d: 0, h: 0, m: 0, s: 0 };
+    return {
+      d: Math.floor(diff / 86400000),
+      h: Math.floor((diff % 86400000) / 3600000),
+      m: Math.floor((diff % 3600000) / 60000),
+      s: Math.floor((diff % 60000) / 1000),
+    };
+  };
+  const [t, setT] = useState(calc);
+  useEffect(() => {
+    const id = setInterval(() => setT(calc()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  return t;
+};
 
 type Plan = {
   name: string;
@@ -108,7 +132,40 @@ interface PricingSectionProps {
   settings?: Record<string, string>;
 }
 
+const TimeBox = ({ value, label }: { value: number; label: string }) => (
+  <div className="flex flex-col items-center">
+    <div className="text-white font-bold text-[20px] leading-none tabular-nums w-9 text-center"
+      style={{ fontVariantNumeric: "tabular-nums" }}>
+      {String(value).padStart(2, "0")}
+    </div>
+    <span className="text-[9px] uppercase tracking-widest mt-0.5" style={{ color: "#f97316" }}>{label}</span>
+  </div>
+);
+
+const PricingFaqItem = ({ q, a }: { q: string; a: string }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
+      <button onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-white/[0.02]"
+        style={{ background: open ? "rgba(249,115,22,0.05)" : "#161618" }}>
+        <span className="text-white text-sm font-semibold">{q}</span>
+        <ChevronDown className={`w-4 h-4 text-gray-500 shrink-0 transition-transform ${open ? "rotate-180" : ""}`} />
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }}>
+            <p className="px-5 pb-4 text-gray-400 text-sm leading-relaxed" style={{ background: "#161618" }}>{a}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
 const PricingSection = ({ supabasePlans, settings = {} }: PricingSectionProps) => {
+  const { d, h, m, s } = useCountdown();
   const activePlans = (supabasePlans ?? []).filter(p => p.status === "active");
 
   const plans: Plan[] = activePlans.length > 0
@@ -129,9 +186,67 @@ const PricingSection = ({ supabasePlans, settings = {} }: PricingSectionProps) =
       }))
     : FALLBACK_PLANS;
 
+  // Social proof + FAQs from CMS
+  const membersCount = settings["pricing_members_count"] ?? "500+";
+  const membersSavings = settings["pricing_savings"] ?? "$200";
+  const toolsValue = settings["pricing_tools_value"] ?? "$2,000";
+  const showSocialProof = settings["pricing_show_social_proof"] !== "false";
+
+  const pricingFaqs = Array.from({ length: 6 }, (_, i) => ({
+    q: settings[`pricing_faq${i + 1}_q`] ?? [
+      "¿Qué incluye cada plan?",
+      "¿Puedo cambiar de plan después?",
+      "¿Cómo funciona el acceso compartido?",
+      "¿Hay contratos o compromisos?",
+      "¿Qué métodos de pago aceptan?",
+      "¿Qué pasa si cancelo?",
+    ][i],
+    a: settings[`pricing_faq${i + 1}_a`] ?? [
+      "Cada plan incluye acceso a las herramientas listadas en su tier. Pro y Elite incluyen todas las del plan anterior más herramientas adicionales de IA profesional.",
+      "Sí. Puedes actualizar tu plan en cualquier momento desde tu panel. El cambio aplica en el siguiente ciclo de facturación.",
+      "Las cuentas son personales. Cada miembro activa su acceso con su propio correo. Compartir credenciales viola los términos de servicio.",
+      "No hay contratos ni compromisos. Las suscripciones son mes a mes y puedes cancelar cuando quieras desde tu panel.",
+      "Aceptamos pagos con tarjeta de crédito, débito y métodos locales a través de nuestra pasarela de pagos segura.",
+      "Tu acceso se mantiene activo hasta el final del período pagado. Después no se renueva automáticamente y pierdes acceso.",
+    ][i],
+  })).filter(f => f.q && f.a);
+
   return (
     <section id="pricing" className="px-4 sm:px-6 py-20">
       <div className="max-w-[1100px] mx-auto text-center">
+
+        {/* Social proof banner */}
+        {showSocialProof && (
+          <div className="flex justify-center mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold"
+              style={{ background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.2)", color: "#10b981" }}>
+              <Users className="w-4 h-4" />
+              {membersCount} miembros ahorrando {membersSavings}+/mes
+              <span className="text-emerald-400 opacity-50 mx-1">·</span>
+              <span className="text-emerald-700 text-xs">herramientas por valor de {toolsValue}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Countdown urgency */}
+        <div className="flex justify-center mb-6">
+          <div className="inline-flex items-center gap-4 px-5 py-3 rounded-2xl"
+            style={{ background: "rgba(249,115,22,0.08)", border: "1px solid rgba(249,115,22,0.25)" }}>
+            <div className="flex items-center gap-1 text-[12px] font-semibold" style={{ color: "#f97316" }}>
+              <Zap className="w-3.5 h-3.5" />
+              Precio de lanzamiento termina en
+            </div>
+            <div className="flex items-center gap-2.5">
+              <TimeBox value={d} label="días" />
+              <span className="text-gray-600 font-bold text-lg -mt-2">:</span>
+              <TimeBox value={h} label="horas" />
+              <span className="text-gray-600 font-bold text-lg -mt-2">:</span>
+              <TimeBox value={m} label="min" />
+              <span className="text-gray-600 font-bold text-lg -mt-2">:</span>
+              <TimeBox value={s} label="seg" />
+            </div>
+          </div>
+        </div>
         <h2 className="text-white text-[28px] sm:text-[34px] font-bold mb-3">
           {settings["pricing_title"] ?? "Elige tu plan ShadowScale"}
         </h2>
@@ -209,7 +324,7 @@ const PricingSection = ({ supabasePlans, settings = {} }: PricingSectionProps) =
 
 
               <a
-                href={plan.ctaLink ?? "https://app.shadowscale.pro/register"}
+                href={settings["checkout_provider"] === "efipay" ? `/checkout?plan=${plan.name.toLowerCase()}` : (plan.ctaLink ?? `/checkout?plan=${plan.name.toLowerCase()}`)}
                 className="block w-full text-center transition-colors"
                 style={{
                   ...getCtaStyle(plan.ctaStyle),
@@ -239,9 +354,28 @@ const PricingSection = ({ supabasePlans, settings = {} }: PricingSectionProps) =
           ))}
         </div>
 
-        <p className="text-center mt-6" style={{ fontSize: "13px", color: "#666" }}>
-          🔒 Acceso instantáneo · Sin contraseña · Cancela cuando quieras
-        </p>
+        {/* Trust badges */}
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-8">
+          {[
+            { icon: Lock, text: "Pago 100% seguro" },
+            { icon: RefreshCw, text: "Cancela cuando quieras" },
+            { icon: Zap, text: "Acceso instantáneo" },
+          ].map(({ icon: Icon, text }) => (
+            <div key={text} className="flex items-center gap-1.5 text-[12px] text-gray-500">
+              <Icon className="w-3.5 h-3.5 text-gray-600" />
+              {text}
+            </div>
+          ))}
+        </div>
+
+        {/* FAQ */}
+        <div className="max-w-2xl mx-auto mt-16 text-left">
+          <h3 className="text-xl font-bold text-white text-center mb-6">Preguntas frecuentes</h3>
+          <div className="flex flex-col gap-2">
+            {pricingFaqs.map((f, i) => <PricingFaqItem key={i} q={f.q} a={f.a} />)}
+          </div>
+        </div>
+
       </div>
     </section>
   );

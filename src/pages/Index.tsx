@@ -3,19 +3,18 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import ToolsGrid from "@/components/ToolsGrid";
 import BrowserSection from "@/components/BrowserSection";
-import FAQSection from "@/components/FAQSection";
 import FloatingConversionBar from "@/components/FloatingConversionBar";
 import TopBanner from "@/components/TopBanner";
 import TestimonialsSection from "@/components/TestimonialsSection";
+import HowItWorksSection from "@/components/HowItWorksSection";
 import PricingSection from "@/components/PricingSection";
 import { useSiteData } from "@/hooks/useSiteData";
 import { useAnalytics } from "@/hooks/useAnalytics";
-import { Globe } from "lucide-react";
 
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const { tools, categories, plans, settings } = useSiteData();
+  const { tools, categories, plans, settings, loading } = useSiteData();
   useAnalytics();
 
   useEffect(() => {
@@ -29,7 +28,7 @@ const Index = () => {
   }, [settings]);
 
   return (
-    <div className="min-h-screen mesh-gradient">
+    <div className="min-h-screen mesh-gradient" style={{ opacity: loading ? 0 : 1, transition: "opacity 0.18s ease" }}>
       <TopBanner settings={settings} />
       <Navbar settings={settings} />
       <FloatingConversionBar settings={settings} />
@@ -42,9 +41,9 @@ const Index = () => {
         settings={settings}
       />
       <BrowserSection settings={settings} />
+      <HowItWorksSection />
       <TestimonialsSection />
       <PricingSection supabasePlans={plans} settings={settings} />
-      <FAQSection />
 
       {/* Footer */}
       <footer className="border-t border-white/[0.06] px-6 py-8">
@@ -56,6 +55,7 @@ const Index = () => {
               { label: settings["footer_link_2_label"] ?? "Política de Privacidad", href: settings["footer_link_2_href"] ?? "/politica" },
               { label: settings["footer_link_3_label"] ?? "Soporte", href: settings["footer_link_3_href"] ?? "/soporte" },
               { label: settings["footer_link_4_label"] ?? "Afiliados", href: settings["footer_link_4_href"] ?? "/afiliados" },
+              { label: "Mi cuenta", href: "/cuenta" },
             ].map((link, i) => (
               <span key={link.href} className="flex items-center gap-2">
                 {i > 0 && <span className="text-gray-700">|</span>}
@@ -63,13 +63,7 @@ const Index = () => {
               </span>
             ))}
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-[12px] text-gray-600">{settings["footer_copyright"] ?? "© 2026 ShadowScale · Todos los derechos reservados"}</span>
-            <button className="inline-flex items-center gap-1.5 text-[12px] text-gray-500 hover:text-gray-300 transition-colors">
-              <Globe className="w-3.5 h-3.5" />
-              Español
-            </button>
-          </div>
+          <span className="text-[12px] text-gray-600">{settings["footer_copyright"] ?? "© 2026 ShadowScale · Todos los derechos reservados"}</span>
         </div>
       </footer>
     </div>
