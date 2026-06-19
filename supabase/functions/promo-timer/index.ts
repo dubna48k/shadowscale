@@ -14,9 +14,10 @@ Deno.serve(async (req) => {
   const json = (body: unknown, status = 200) =>
     new Response(JSON.stringify(body), { status, headers: { ...cors, "Content-Type": "application/json" } });
 
+  // Solo headers de infraestructura confiable (Cloudflare/proxy verificado).
+  // x-forwarded-for es spoofeable por el cliente → ignorado.
   const ip = req.headers.get("cf-connecting-ip")
     ?? req.headers.get("x-real-ip")
-    ?? req.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
     ?? "unknown";
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SVC_KEY);

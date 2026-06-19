@@ -851,8 +851,6 @@ const SettingsSection = ({ settings, onRefresh }: { settings: Record<string, str
           <Field label="Stripe — URL plan Starter"><input className={inputCls} placeholder="https://buy.stripe.com/..." {...s("checkout_stripe_url_starter")} /></Field>
           <Field label="Stripe — URL plan Pro"><input className={inputCls} placeholder="https://buy.stripe.com/..." {...s("checkout_stripe_url_pro")} /></Field>
           <Field label="Stripe — URL plan Elite"><input className={inputCls} placeholder="https://buy.stripe.com/..." {...s("checkout_stripe_url_elite")} /></Field>
-          <Field label="Efipay — API Key"><input className={inputCls} placeholder="965|xxxxxxxx... (test o producción)" {...s("efipay_api_key")} /></Field>
-          <Field label="Efipay — Branch ID (sucursal)"><input className={inputCls} placeholder="Ej: 12 — Panel Efipay → Sucursales → ID" {...s("efipay_branch_id")} /></Field>
           <Field label="Efipay — Moneda"><input className={inputCls} placeholder="COP" {...s("efipay_currency")} /></Field>
           <Field label="Efipay — URL éxito"><input className={inputCls} placeholder="https://shadowscale.pro/gracias" {...s("efipay_success_url")} /></Field>
           <Field label="Efipay — URL pendiente"><input className={inputCls} placeholder="https://shadowscale.pro/pago-pendiente" {...s("efipay_pending_url")} /></Field>
@@ -866,9 +864,9 @@ const SettingsSection = ({ settings, onRefresh }: { settings: Record<string, str
           <Field label="WhatsApp — Mensaje pre-escrito"><input className={inputCls} placeholder="¡Hola! Acabo de suscribirme a ShadowScale..." {...s("gracias_wpp_message")} /></Field>
         </div>
 
-        <div className="mt-4 p-3 rounded-xl text-xs text-gray-500 flex gap-2" style={{ background: "#0d0d0d", border: "1px solid rgba(255,255,255,0.05)" }}>
+        <div className="mt-4 p-3 rounded-xl text-xs text-orange-900/60 flex gap-2" style={{ background: "rgba(249,115,22,0.06)", border: "1px solid rgba(249,115,22,0.15)" }}>
           <span className="text-orange-500 shrink-0">🔑</span>
-          <span>Los secrets de Efipay (<code className="text-gray-400">EFIPAY_API_KEY</code>, <code className="text-gray-400">EFIPAY_BRANCH_ID</code>) van en Supabase → Edge Functions → Secrets — nunca en el CMS.</span>
+          <span><strong className="text-orange-400">EFIPAY_API_KEY</strong> y <strong className="text-orange-400">EFIPAY_BRANCH_ID</strong> van exclusivamente en <a href="https://supabase.com/dashboard/project/xqeqjutulgxiwfkuflla/functions" target="_blank" className="underline">Supabase → Edge Functions → Secrets</a>. Nunca en el CMS — quedarían expuestos al público.</span>
         </div>
         <p className="text-xs text-gray-600 mt-2">Los planes con &quot;Enlace CTA&quot; propio (en la sección Planes) tienen prioridad sobre la pasarela configurada.</p>
       </Card>

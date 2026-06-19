@@ -65,15 +65,8 @@ const Checkout = () => {
     try {
       const { data, error } = await supabase.functions.invoke("efipay-checkout", {
         body: {
-          plan_name:    plan.name,
-          plan_price:   plan.price,
-          api_key:      settings["efipay_api_key"] || "",
-          branch_id:    settings["efipay_branch_id"] || "",
-          currency:     settings["efipay_currency"] || "COP",
-          success_url:  settings["efipay_success_url"]  || `${window.location.origin}/gracias`,
-          pending_url:  settings["efipay_pending_url"]  || `${window.location.origin}/pago-pendiente`,
-          rejected_url: settings["efipay_rejected_url"] || `${window.location.origin}/pago-rechazado`,
-          ref_code:     localStorage.getItem("ss_ref") || null,
+          plan_name: plan.name,
+          ref_code:  localStorage.getItem("ss_ref") || null,
         },
       });
       if (error || !data?.checkout_url) {
