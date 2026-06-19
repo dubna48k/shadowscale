@@ -1,7 +1,10 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "jsr:@supabase/supabase-js@2";
 
-const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY") ?? "";
-const EMAIL_FROM = Deno.env.get("EMAIL_FROM") ?? "ShadowScale <no-reply@shadowscale.pro>";
+const RESEND_API_KEY   = Deno.env.get("RESEND_API_KEY") ?? "";
+const EMAIL_FROM       = Deno.env.get("EMAIL_FROM") ?? "ShadowScale <no-reply@shadowscale.pro>";
+const SUPABASE_URL     = Deno.env.get("SUPABASE_URL") ?? "";
+const SUPABASE_SVC_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -75,8 +78,35 @@ Deno.serve(async (req: Request) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
+  // Validar JWT — solo usuarios autenticados pueden invocar esta función
+  const jwt = (req.headers.get("Authorization") ?? "").replace("Bearer ", "");
+  if (!jwt) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SVC_KEY);
+  const { data: { user }, error: authErr } = await supabase.auth.getUser(jwt);
+  if (authErr || !user) {
+    return new Response(JSON.stringify({ error: "Invalid token" }), {
+      status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
+  // Verificar rol: admin puede enviar a cualquier dirección; usuario solo a su propio email
+  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  const isAdmin = profile?.role === "admin";
+
   try {
     const { to, template, data = {} } = await req.json();
+
+    // Usuario no-admin solo puede enviar a su propio correo (ej: email de bienvenida afiliado)
+    if (!isAdmin && to !== user.email) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     if (!to || !template) {
       return new Response(JSON.stringify({ error: "Missing to or template" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
