@@ -333,7 +333,7 @@ const HeroSection = ({ settings = {} }: { settings?: Record<string, string> }) =
               transition={{ ...spring, delay: 0.3 }}
             >
               <a
-                href={settings["cta_link"] ?? "https://app.shadowscale.pro/register"}
+                href={settings["cta_link"] ?? "#pricing"}
                 className="glow-button inline-flex items-center justify-center text-white font-bold transition-colors"
                 style={{ background: "#f97316", borderRadius: "12px", padding: "14px 28px", fontSize: "16px" }}
                 onMouseEnter={(e) => (e.currentTarget.style.background = "#ea580c")}

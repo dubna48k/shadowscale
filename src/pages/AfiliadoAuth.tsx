@@ -59,15 +59,9 @@ const AfiliadoAuth = () => {
           <p className="text-gray-500 text-sm mt-1">{mode === "register" ? "Gana comisiones recurrentes" : "Accede a tu panel de afiliado"}</p>
         </div>
 
-        <button onClick={() => signInWithGoogle(redirectTo)}
-          className="flex items-center justify-center gap-2.5 w-full py-2.5 rounded-xl text-sm font-medium text-white transition-colors hover:bg-white/[0.06]"
-          style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.12)" }}>
-          <GoogleIcon /> Continuar con Google
-        </button>
-
         <div className="flex items-center gap-3">
           <div className="flex-1 h-px bg-white/[0.08]" />
-          <span className="text-[11px] text-gray-600">o con tu correo</span>
+          <span className="text-[11px] text-gray-600">con tu correo</span>
           <div className="flex-1 h-px bg-white/[0.08]" />
         </div>
 

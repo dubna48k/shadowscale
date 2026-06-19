@@ -8,8 +8,8 @@ import {
 
 const faqs = [
   {
-    q: "¿Cómo funciona la prueba gratuita de 3 días?",
-    a: "Obtienes acceso completo a todas las herramientas de tu plan durante 3 días sin costo. Al finalizar, se activa tu suscripción mensual automáticamente. Puedes cancelar antes si no quieres continuar.",
+    q: "¿Cómo funciona la prueba gratuita de 1 día?",
+    a: "Obtienes acceso completo a todas las herramientas de tu plan durante 1 día sin costo. Al finalizar, se activa tu suscripción mensual. Puedes cancelar antes si no quieres continuar.",
   },
   {
     q: "¿Necesito crear una cuenta por separado en cada herramienta?",
@@ -29,7 +29,7 @@ const faqs = [
   },
   {
     q: "¿Qué métodos de pago aceptan?",
-    a: "Aceptamos tarjetas de crédito/débito, PayPal y transferencias bancarias. Todos los pagos son procesados de forma segura.",
+    a: "Procesamos pagos con Efipay: tarjetas débito/crédito, PSE y efectivo (Efecty, Baloto). Todos los pagos son seguros y en pesos colombianos.",
   },
   {
     q: "¿Puedo cancelar en cualquier momento?",

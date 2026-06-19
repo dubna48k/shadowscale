@@ -20,16 +20,34 @@ const Card = ({ children, className = "" }: { children: React.ReactNode; classNa
   <div className={`rounded-2xl p-5 ${className}`} style={{ background: "#161618", border: "1px solid rgba(255,255,255,0.07)" }}>{children}</div>
 );
 
+const inputCls = "w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm outline-none focus:border-orange-500/50 transition-colors placeholder:text-gray-600";
+const labelCls = "text-[11px] text-gray-500 uppercase tracking-wide font-semibold";
+
+const PLATFORMS = ["Instagram","TikTok","YouTube","Twitter / X","Facebook","LinkedIn","Blog / Web","Email marketing","Discord / Telegram","Otro"];
+const AUDIENCE_SIZES = ["Menos de 1,000","1,000 – 5,000","5,000 – 20,000","20,000 – 100,000","Más de 100,000"];
+const PAYOUT_METHODS = ["Nequi / Daviplata","Transferencia bancaria","PayPal","Cripto (USDT)","Binance Pay","Otro"];
+const PLATFORM_PLACEHOLDER: Record<string,string> = {
+  "Instagram":"https://instagram.com/tuusuario","TikTok":"https://tiktok.com/@tuusuario",
+  "YouTube":"https://youtube.com/@tucanal","Blog / Web":"https://tusitio.com",
+};
+
 // ─── Crear perfil de afiliado ────────────────────────────────────────────────
 const CreateAffiliate = ({ onCreated }: { onCreated: () => void }) => {
   const { user, profile } = useAuth();
-  const [payoutMethod, setPayoutMethod] = useState("Transferencia bancaria");
+  const [step, setStep] = useState<1 | 2>(1);
+  const [country, setCountry] = useState("");
+  const [platform, setPlatform] = useState("Instagram");
+  const [platformUrl, setPlatformUrl] = useState("");
+  const [audienceSize, setAudienceSize] = useState("");
+  const [bio, setBio] = useState("");
+  const [payoutMethod, setPayoutMethod] = useState("Nequi / Daviplata");
   const [payoutDetails, setPayoutDetails] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
 
   const create = async () => {
     if (!user) return;
+    if (!payoutDetails.trim()) { setErr("Ingresa tus datos de pago"); return; }
     setBusy(true); setErr("");
     const name = profile?.full_name || user.email?.split("@")[0] || "Afiliado";
     let lastErr: any = null;
@@ -37,7 +55,14 @@ const CreateAffiliate = ({ onCreated }: { onCreated: () => void }) => {
       const code = genCode(name);
       const { error } = await supabase.from("affiliates").insert({
         user_id: user.id, code, name, email: user.email,
-        status: "pending", payout_method: payoutMethod, payout_details: payoutDetails || null,
+        status: "pending",
+        payout_method: payoutMethod,
+        payout_details: payoutDetails.trim(),
+        country: country.trim() || null,
+        platform,
+        platform_url: platformUrl.trim() || null,
+        audience_size: audienceSize || null,
+        bio: bio.trim() || null,
       });
       if (!error) {
         if (user.email) sendEmail(user.email, "affiliate_welcome", { name });
@@ -51,31 +76,121 @@ const CreateAffiliate = ({ onCreated }: { onCreated: () => void }) => {
   };
 
   return (
-    <Card className="max-w-md mx-auto mt-10">
-      <h2 className="text-white font-bold text-lg mb-1">Completa tu perfil de afiliado</h2>
-      <p className="text-gray-500 text-sm mb-5">Un último paso para activar tu cuenta de afiliado.</p>
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-1">
-          <label className="text-[11px] text-gray-500 uppercase tracking-wide font-medium">Método de pago</label>
-          <select value={payoutMethod} onChange={e => setPayoutMethod(e.target.value)}
-            className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-white/25">
-            <option>Transferencia bancaria</option>
-            <option>PayPal</option>
-            <option>Nequi / Daviplata</option>
-            <option>Cripto (USDT)</option>
-          </select>
+    <div className="min-h-[calc(100vh-60px)] flex items-start justify-center px-4 py-10">
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-lg flex flex-col gap-5">
+        <div className="text-center">
+          <h2 className="text-white font-bold text-2xl">Configura tu perfil de afiliado</h2>
+          <p className="text-gray-500 text-sm mt-1">Completa tu información para activar tu cuenta y empezar a ganar comisiones.</p>
         </div>
-        <div className="flex flex-col gap-1">
-          <label className="text-[11px] text-gray-500 uppercase tracking-wide font-medium">Datos de pago</label>
-          <input value={payoutDetails} onChange={e => setPayoutDetails(e.target.value)} placeholder="Cuenta, correo PayPal o wallet"
-            className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-white/25" />
+
+        {/* Pasos */}
+        <div className="flex items-center justify-center gap-2">
+          {([1, 2] as const).map((s, i) => (
+            <div key={s} className="flex items-center gap-2">
+              {i > 0 && <div className="w-10 h-px" style={{ background: step >= s ? "#f97316" : "#2a2a2a" }} />}
+              <div className="flex items-center gap-1.5">
+                <div className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold"
+                  style={{ background: step >= s ? "#f97316" : "#1f1f22", color: step >= s ? "#fff" : "#555" }}>{s}</div>
+                <span className="text-xs" style={{ color: step >= s ? "#e5e7eb" : "#555" }}>
+                  {s === 1 ? "Tu perfil" : "Método de pago"}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
-        {err && <p className="text-red-400 text-xs">{err}</p>}
-        <button onClick={create} disabled={busy}
-          className="w-full py-2.5 rounded-xl font-bold text-white text-sm hover:opacity-90 disabled:opacity-50"
-          style={{ background: "#f97316" }}>{busy ? "Creando..." : "Activar cuenta de afiliado"}</button>
-      </div>
-    </Card>
+
+        {/* Paso 1 */}
+        {step === 1 && (
+          <div className="rounded-2xl p-6 flex flex-col gap-4" style={{ background: "#161618", border: "1px solid rgba(255,255,255,0.07)" }}>
+            <p className="text-white font-semibold text-sm">Cuéntanos sobre ti y tu audiencia</p>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1.5">
+                <label className={labelCls}>País</label>
+                <input className={inputCls} placeholder="Colombia, México..." value={country} onChange={e => setCountry(e.target.value)} />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className={labelCls}>Plataforma principal</label>
+                <select className={inputCls} value={platform} onChange={e => setPlatform(e.target.value)}>
+                  {PLATFORMS.map(p => <option key={p}>{p}</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelCls}>URL de tu perfil / canal</label>
+              <input className={inputCls} placeholder={PLATFORM_PLACEHOLDER[platform] ?? "https://..."}
+                value={platformUrl} onChange={e => setPlatformUrl(e.target.value)} />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelCls}>Tamaño de audiencia</label>
+              <select className={inputCls} value={audienceSize} onChange={e => setAudienceSize(e.target.value)}>
+                <option value="">Selecciona un rango</option>
+                {AUDIENCE_SIZES.map(a => <option key={a}>{a}</option>)}
+              </select>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelCls}>¿Cómo planeas promocionarnos? <span className="text-gray-700 normal-case">(opcional)</span></label>
+              <textarea className={inputCls} rows={3}
+                placeholder="Ej: Hago reseñas de herramientas IA en TikTok, tengo newsletter de emprendimiento..."
+                value={bio} onChange={e => setBio(e.target.value)} />
+            </div>
+            <button onClick={() => setStep(2)}
+              className="w-full py-3 rounded-xl font-bold text-white text-sm hover:opacity-90 transition-opacity mt-1"
+              style={{ background: "#f97316" }}>
+              Continuar →
+            </button>
+          </div>
+        )}
+
+        {/* Paso 2 */}
+        {step === 2 && (
+          <div className="rounded-2xl p-6 flex flex-col gap-4" style={{ background: "#161618", border: "1px solid rgba(255,255,255,0.07)" }}>
+            <p className="text-white font-semibold text-sm">¿Cómo quieres recibir tus comisiones?</p>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelCls}>Método de pago</label>
+              <select className={inputCls} value={payoutMethod} onChange={e => setPayoutMethod(e.target.value)}>
+                {PAYOUT_METHODS.map(m => <option key={m}>{m}</option>)}
+              </select>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelCls}>
+                {payoutMethod === "Nequi / Daviplata" ? "Número de celular" :
+                 payoutMethod === "PayPal" ? "Correo PayPal" :
+                 payoutMethod.includes("Cripto") || payoutMethod === "Binance Pay" ? "Wallet o ID Binance" :
+                 payoutMethod === "Transferencia bancaria" ? "Banco, cuenta y tipo" : "Datos de pago"}
+              </label>
+              <input className={inputCls}
+                placeholder={
+                  payoutMethod === "Nequi / Daviplata" ? "+57 300 000 0000" :
+                  payoutMethod === "PayPal" ? "correo@ejemplo.com" :
+                  payoutMethod.includes("Cripto") ? "TXxxxxxx... (TRC20)" :
+                  payoutMethod === "Binance Pay" ? "ID de Binance Pay" :
+                  "Bancolombia · Ahorros · 0000000000"
+                }
+                value={payoutDetails} onChange={e => setPayoutDetails(e.target.value)} />
+            </div>
+            <div className="p-3 rounded-xl text-xs text-gray-500 flex gap-2 items-start"
+              style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.05)" }}>
+              <span className="shrink-0">💡</span>
+              Pagos mensuales al superar el mínimo. Revisaremos tu solicitud en 24–48 horas.
+            </div>
+            {err && <p className="text-red-400 text-xs">{err}</p>}
+            <div className="flex gap-3">
+              <button onClick={() => setStep(1)}
+                className="flex-1 py-3 rounded-xl font-medium text-gray-400 text-sm hover:text-white transition-colors"
+                style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)" }}>
+                ← Volver
+              </button>
+              <button onClick={create} disabled={busy}
+                className="flex-1 py-3 rounded-xl font-bold text-white text-sm hover:opacity-90 disabled:opacity-50 transition-opacity"
+                style={{ background: "#f97316" }}>
+                {busy ? "Enviando..." : "Activar mi cuenta"}
+              </button>
+            </div>
+          </div>
+        )}
+      </motion.div>
+    </div>
   );
 };
 

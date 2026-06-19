@@ -11,6 +11,13 @@ import Soporte from "./pages/Soporte.tsx";
 import Afiliados from "./pages/Afiliados.tsx";
 import AfiliadoAuth from "./pages/AfiliadoAuth.tsx";
 import AfiliadoDashboard from "./pages/AfiliadoDashboard.tsx";
+import Checkout from "./pages/Checkout.tsx";
+import Gracias from "./pages/Gracias.tsx";
+import ClienteAuth from "./pages/ClienteAuth.tsx";
+import CuentaDashboard from "./pages/CuentaDashboard.tsx";
+import PagoPendiente from "./pages/PagoPendiente.tsx";
+import PagoRechazado from "./pages/PagoRechazado.tsx";
+import ResetPassword from "./pages/ResetPassword.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -31,6 +38,14 @@ const App = () => (
           <Route path="/afiliados/registro" element={<AfiliadoAuth />} />
           <Route path="/afiliados/login" element={<AfiliadoAuth />} />
           <Route path="/afiliados/dashboard" element={<AfiliadoDashboard />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/gracias" element={<Gracias />} />
+          <Route path="/cuenta" element={<CuentaDashboard />} />
+          <Route path="/cuenta/login" element={<ClienteAuth />} />
+          <Route path="/cuenta/registro" element={<ClienteAuth />} />
+          <Route path="/pago-pendiente" element={<PagoPendiente />} />
+          <Route path="/pago-rechazado" element={<PagoRechazado />} />
+          <Route path="/cuenta/reset-password" element={<ResetPassword />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

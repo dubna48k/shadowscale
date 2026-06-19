@@ -49,6 +49,13 @@ const Navbar = ({ settings = {} }: NavbarProps) => {
 
         <div className="flex items-center gap-2">
           <a
+            href="/cuenta"
+            className="hidden md:inline-flex items-center text-[13px] text-gray-400 hover:text-white transition-colors font-medium"
+            style={{ padding: "8px 12px" }}
+          >
+            Mi cuenta
+          </a>
+          <a
             href={ctaLink}
             className="glow-button inline-flex items-center justify-center text-white font-bold transition-colors"
             style={{ background: "#f97316", borderRadius: "10px", padding: "8px 14px", fontSize: "13px" }}
@@ -90,6 +97,7 @@ const Navbar = ({ settings = {} }: NavbarProps) => {
                   {link.label}
                 </a>
               ))}
+              <a href="/cuenta" onClick={() => setMenuOpen(false)} className="text-[14px] text-gray-400 hover:text-white transition-colors">Mi cuenta</a>
               <a href={ctaLink} className="text-[14px] font-bold text-orange-400">{ctaText}</a>
             </div>
           </motion.div>
