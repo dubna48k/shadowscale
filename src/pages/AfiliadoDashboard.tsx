@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase, Affiliate, Referral } from "@/lib/supabase";
 import { sendEmail } from "@/lib/email";
@@ -327,7 +327,7 @@ const AfiliadoDashboard = () => {
 
 const DashHeader = ({ onSignOut }: { onSignOut: () => void }) => (
   <div className="sticky top-0 z-40 flex items-center justify-between px-5 py-3" style={{ background: "#0d0d0f", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-    <a href="/" className="flex items-center"><img src="/shadowscale-logo.png" alt="ShadowScale" className="h-12 w-auto" /></a>
+    <Link to="/" className="flex items-center"><img src="/shadowscale-logo.png" alt="ShadowScale" className="h-12 w-auto" /></Link>
     <div className="flex items-center gap-3">
       <span className="text-xs text-gray-600 hidden sm:inline">Panel de afiliado</span>
       <button onClick={onSignOut} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white hover:bg-white/[0.05] transition-colors"><LogOut className="w-3.5 h-3.5" /> Salir</button>

@@ -1,8 +1,18 @@
+import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useSearchParams } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+
+const RefCapture = () => {
+  const [params] = useSearchParams();
+  useEffect(() => {
+    const ref = params.get("ref");
+    if (ref) localStorage.setItem("ss_ref", ref);
+  }, []);
+  return null;
+};
 import Index from "./pages/Index.tsx";
 import Admin from "./pages/Admin.tsx";
 import Terminos from "./pages/Terminos.tsx";
@@ -28,6 +38,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <RefCapture />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/admin" element={<Admin />} />

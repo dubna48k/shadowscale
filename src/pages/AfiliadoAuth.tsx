@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { ArrowLeft } from "lucide-react";
@@ -46,9 +46,9 @@ const AfiliadoAuth = () => {
   return (
     <div className="min-h-screen flex items-center justify-center px-4" style={{ background: "#0a0a0a" }}>
       <div className="absolute top-6 left-6">
-        <a href="/afiliados" className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-white transition-colors">
+        <Link to="/afiliados" className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-white transition-colors">
           <ArrowLeft className="w-4 h-4" /> Volver
-        </a>
+        </Link>
       </div>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-sm rounded-2xl p-8 flex flex-col gap-4"

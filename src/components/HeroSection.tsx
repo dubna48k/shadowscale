@@ -1,6 +1,8 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
+
+type SupabaseTool = { name: string; individual_price: number; domain?: string | null; color: string; status: string; sort_order: number };
 
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 
@@ -27,13 +29,9 @@ const cardTools = [
   { name: "Hailuo AI", price: "$199", domain: null, color: "#d97706" },
 ];
 
-const tools = cardTools.map(t => ({ name: t.name, price: t.price, color: t.color, domain: t.domain }));
-
-const row1 = tools.slice(0, 10);
-const row2 = tools.slice(10);
 
 interface MarqueeRowProps {
-  items: typeof tools;
+  items: typeof cardTools;
   direction: "left" | "right";
 }
 
@@ -151,7 +149,7 @@ const VISIBLE = 5;
 const STEP = 3;
 const INTERVAL_MS = 3000;
 
-const PriceCard = ({ settings = {} }: { settings?: Record<string, string> }) => {
+const PriceCard = ({ settings = {}, tools = cardTools }: { settings?: Record<string, string>; tools?: typeof cardTools }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const offsetRef = useRef(0);
   const isDragging = useRef(false);
@@ -159,8 +157,9 @@ const PriceCard = ({ settings = {} }: { settings?: Record<string, string> }) => 
   const dragStartOffset = useRef(0);
   const animating = useRef(false);
 
-  const total = cardTools.length;
-  const looped = [...cardTools, ...cardTools, ...cardTools];
+  const displayTools = tools.length >= 4 ? tools : cardTools;
+  const total = displayTools.length;
+  const looped = [...displayTools, ...displayTools, ...displayTools];
 
   const smoothScrollTo = (target: number) => {
     if (!scrollRef.current || animating.current) return;
@@ -291,7 +290,16 @@ const PriceCard = ({ settings = {} }: { settings?: Record<string, string> }) => 
   );
 };
 
-const HeroSection = ({ settings = {} }: { settings?: Record<string, string> }) => {
+const HeroSection = ({ settings = {}, supabaseTools = [] }: { settings?: Record<string, string>; supabaseTools?: SupabaseTool[] }) => {
+  const activeTools = useMemo(() => {
+    const st = supabaseTools.filter(t => t.status === "active").sort((a, b) => a.sort_order - b.sort_order);
+    if (st.length >= 6) {
+      return st.map(t => ({ name: t.name, price: `$${t.individual_price}`, domain: t.domain ?? null, color: t.color }));
+    }
+    return cardTools;
+  }, [supabaseTools]);
+  const row1 = activeTools.slice(0, Math.ceil(activeTools.length / 2));
+  const row2 = activeTools.slice(Math.ceil(activeTools.length / 2));
   return (
     <section className="relative pt-20 md:pt-14 pb-0 overflow-hidden">
       {/* Background glow */}
@@ -372,7 +380,7 @@ const HeroSection = ({ settings = {} }: { settings?: Record<string, string> }) =
             transition={{ ...spring, delay: 0.25 }}
             className="hidden md:block shrink-0 self-center"
           >
-            <PriceCard settings={settings} />
+            <PriceCard settings={settings} tools={activeTools} />
           </motion.div>
         </div>
 
@@ -383,9 +391,29 @@ const HeroSection = ({ settings = {} }: { settings?: Record<string, string> }) =
           transition={{ ...spring, delay: 0.4 }}
           className="md:hidden mt-6 mx-auto"
         >
-          <PriceCard settings={settings} />
+          <PriceCard settings={settings} tools={activeTools} />
         </motion.div>
       </div>
+
+      {/* Video hero */}
+      {settings["hero_video_url"] && (
+        <motion.div
+          className="mt-10 md:mt-12 max-w-4xl mx-auto px-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+        >
+          <video
+            src={settings["hero_video_url"]}
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full rounded-2xl"
+            style={{ border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 8px 40px rgba(0,0,0,0.4)" }}
+          />
+        </motion.div>
+      )}
 
       {/* Horizontal tool ticker — full width, below headline */}
       <motion.div

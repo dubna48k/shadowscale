@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import PageLayout from "@/components/PageLayout";
 import { useSiteData } from "@/hooks/useSiteData";
 import {
   DollarSign, TrendingUp, ArrowUpRight, Star, Copy, Check,
   ChevronLeft, ChevronRight, ChevronDown, Zap, Crown,
   MessageCircle, Users, Link2, BarChart3,
+  Palette, FileText, Image, Calculator,
 } from "lucide-react";
 
 // ─── Animation presets ───────────────────────────────────────────────────────
@@ -70,12 +72,21 @@ const TIER_COLORS = ["#f97316", "#8b5cf6", "#f59e0b"];
 // ─── Main ─────────────────────────────────────────────────────────────────────
 const Afiliados = () => {
   const { settings, plans } = useSiteData();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (settings["afiliados_enabled"] === "false") navigate("/", { replace: true });
+  }, [settings, navigate]);
 
-  const commission  = Number(settings["affiliate_commission"]  ?? "30");
-  const minPayout   = settings["affiliate_min_payout"]         ?? "$50";
-  const applyLink   = settings["affiliate_apply_link"]         ?? "/afiliados/registro";
-  const intro       = settings["affiliate_intro"]              ?? "Gana comisiones recurrentes recomendando ShadowScale. Sin inversión, sin límites.";
-  const socialCount = settings["affiliate_social_count"]       ?? "200+ afiliados activos";
+  const commission    = Number(settings["affiliate_commission"]  ?? "30");
+  const minPayout     = settings["affiliate_min_payout"]         ?? "$50";
+  const applyLink     = settings["affiliate_apply_link"]         ?? "/afiliados/registro";
+  const intro         = settings["affiliate_intro"]              ?? "Gana comisiones recurrentes recomendando ShadowScale. Sin inversión, sin límites.";
+  const socialCount   = settings["affiliate_social_count"]       ?? "200+ afiliados activos";
+  const heroTitle1    = settings["aff_hero_title_1"]             ?? "Genera";
+  const heroTitle2    = settings["aff_hero_title_2"]             ?? "Ingresos Recurrentes";
+  const heroTitle3    = settings["aff_hero_title_3"]             ?? "con ShadowScale";
+  const ctaApplyLabel = settings["aff_cta_apply_label"]          ?? "Aplicar ahora";
+  const ctaHowLabel   = settings["aff_cta_how_label"]            ?? "Cómo funciona";
   const discordLink = settings["soporte_discord"]              ?? "#";
   const whatsappNum = settings["soporte_whatsapp"]             ?? "";
 
@@ -143,7 +154,7 @@ const Afiliados = () => {
   const resources = Array.from({ length: 4 }, (_, i) => ({
     title: settings[`aff_res${i+1}_title`] ?? ["Plantillas listas","Scripts de ventas","Imágenes y assets","Guía de estrategia"][i],
     desc:  settings[`aff_res${i+1}_desc`]  ?? ["Posts, stories y reels para compartir en redes.","Textos probados para cerrar más referidos.","Banners y creativos para tus campañas.","Step-by-step para maximizar tus conversiones."][i],
-    emoji: ["🎨","📝","🖼️","📈"][i],
+    icon: [Palette, FileText, Image, TrendingUp][i],
   }));
 
   // Calculator
@@ -185,9 +196,9 @@ const Afiliados = () => {
 
             <motion.h1 {...fadeUp(0.05)}
               className="text-4xl sm:text-5xl lg:text-[52px] font-black text-white leading-[1.08] mb-5">
-              Genera{" "}
-              <span style={{ color: "#f97316" }}>Ingresos Recurrentes</span>
-              {" "}con ShadowScale
+              {heroTitle1}{" "}
+              <span style={{ color: "#f97316" }}>{heroTitle2}</span>
+              {heroTitle3 ? <>{" "}{heroTitle3}</> : null}
             </motion.h1>
 
             <motion.p {...fadeUp(0.1)} className="text-gray-400 text-lg leading-relaxed mb-8 max-w-lg">{intro}</motion.p>
@@ -196,12 +207,12 @@ const Afiliados = () => {
               <a href={applyLink}
                 className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl font-bold text-white text-base transition-all hover:scale-105 hover:opacity-90"
                 style={{ background: "#f97316", boxShadow: "0 0 40px rgba(249,115,22,0.3)" }}>
-                Aplicar ahora <ArrowUpRight className="w-4 h-4" />
+                {ctaApplyLabel} <ArrowUpRight className="w-4 h-4" />
               </a>
               <a href="#como-funciona"
                 className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl font-semibold text-gray-300 text-base transition-all hover:text-white"
                 style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}>
-                Cómo funciona
+                {ctaHowLabel}
               </a>
             </motion.div>
 
@@ -218,43 +229,46 @@ const Afiliados = () => {
             <div className="rounded-2xl p-6"
               style={{ background: "#111", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 24px 80px rgba(0,0,0,0.5)" }}>
               {/* Header */}
-              <div className="flex items-center justify-between mb-6">
-                <span className="text-white font-bold text-sm">Empieza con un</span>
-                <div className="px-4 py-2 rounded-xl font-black text-2xl"
-                  style={{ background: "rgba(249,115,22,0.15)", color: "#f97316", border: "1px solid rgba(249,115,22,0.2)" }}>
-                  {commission}%
+              <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center gap-2">
+                  <Calculator className="w-4 h-4 text-orange-400" />
+                  <span className="text-white font-bold text-sm">Calculadora de ingresos</span>
+                </div>
+                <div className="px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wider"
+                  style={{ background: "rgba(16,185,129,0.1)", color: "#10b981", border: "1px solid rgba(16,185,129,0.2)" }}>
+                  SIMULACIÓN
                 </div>
               </div>
+              <p className="text-gray-600 text-xs mb-5">Comisión del <span className="text-orange-400 font-bold">{commission}%</span> por cada referido que se suscriba</p>
 
               {/* Slider */}
               <div className="mb-5">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-gray-500 text-xs">Referidos por mes</span>
-                  <span className="text-white font-bold text-sm">{refs}</span>
+                  <span className="text-gray-400 text-xs font-medium">¿Cuántos referidos por mes?</span>
+                  <span className="text-white font-bold text-sm px-2 py-0.5 rounded-lg" style={{ background: "rgba(249,115,22,0.1)", color: "#f97316" }}>{refs}</span>
                 </div>
                 <input type="range" min={1} max={100} value={refs} onChange={e => setRefs(Number(e.target.value))}
                   className="w-full h-1.5 rounded-full outline-none cursor-pointer" style={{ accentColor: "#f97316" }} />
                 <div className="flex justify-between mt-1">
-                  <span className="text-[10px] text-gray-700">1</span>
-                  <span className="text-[10px] text-gray-700">100</span>
+                  <span className="text-[10px] text-gray-700">1 referido</span>
+                  <span className="text-[10px] text-gray-700">100 referidos</span>
                 </div>
               </div>
 
-              {/* Stat cards */}
-              <div className="grid grid-cols-3 gap-2.5 mb-5">
+              {/* Earnings display */}
+              <div className="grid grid-cols-2 gap-3 mb-5">
                 {[
-                  { label: "Pendiente", val: "$0",                active: false },
-                  { label: "Disponible", val: `$${(monthly * 0.6).toFixed(0)}`, active: false },
-                  { label: "Este mes",   val: `$${monthly.toFixed(2)}`,          active: true  },
+                  { label: "Ganarías al mes", val: `$${monthly.toFixed(2)}`, active: true },
+                  { label: "Proyección anual", val: `$${yearly.toFixed(0)}`, active: false },
                 ].map((s, i) => (
                   <motion.div key={i} layout
-                    className="rounded-xl p-3 text-center"
+                    className="rounded-xl p-4 text-center"
                     style={{
                       background: s.active ? "rgba(249,115,22,0.1)" : "rgba(255,255,255,0.04)",
                       border: s.active ? "1px solid rgba(249,115,22,0.2)" : "1px solid rgba(255,255,255,0.06)",
                     }}>
                     <p className="text-gray-500 text-[10px] mb-1">{s.label}</p>
-                    <p className={`font-bold text-sm ${s.active ? "text-orange-400" : "text-white"}`}>{s.val}</p>
+                    <p className={`font-bold text-lg ${s.active ? "text-orange-400" : "text-white"}`}>{s.val}</p>
                   </motion.div>
                 ))}
               </div>
@@ -272,10 +286,8 @@ const Afiliados = () => {
               </div>
 
               <div className="flex items-center justify-between text-[11px]">
-                <span className="text-gray-600">Proyección mensual</span>
-                <span className="text-orange-400 font-bold">
-                  ${monthly.toFixed(2)}/mes · ${yearly.toFixed(0)}/año
-                </span>
+                <span className="text-gray-600">Crecimiento estimado · 12 meses</span>
+                <span className="text-gray-600">*estimación basada en precio promedio de planes</span>
               </div>
             </div>
           </motion.div>
@@ -544,7 +556,10 @@ const Afiliados = () => {
               <motion.div key={i} {...fadeUpView(i * 0.08)}
                 className="rounded-2xl p-6 flex items-start gap-4 transition-all hover:border-orange-400/20"
                 style={{ background: "#111", border: "1px solid rgba(255,255,255,0.07)" }}>
-                <div className="text-3xl shrink-0 mt-0.5">{r.emoji}</div>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                  style={{ background: "rgba(249,115,22,0.1)", border: "1px solid rgba(249,115,22,0.15)" }}>
+                  <r.icon className="w-5 h-5 text-orange-400" />
+                </div>
                 <div>
                   <h3 className="text-white font-bold mb-1">{r.title}</h3>
                   <p className="text-gray-500 text-sm leading-relaxed">{r.desc}</p>

@@ -1,9 +1,19 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { LogOut, MessageCircle, CheckCircle2, Clock, XCircle, RefreshCw, Zap, Shield, ChevronRight } from "lucide-react";
+import { LogOut, MessageCircle, CheckCircle2, Clock, XCircle, RefreshCw, Zap, Shield, ChevronRight, DollarSign, Copy, Check, ExternalLink } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useSiteData } from "@/hooks/useSiteData";
+
+type AffiliateRecord = {
+  id: string;
+  code: string;
+  status: string;
+  commission_rate: number;
+  total_earnings: number;
+  pending_earnings: number;
+  paid_earnings: number;
+};
 
 type Subscription = {
   id: string;
@@ -39,12 +49,18 @@ const CuentaDashboard = () => {
   const [user, setUser] = useState<any>(null);
   const [sub, setSub] = useState<Subscription | null>(null);
   const [loadingSub, setLoadingSub] = useState(true);
+  const [aff, setAff] = useState<AffiliateRecord | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       if (!data.session) { navigate("/cuenta/login", { replace: true }); return; }
-      setUser(data.session.user);
-      fetchSub(data.session.user.id);
+      const u = data.session.user;
+      setUser(u);
+      fetchSub(u.id);
+      supabase.from("affiliates").select("*").eq("email", u.email).maybeSingle().then(({ data: affData }) => {
+        setAff((affData as AffiliateRecord) ?? null);
+      });
     });
   }, []);
 
@@ -250,6 +266,80 @@ const CuentaDashboard = () => {
             </div>
           </motion.div>
         ) : null}
+
+        {/* Afiliado */}
+        {aff && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.08 }}
+            className="rounded-2xl p-5 flex flex-col gap-4"
+            style={{ background: "#161618", border: "1px solid rgba(249,115,22,0.18)" }}
+          >
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <DollarSign className="w-4 h-4 text-orange-500" />
+                <h3 className="text-white font-semibold text-sm">Programa de afiliados</h3>
+              </div>
+              <span
+                className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                style={{
+                  background: aff.status === "approved" ? "rgba(16,185,129,0.12)" : "rgba(245,158,11,0.12)",
+                  color: aff.status === "approved" ? "#10b981" : "#f59e0b",
+                  border: `1px solid ${aff.status === "approved" ? "rgba(16,185,129,0.3)" : "rgba(245,158,11,0.3)"}`,
+                }}
+              >
+                {aff.status === "approved" ? "Activo" : aff.status === "pending" ? "Pendiente aprobación" : aff.status}
+              </span>
+            </div>
+
+            {aff.status === "approved" && (
+              <>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { label: "Comisión", value: `${aff.commission_rate}%` },
+                    { label: "Ganancias", value: `$${(aff.total_earnings ?? 0).toFixed(2)}` },
+                    { label: "Pendiente", value: `$${(aff.pending_earnings ?? 0).toFixed(2)}` },
+                  ].map(({ label, value }) => (
+                    <div key={label} className="rounded-xl p-3 text-center" style={{ background: "#0d0d0d" }}>
+                      <p className="text-gray-600 text-[10px] mb-0.5">{label}</p>
+                      <p className="text-white text-sm font-bold">{value}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl" style={{ background: "#0d0d0d" }}>
+                  <span className="text-xs text-gray-500 flex-1 font-mono truncate">
+                    {typeof window !== "undefined" ? window.location.origin : "https://shadowscale.pro"}/?ref={aff.code}
+                  </span>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${window.location.origin}/?ref=${aff.code}`);
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 2000);
+                    }}
+                    className="shrink-0 p-1.5 rounded-lg transition-colors"
+                    style={{ background: copied ? "rgba(16,185,129,0.1)" : "rgba(255,255,255,0.05)" }}
+                  >
+                    {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-gray-400" />}
+                  </button>
+                </div>
+
+                <Link
+                  to="/afiliados/dashboard"
+                  className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold transition-opacity hover:opacity-80"
+                  style={{ background: "rgba(249,115,22,0.1)", color: "#f97316", border: "1px solid rgba(249,115,22,0.2)" }}
+                >
+                  Ver panel completo <ExternalLink className="w-3 h-3" />
+                </Link>
+              </>
+            )}
+
+            {aff.status === "pending" && (
+              <p className="text-xs text-gray-500">Tu solicitud está en revisión. Te notificaremos por email cuando sea aprobada.</p>
+            )}
+          </motion.div>
+        )}
 
         {/* Soporte */}
         {wppUrl && (

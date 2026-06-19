@@ -604,6 +604,54 @@ const ToolsSection = ({ tools, categories, onRefresh }: { tools: Tool[]; categor
           </table>
         </div>
       </Card>
+
+      {/* ── Categorías inline ─────────────────────────────────────── */}
+      <CategoriesInline categories={categories} onRefresh={onRefresh} />
+    </div>
+  );
+};
+
+const CategoriesInline = ({ categories, onRefresh }: { categories: Category[]; onRefresh: () => void }) => {
+  const [open, setOpen] = useState(false);
+  const [adding, setAdding] = useState(false);
+  const [label, setLabel] = useState("");
+  const add = async () => { if (!label.trim()) return; const id = label.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""); await supabase.from("categories").insert({ id, label: label.trim(), sort_order: categories.length + 1 }); setLabel(""); setAdding(false); onRefresh(); };
+  const rename = async (cat: Category, newLabel: string) => { await supabase.from("categories").update({ label: newLabel }).eq("id", cat.id); onRefresh(); };
+  const remove = async (id: string) => { if (!confirm("¿Eliminar categoría?")) return; await supabase.from("categories").delete().eq("id", id); onRefresh(); };
+  return (
+    <div className="rounded-2xl overflow-hidden" style={{ background: "#161618", border: "1px solid rgba(255,255,255,0.07)" }}>
+      <button onClick={() => setOpen(o => !o)} className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-white/[0.02] transition-colors">
+        <div className="flex items-center gap-2">
+          <FolderOpen className="w-4 h-4 text-gray-500" />
+          <span className="text-white text-sm font-semibold">Categorías</span>
+          <span className="text-[11px] text-gray-600 bg-white/[0.04] px-2 py-0.5 rounded-full">{categories.length}</span>
+        </div>
+        <ChevronRight className={`w-4 h-4 text-gray-600 transition-transform ${open ? "rotate-90" : ""}`} />
+      </button>
+      {open && (
+        <div className="px-5 pb-4 flex flex-col gap-2 border-t border-white/[0.05]">
+          <div className="pt-3 flex flex-col gap-1.5">
+            {categories.map(cat => (
+              <div key={cat.id} className="flex items-center gap-3 group">
+                <span className="text-[11px] text-gray-600 font-mono w-5 text-right">{cat.sort_order}</span>
+                <input defaultValue={cat.label} onBlur={e => { if (e.target.value !== cat.label) rename(cat, e.target.value); }}
+                  className="flex-1 bg-transparent border border-transparent focus:border-white/10 rounded-lg px-3 py-1.5 text-white text-sm outline-none transition-colors" />
+                <button onClick={() => remove(cat.id)} className="opacity-0 group-hover:opacity-100 p-1.5 text-gray-500 hover:text-red-400 transition-all"><Trash2 className="w-3.5 h-3.5" /></button>
+              </div>
+            ))}
+          </div>
+          {adding ? (
+            <div className="flex gap-2 mt-1">
+              <input autoFocus className={inputCls} placeholder="Nombre de categoría" value={label} onChange={e => setLabel(e.target.value)} onKeyDown={e => { if (e.key === "Enter") add(); if (e.key === "Escape") setAdding(false); }} />
+              <button onClick={add} className="px-4 py-2 rounded-lg text-sm font-bold text-white shrink-0" style={{ background: "#f97316" }}>Agregar</button>
+            </div>
+          ) : (
+            <button onClick={() => setAdding(true)} className="flex items-center gap-1.5 text-xs text-orange-400 hover:text-orange-300 mt-1 w-fit">
+              <Plus className="w-3.5 h-3.5" /> Nueva categoría
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 };
@@ -824,6 +872,14 @@ const SettingsSection = ({ settings, onRefresh }: { settings: Record<string, str
         </div>
         <p className="text-xs text-gray-600 mt-2">Los planes con &quot;Enlace CTA&quot; propio (en la sección Planes) tienen prioridad sobre la pasarela configurada.</p>
       </Card>
+      <Card>
+        <h2 className="text-white font-semibold text-sm mb-4">Hero — Video</h2>
+        <div className="grid sm:grid-cols-2 gap-4">
+          <Field label="URL del video (mp4 o iframe embed)"><input className={inputCls} placeholder="https://framerusercontent.com/.../video.mp4" {...s("hero_video_url")} /></Field>
+        </div>
+        <p className="text-xs text-gray-600 mt-2">Déjalo vacío para ocultar el video. Sube el video a Framer y pega la URL directa del .mp4.</p>
+      </Card>
+
       {/* Pricing social proof */}
       <Card>
         <h2 className="text-white font-semibold text-sm mb-4">Sección Precios — Prueba Social</h2>
@@ -835,17 +891,12 @@ const SettingsSection = ({ settings, onRefresh }: { settings: Record<string, str
         </div>
       </Card>
 
-      {/* Pricing FAQ */}
       <Card>
-        <h2 className="text-white font-semibold text-sm mb-4">Preguntas frecuentes — Precios</h2>
-        <div className="flex flex-col gap-5">
-          {[1,2,3,4,5,6].map(n => (
-            <div key={n} className="flex flex-col gap-2">
-              <Field label={`Pregunta ${n}`}><input className={inputCls} {...s(`pricing_faq${n}_q`)} /></Field>
-              <Field label={`Respuesta ${n}`}><textarea className={inputCls} rows={2} {...s(`pricing_faq${n}_a`)} /></Field>
-            </div>
-          ))}
+        <h2 className="text-white font-semibold text-sm mb-4">Countdown de Precios — Anti-cheat IP</h2>
+        <div className="grid sm:grid-cols-2 gap-4">
+          <Field label="Duración en horas (ej: 72 = 3 días)"><input className={inputCls} type="number" placeholder="72" {...s("promo_duration_hours")} /></Field>
         </div>
+        <p className="text-xs text-gray-600 mt-2">El cronómetro se inicia al primer acceso del usuario y se ancla a su IP. Aunque limpie cookies o cambie de dispositivo con la misma IP, seguirá donde lo dejó.</p>
       </Card>
 
       <div className="flex justify-end">
@@ -859,21 +910,34 @@ const SettingsSection = ({ settings, onRefresh }: { settings: Record<string, str
 const PagesSection = ({ settings, onRefresh }: { settings: Record<string, string>; onRefresh: () => void }) => {
   const [vals, setVals] = useState<Record<string, string>>(settings);
   const [saving, setSaving] = useState(false);
-  const [tab, setTab] = useState<"terminos" | "politica" | "soporte">("terminos");
+  const [tab, setTab] = useState<"terminos" | "politica" | "soporte" | "afiliados">("terminos");
   useEffect(() => { setVals(settings); }, [settings]);
   const save = async () => {
     setSaving(true);
-    const keys = ["page_terminos_content", "page_politica_content", "soporte_email", "soporte_whatsapp", "soporte_discord", "soporte_horario"];
+    const keys = [
+      "page_terminos_content", "page_politica_content",
+      "soporte_email", "soporte_whatsapp", "soporte_discord", "soporte_horario",
+      "afiliados_enabled", "aff_hero_title_1", "aff_hero_title_2", "aff_hero_title_3",
+      "affiliate_intro", "affiliate_apply_link", "aff_cta_apply_label", "aff_cta_how_label",
+      "affiliate_social_count", "affiliate_commission", "affiliate_min_payout",
+    ];
     await Promise.all(keys.map(key => supabase.from("site_settings").upsert({ key, value: vals[key] ?? "" }, { onConflict: "key" })));
     setSaving(false); onRefresh();
   };
   const s = (key: string) => ({ value: vals[key] ?? "", onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setVals(v => ({ ...v, [key]: e.target.value })) });
-  const tabs = [{ id: "terminos", label: "Términos", href: "/terminos" }, { id: "politica", label: "Privacidad", href: "/politica" }, { id: "soporte", label: "Soporte", href: "/soporte" }] as const;
+  const tabLinks: Record<string, string> = { terminos: "/terminos", politica: "/politica", soporte: "/soporte", afiliados: "/afiliados" };
+  const tabs = [
+    { id: "terminos", label: "Términos" },
+    { id: "politica", label: "Privacidad" },
+    { id: "soporte", label: "Soporte" },
+    { id: "afiliados", label: "Afiliados" },
+  ] as const;
+  const afiliadosEnabled = vals["afiliados_enabled"] !== "false";
   return (
     <div className="flex flex-col gap-5">
       <div className="flex items-center justify-between">
         <div><h1 className="text-xl font-bold text-white">Páginas</h1><p className="text-gray-500 text-sm">Edita el contenido de las páginas estáticas</p></div>
-        <a href={tabs.find(t => t.id === tab)?.href} target="_blank" className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs text-gray-400 hover:text-white border border-white/[0.08]"><ExternalLink className="w-3.5 h-3.5" /> Ver</a>
+        <a href={tabLinks[tab]} target="_blank" className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs text-gray-400 hover:text-white border border-white/[0.08]"><ExternalLink className="w-3.5 h-3.5" /> Ver</a>
       </div>
       <div className="flex gap-1 p-1 rounded-xl w-fit" style={{ background: "#161618", border: "1px solid rgba(255,255,255,0.07)" }}>
         {tabs.map(t => <button key={t.id} onClick={() => setTab(t.id)} className="px-5 py-2 rounded-lg text-sm font-medium transition-all" style={tab === t.id ? { background: "#f97316", color: "#fff" } : { color: "#9ca3af" }}>{t.label}</button>)}
@@ -882,6 +946,50 @@ const PagesSection = ({ settings, onRefresh }: { settings: Record<string, string
         {tab === "terminos" && <Field label="Contenido (## para títulos, párrafos separados por línea en blanco)"><textarea className={inputCls} rows={16} {...s("page_terminos_content")} /></Field>}
         {tab === "politica" && <Field label="Contenido (## para títulos, párrafos separados por línea en blanco)"><textarea className={inputCls} rows={16} {...s("page_politica_content")} /></Field>}
         {tab === "soporte" && <div className="grid sm:grid-cols-2 gap-4"><Field label="Invitación de Discord (URL)"><input className={inputCls} {...s("soporte_discord")} placeholder="https://discord.gg/tucanal" /></Field><Field label="Email de soporte"><input className={inputCls} {...s("soporte_email")} placeholder="soporte@shadowscale.pro" /></Field><Field label="WhatsApp"><input className={inputCls} {...s("soporte_whatsapp")} placeholder="+57 300 000 0000" /></Field><Field label="Horario"><input className={inputCls} {...s("soporte_horario")} placeholder="Lunes a Viernes · 9am – 8pm" /></Field></div>}
+        {tab === "afiliados" && (
+          <div className="flex flex-col gap-6">
+            {/* Toggle */}
+            <div className="flex items-center justify-between p-4 rounded-xl" style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <div>
+                <p className="text-white text-sm font-semibold">Página de afiliados activa</p>
+                <p className="text-gray-500 text-xs mt-0.5">Cuando está desactivada, /afiliados redirige al inicio y desaparece del menú</p>
+              </div>
+              <button
+                onClick={() => setVals(v => ({ ...v, afiliados_enabled: afiliadosEnabled ? "false" : "true" }))}
+                className="relative w-12 h-6 rounded-full transition-colors duration-200 flex-shrink-0"
+                style={{ background: afiliadosEnabled ? "#f97316" : "#374151" }}
+              >
+                <span className="absolute top-1 transition-all duration-200 w-4 h-4 rounded-full bg-white" style={{ left: afiliadosEnabled ? "calc(100% - 20px)" : "4px" }} />
+              </button>
+            </div>
+
+            {/* Hero */}
+            <div className="flex flex-col gap-4">
+              <p className="text-xs font-semibold uppercase tracking-widest text-gray-500">Hero — Título</p>
+              <div className="grid sm:grid-cols-3 gap-3">
+                <Field label="Línea 1 (blanca)"><input className={inputCls} {...s("aff_hero_title_1")} placeholder="Genera" /></Field>
+                <Field label="Línea 2 (naranja)"><input className={inputCls} {...s("aff_hero_title_2")} placeholder="Ingresos Recurrentes" /></Field>
+                <Field label="Línea 3 (blanca)"><input className={inputCls} {...s("aff_hero_title_3")} placeholder="con ShadowScale" /></Field>
+              </div>
+              <Field label="Subtítulo / descripción"><textarea className={inputCls} rows={2} {...s("affiliate_intro")} placeholder="Gana comisiones recurrentes recomendando ShadowScale..." /></Field>
+              <div className="grid sm:grid-cols-2 gap-3">
+                <Field label="Texto botón principal"><input className={inputCls} {...s("aff_cta_apply_label")} placeholder="Aplicar ahora" /></Field>
+                <Field label="Texto botón secundario"><input className={inputCls} {...s("aff_cta_how_label")} placeholder="Cómo funciona" /></Field>
+              </div>
+              <Field label="Badge social (ej: '200+ afiliados activos')"><input className={inputCls} {...s("affiliate_social_count")} placeholder="200+ afiliados activos" /></Field>
+            </div>
+
+            {/* Comisiones */}
+            <div className="flex flex-col gap-3">
+              <p className="text-xs font-semibold uppercase tracking-widest text-gray-500">Comisiones</p>
+              <div className="grid sm:grid-cols-2 gap-3">
+                <Field label="Comisión base (%)"><input className={inputCls} type="number" {...s("affiliate_commission")} placeholder="30" /></Field>
+                <Field label="Pago mínimo (ej: '$50')"><input className={inputCls} {...s("affiliate_min_payout")} placeholder="$50" /></Field>
+              </div>
+              <Field label="Link de registro / aplicar"><input className={inputCls} {...s("affiliate_apply_link")} placeholder="/afiliados/registro" /></Field>
+            </div>
+          </div>
+        )}
       </Card>
       <div className="flex justify-end"><button onClick={save} disabled={saving} className="px-8 py-2.5 rounded-xl text-sm font-bold text-white hover:opacity-90 disabled:opacity-50" style={{ background: "#f97316" }}>{saving ? "Guardando..." : "Guardar"}</button></div>
     </div>
@@ -1137,6 +1245,7 @@ const AnalyticsSection = () => {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [visitsLimit, setVisitsLimit] = useState(10);
   const [fDevice, setFDevice] = useState<string>("");
   const [fCountry, setFCountry] = useState<string>("");
   const [fBrowser, setFBrowser] = useState<string>("");
@@ -1248,21 +1357,21 @@ const AnalyticsSection = () => {
 
         {/* Filtros */}
         {!loading && visits.length > 0 && (<>
-          <select value={fDevice} onChange={e => setFDevice(e.target.value)}
+          <select value={fDevice} onChange={e => { setFDevice(e.target.value); setVisitsLimit(10); }}
             className="px-3 py-1.5 rounded-xl text-xs font-medium outline-none transition-colors"
             style={{ background: fDevice ? "rgba(249,115,22,0.15)" : "#0e0e10", color: fDevice ? "#f97316" : "#9ca3af", border: `1px solid ${fDevice ? "rgba(249,115,22,0.4)" : "rgba(255,255,255,0.07)"}` }}>
             <option value="">Dispositivo</option>
             {allDevices.map(d => <option key={d} value={d}>{d}</option>)}
           </select>
 
-          <select value={fCountry} onChange={e => setFCountry(e.target.value)}
+          <select value={fCountry} onChange={e => { setFCountry(e.target.value); setVisitsLimit(10); }}
             className="px-3 py-1.5 rounded-xl text-xs font-medium outline-none transition-colors max-w-[140px]"
             style={{ background: fCountry ? "rgba(14,165,233,0.15)" : "#0e0e10", color: fCountry ? "#38bdf8" : "#9ca3af", border: `1px solid ${fCountry ? "rgba(14,165,233,0.4)" : "rgba(255,255,255,0.07)"}` }}>
             <option value="">País</option>
             {allCountries.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
 
-          <select value={fBrowser} onChange={e => setFBrowser(e.target.value)}
+          <select value={fBrowser} onChange={e => { setFBrowser(e.target.value); setVisitsLimit(10); }}
             className="px-3 py-1.5 rounded-xl text-xs font-medium outline-none transition-colors"
             style={{ background: fBrowser ? "rgba(139,92,246,0.15)" : "#0e0e10", color: fBrowser ? "#a78bfa" : "#9ca3af", border: `1px solid ${fBrowser ? "rgba(139,92,246,0.4)" : "rgba(255,255,255,0.07)"}` }}>
             <option value="">Navegador</option>
@@ -1439,14 +1548,13 @@ const AnalyticsSection = () => {
                   <span className="text-right">Hora</span>
                 </div>
                 <div>
-                  {fVisits.slice(0, 50).map((v, idx) => {
+                  {fVisits.slice(0, visitsLimit).map((v, idx) => {
                     const vEvents = evsByVisit[v.id] ?? [];
                     const isOpen = expanded === v.id;
                     return (
-                      <div key={v.id}>
+                      <div key={v.id} style={{ borderTop: idx === 0 ? "none" : "1px solid rgba(255,255,255,0.03)" }}>
                         <button onClick={() => setExpanded(isOpen ? null : v.id)}
-                          className="w-full px-5 py-3 hover:bg-white/[0.02] transition-colors text-left"
-                          style={{ borderTop: idx > 0 ? "1px solid rgba(255,255,255,0.03)" : "none" }}>
+                          className="w-full px-5 py-3 hover:bg-white/[0.02] transition-colors text-left" aria-expanded={isOpen}>
                           <div className="hidden sm:grid items-center gap-3" style={{ gridTemplateColumns: "2rem 1fr 8rem 10rem 7rem" }}>
                             <span className="text-xl">{flagEmoji(v.country_code)}</span>
                             <div className="min-w-0">
@@ -1500,6 +1608,32 @@ const AnalyticsSection = () => {
                     );
                   })}
                 </div>
+                {/* Pagination footer */}
+                {(fVisits.length > 10) && (
+                  <div className="flex items-center justify-between px-5 py-3" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+                    <span className="text-[11px] text-gray-600">
+                      Mostrando {Math.min(visitsLimit, fVisits.length)} de {fVisits.length}
+                    </span>
+                    <div className="flex gap-2">
+                      {visitsLimit < fVisits.length && (
+                        <button
+                          onClick={() => setVisitsLimit(v => v + 10)}
+                          className="text-xs text-orange-400 hover:text-orange-300 px-3 py-1.5 rounded-lg border border-orange-400/20 hover:bg-orange-400/10 transition-colors"
+                        >
+                          Ver 10 más
+                        </button>
+                      )}
+                      {visitsLimit > 10 && (
+                        <button
+                          onClick={() => setVisitsLimit(10)}
+                          className="text-xs text-gray-500 hover:text-gray-300 px-3 py-1.5 rounded-lg border border-white/[0.06] hover:bg-white/[0.04] transition-colors"
+                        >
+                          Colapsar
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             </motion.div>
           ) : (
@@ -1699,11 +1833,10 @@ const SubscriptionsSection = () => {
 };
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
-type SectionId = "overview" | "tools" | "categories" | "plans" | "media" | "settings" | "pages" | "affiliates" | "analytics" | "subscriptions";
+type SectionId = "overview" | "tools" | "plans" | "media" | "settings" | "pages" | "affiliates" | "analytics" | "subscriptions";
 const SIDEBAR_ITEMS: { id: SectionId; label: string; icon: React.ElementType }[] = [
   { id: "overview", label: "Dashboard", icon: LayoutDashboard },
   { id: "tools", label: "Herramientas", icon: Package },
-  { id: "categories", label: "Categorías", icon: FolderOpen },
   { id: "plans", label: "Planes", icon: CreditCard },
   { id: "subscriptions", label: "Suscripciones", icon: ShieldCheck },
   { id: "affiliates", label: "Afiliados", icon: Users },
@@ -1778,7 +1911,6 @@ const AdminPanel = ({ onSignOut }: { onSignOut: () => void }) => {
             <motion.div key={section} variants={pageVariants} initial="initial" animate="animate" exit="exit">
               {section === "overview" && <OverviewSection tools={tools} categories={categories} plans={plans} settings={settings} />}
               {section === "tools" && <ToolsSection tools={tools} categories={categories} onRefresh={refetch} />}
-              {section === "categories" && <CategoriesSection categories={categories} onRefresh={refetch} />}
               {section === "plans" && <PlansSection plans={plans} onRefresh={refetch} />}
               {section === "media" && <MediaSection settings={settings} onRefresh={refetch} />}
               {section === "settings" && <SettingsSection settings={settings} onRefresh={refetch} />}

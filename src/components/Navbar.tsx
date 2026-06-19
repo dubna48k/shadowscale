@@ -19,7 +19,7 @@ const Navbar = ({ settings = {} }: NavbarProps) => {
 
   const navLinks = [
     { label: settings["nav_1_label"] ?? "Herramientas", href: settings["nav_1_href"] ?? "#herramientas" },
-    { label: settings["nav_2_label"] ?? "Afiliados", href: settings["nav_2_href"] ?? "/afiliados" },
+    ...(settings["afiliados_enabled"] !== "false" ? [{ label: settings["nav_2_label"] ?? "Afiliados", href: settings["nav_2_href"] ?? "/afiliados" }] : []),
     { label: settings["nav_3_label"] ?? "Precios", href: settings["nav_3_href"] ?? "#pricing" },
   ];
 

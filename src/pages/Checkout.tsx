@@ -73,6 +73,7 @@ const Checkout = () => {
           success_url:  settings["efipay_success_url"]  || `${window.location.origin}/gracias`,
           pending_url:  settings["efipay_pending_url"]  || `${window.location.origin}/pago-pendiente`,
           rejected_url: settings["efipay_rejected_url"] || `${window.location.origin}/pago-rechazado`,
+          ref_code:     localStorage.getItem("ss_ref") || null,
         },
       });
       if (error || !data?.checkout_url) {

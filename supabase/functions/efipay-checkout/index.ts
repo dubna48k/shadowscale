@@ -32,12 +32,13 @@ Deno.serve(async (req) => {
     const {
       plan_name,
       plan_price,
-      api_key,         // CMS tiene prioridad; fallback al secret
+      api_key,
       branch_id,
       currency,
       success_url,
       pending_url,
       rejected_url,
+      ref_code,
     } = await req.json();
 
     const EFIPAY_API_KEY    = api_key    || EFIPAY_API_KEY_SECRET;
@@ -100,6 +101,7 @@ Deno.serve(async (req) => {
       plan_price:       Number(plan_price),
       status:           "pending",
       efipay_reference: payment_id ?? `SS-${Date.now()}`,
+      ref_code:         ref_code ?? null,
     });
 
     return json({ checkout_url, payment_id });

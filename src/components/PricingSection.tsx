@@ -2,13 +2,15 @@ import { Check, Lock, RefreshCw, Zap, ChevronDown, Users } from "lucide-react";
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Plan as SupabasePlan } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 
-// Countdown — fecha fija de fin de oferta
-const LAUNCH_END = new Date("2026-07-15T23:59:59");
-
-const useCountdown = () => {
+const usePromoCountdown = (startedAt: string | null, durationHours: number) => {
+  const endTime = startedAt
+    ? new Date(new Date(startedAt).getTime() + durationHours * 3600000)
+    : null;
   const calc = () => {
-    const diff = LAUNCH_END.getTime() - Date.now();
+    if (!endTime) return { d: 0, h: 0, m: 0, s: 0 };
+    const diff = endTime.getTime() - Date.now();
     if (diff <= 0) return { d: 0, h: 0, m: 0, s: 0 };
     return {
       d: Math.floor(diff / 86400000),
@@ -18,10 +20,12 @@ const useCountdown = () => {
     };
   };
   const [t, setT] = useState(calc);
+  useEffect(() => { setT(calc()); }, [startedAt, durationHours]);
   useEffect(() => {
+    if (!endTime) return;
     const id = setInterval(() => setT(calc()), 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [endTime?.getTime()]);
   return t;
 };
 
@@ -165,7 +169,14 @@ const PricingFaqItem = ({ q, a }: { q: string; a: string }) => {
 };
 
 const PricingSection = ({ supabasePlans, settings = {} }: PricingSectionProps) => {
-  const { d, h, m, s } = useCountdown();
+  const [promoStartedAt, setPromoStartedAt] = useState<string | null>(null);
+  useEffect(() => {
+    supabase.functions.invoke("promo-timer")
+      .then(({ data }) => { if (data?.started_at) setPromoStartedAt(data.started_at); })
+      .catch(() => null);
+  }, []);
+  const promoDurationHours = Number(settings["promo_duration_hours"] ?? 72);
+  const { d, h, m, s } = usePromoCountdown(promoStartedAt, promoDurationHours);
   const activePlans = (supabasePlans ?? []).filter(p => p.status === "active");
 
   const plans: Plan[] = activePlans.length > 0

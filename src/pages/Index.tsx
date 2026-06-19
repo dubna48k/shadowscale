@@ -32,7 +32,7 @@ const Index = () => {
       <TopBanner settings={settings} />
       <Navbar settings={settings} />
       <FloatingConversionBar settings={settings} />
-      <HeroSection settings={settings} />
+      <HeroSection settings={settings} supabaseTools={tools} />
       <ToolsGrid
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -54,7 +54,7 @@ const Index = () => {
               { label: settings["footer_link_1_label"] ?? "Términos y Condiciones", href: settings["footer_link_1_href"] ?? "/terminos" },
               { label: settings["footer_link_2_label"] ?? "Política de Privacidad", href: settings["footer_link_2_href"] ?? "/politica" },
               { label: settings["footer_link_3_label"] ?? "Soporte", href: settings["footer_link_3_href"] ?? "/soporte" },
-              { label: settings["footer_link_4_label"] ?? "Afiliados", href: settings["footer_link_4_href"] ?? "/afiliados" },
+              ...(settings["afiliados_enabled"] !== "false" ? [{ label: settings["footer_link_4_label"] ?? "Afiliados", href: settings["footer_link_4_href"] ?? "/afiliados" }] : []),
               { label: "Mi cuenta", href: "/cuenta" },
             ].map((link, i) => (
               <span key={link.href} className="flex items-center gap-2">
