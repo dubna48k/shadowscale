@@ -714,6 +714,7 @@ const PlansSection = ({ plans, onRefresh }: { plans: Plan[]; onRefresh: () => vo
               <Field label="Destacado"><select className={inputCls} value={editing.highlight ? "1" : "0"} onChange={e => setEditing(v => ({ ...v, highlight: e.target.value === "1" }))}><option value="0">No</option><option value="1">Sí</option></select></Field>
               <Field label="Texto del botón"><input className={inputCls} value={editing.cta_text ?? ""} onChange={e => setEditing(v => ({ ...v, cta_text: e.target.value }))} /></Field>
               <Field label="Link del botón"><input className={inputCls} value={editing.cta_link ?? ""} onChange={e => setEditing(v => ({ ...v, cta_link: e.target.value }))} /></Field>
+              <Field label="Cupos restantes (vacío = ilimitado)"><input type="number" min={0} placeholder="∞" className={inputCls} value={editing.slots_left ?? ""} onChange={e => setEditing(v => ({ ...v, slots_left: e.target.value === "" ? null : Number(e.target.value) }))} /></Field>
             </div>
             <Field label="Features (una por línea)"><textarea rows={5} className={inputCls} value={(editing.features ?? []).join("\n")} onChange={e => setEditing(v => ({ ...v, features: e.target.value.split("\n") }))} /></Field>
             <div className="flex gap-2 justify-end pt-2">

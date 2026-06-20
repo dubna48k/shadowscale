@@ -43,6 +43,7 @@ type Plan = {
   ctaLink?: string;
   highlighted?: boolean;
   ctaStyle: "outline" | "solid" | "gradient";
+  slots?: number | null;
 };
 
 const FALLBACK_PLANS: Plan[] = [
@@ -194,6 +195,7 @@ const PricingSection = ({ supabasePlans, settings = {} }: PricingSectionProps) =
         ctaLink: p.cta_link,
         highlighted: p.highlight,
         ctaStyle: ctaStyleByIndex(i, p.highlight),
+        slots: p.slots_left,
       }))
     : FALLBACK_PLANS;
 
@@ -336,6 +338,15 @@ const PricingSection = ({ supabasePlans, settings = {} }: PricingSectionProps) =
                 {plan.discount}
               </div>
 
+              {plan.slots != null && plan.slots > 0 && (
+                <div
+                  className="inline-flex items-center gap-1.5 self-start mb-4 animate-pulse"
+                  style={{ background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.35)", borderRadius: "20px", padding: "4px 12px", fontSize: "12px", fontWeight: 700, color: "#f87171" }}
+                >
+                  🔥 Solo {plan.slots} {plan.slots === 1 ? "cupo disponible" : "cupos disponibles"}
+                </div>
+              )}
+
               <ul className="space-y-2.5 mb-6 flex-1">
                 {plan.features.map((f) => (
                   <li key={f} className="flex items-start gap-2.5">
@@ -346,6 +357,14 @@ const PricingSection = ({ supabasePlans, settings = {} }: PricingSectionProps) =
               </ul>
 
 
+              {plan.slots === 0 ? (
+                <div
+                  className="block w-full text-center"
+                  style={{ borderRadius: "12px", padding: "14px", fontSize: "15px", fontWeight: 700, background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)", cursor: "not-allowed", border: "1px solid rgba(255,255,255,0.1)" }}
+                >
+                  Agotado · sin cupos
+                </div>
+              ) : (
               <a
                 href={settings["checkout_provider"] === "efipay" ? `/checkout?plan=${plan.name.toLowerCase()}` : (plan.ctaLink ?? `/checkout?plan=${plan.name.toLowerCase()}`)}
                 className="block w-full text-center transition-colors"
@@ -373,6 +392,7 @@ const PricingSection = ({ supabasePlans, settings = {} }: PricingSectionProps) =
               >
                 {plan.cta}
               </a>
+              )}
             </div>
           ))}
         </div>

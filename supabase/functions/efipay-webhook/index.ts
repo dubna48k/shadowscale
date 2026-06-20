@@ -53,13 +53,23 @@ Deno.serve(async (req) => {
 
     const payload = JSON.parse(rawBody);
 
-    // Efipay envía { transaction: {...}, checkout: {...} }
-    const transaction = payload.transaction ?? payload;
-    const checkout    = payload.checkout ?? {};
+    console.log("[efipay-webhook] payload:", JSON.stringify(payload));
 
-    // payment_id viene en checkout o en el root del payload
-    const payment_id = checkout.id ?? checkout.payment_id ?? payload.payment_id ?? null;
-    const status     = transaction.status ?? payload.status ?? "";
+    // Efipay envía { transaction: {...}, checkout: {...} } — normalizar
+    const transaction = payload.transaction ?? payload.data?.transaction ?? payload;
+    const checkout    = payload.checkout ?? payload.data?.checkout ?? payload.data ?? {};
+
+    // payment_id puede venir en múltiples ubicaciones según versión de API
+    const payment_id =
+      checkout.id ?? checkout.payment_id ?? checkout.checkout_id ??
+      payload.payment_id ?? payload.id ?? payload.checkout_id ??
+      transaction.payment_id ?? transaction.checkout_id ?? null;
+
+    const status =
+      transaction.status ?? payload.status ?? payload.data?.status ??
+      checkout.status ?? "";
+
+    console.log("[efipay-webhook] payment_id:", payment_id, "status:", status);
 
     if (!payment_id) {
       return json({ error: "No se encontró payment_id en el webhook", payload }, 400);
@@ -71,16 +81,16 @@ Deno.serve(async (req) => {
     const { data: sub } = await supabase
       .from("subscriptions")
       .select("*")
-      .eq("efipay_reference", payment_id)
+      .eq("efipay_reference", String(payment_id))
       .maybeSingle();
 
     if (!sub) {
       // No es un error crítico — puede ser un pago no relacionado
-      return json({ ok: true, note: "subscription not found", payment_id });
+      return json({ ok: true, note: "subscription not found", payment_id, payload });
     }
 
-    const isApproved = ["Aprobada", "approved", "APPROVED", "paid", "PAID"].includes(String(status));
-    const isRejected = ["Rechazada", "rejected", "declined", "failed", "FAILED"].includes(String(status));
+    const isApproved = ["Aprobada", "approved", "APPROVED", "paid", "PAID", "completado", "COMPLETADO"].includes(String(status));
+    const isRejected = ["Rechazada", "rejected", "declined", "failed", "FAILED", "cancelado", "CANCELADO"].includes(String(status));
     // "Pendiente" / "pending" → ignorar, esperar siguiente webhook con estado final
 
     if (isApproved) {
@@ -94,6 +104,13 @@ Deno.serve(async (req) => {
         expires_at: expiresAt.toISOString(),
         updated_at: now.toISOString(),
       }).eq("id", sub.id);
+
+      // Cupos limitados (marketing de guerrilla): resta 1 cupo del plan vendido.
+      // Si el plan tiene slots_left definido y llega a 0, la función lo marca sold_out.
+      if (sub.plan_name) {
+        const { error: slotErr } = await supabase.rpc("decrement_plan_slot", { p_plan_name: sub.plan_name });
+        if (slotErr) console.error("[efipay-webhook] decrement_plan_slot:", slotErr.message);
+      }
 
       // Registrar conversión de referido si hay ref_code
       if (sub.ref_code) {

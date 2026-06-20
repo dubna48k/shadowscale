@@ -46,6 +46,7 @@ export interface Plan {
   old_price: string | null;
   discount: string | null;
   top_badge: string | null;
+  slots_left: number | null;
 }
 
 export interface Affiliate {
