@@ -273,7 +273,11 @@ const PricingSection = ({ supabasePlans, settings = {} }: PricingSectionProps) =
           {settings["pricing_subtitle"] ?? "Sin sorpresas, sin contratos. Cancela cuando quieras."}
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 justify-center items-start">
+        <div className={`grid grid-cols-1 gap-6 mx-auto justify-center items-stretch ${
+          plans.length === 1 ? "md:grid-cols-1 max-w-md" :
+          plans.length === 2 ? "md:grid-cols-2 max-w-3xl" :
+          "md:grid-cols-3 max-w-5xl"
+        }`}>
           {plans.map((plan) => (
             <div
               key={plan.name}

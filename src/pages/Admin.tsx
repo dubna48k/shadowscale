@@ -407,7 +407,7 @@ const OverviewSection = ({ tools, categories, plans, settings }:
                     </div>
                     <div className="text-right shrink-0">
                       <div className="text-green-400 text-xs font-bold font-mono">${(a.total_earned ?? 0).toFixed(2)}</div>
-                      <div className="text-[10px] text-gray-600">{(a.commission_rate ?? 0) * 100}% comis.</div>
+                      <div className="text-[10px] text-gray-600">{a.commission_rate ?? 30}% comis.</div>
                     </div>
                   </div>
                 ))}
@@ -1008,6 +1008,8 @@ const AffiliatesSection = ({ settings, onRefresh }: { settings: Record<string, s
   const [affiliates, setAffiliates] = useState<Affiliate[]>([]);
   const [refCounts, setRefCounts] = useState<Record<string, { clicks: number; conv: number }>>({});
   const [tab, setTab] = useState<"list" | "config">("list");
+  const [editingAff, setEditingAff] = useState<Affiliate | null>(null);
+  const [editBusy, setEditBusy] = useState(false);
   useEffect(() => { setVals(settings); }, [settings]);
 
   const loadAffiliates = async () => {
@@ -1035,6 +1037,20 @@ const AffiliatesSection = ({ settings, onRefresh }: { settings: Record<string, s
         });
       }
     }
+    loadAffiliates();
+  };
+
+  const saveAff = async () => {
+    if (!editingAff) return;
+    setEditBusy(true);
+    await supabase.from("affiliates").update({
+      commission_rate: Number(editingAff.commission_rate),
+      payout_method:   editingAff.payout_method ?? null,
+      payout_details:  editingAff.payout_details ?? null,
+      status:          editingAff.status,
+    }).eq("id", editingAff.id);
+    setEditBusy(false);
+    setEditingAff(null);
     loadAffiliates();
   };
 
@@ -1081,13 +1097,55 @@ const AffiliatesSection = ({ settings, onRefresh }: { settings: Record<string, s
         ))}
       </div>
 
+      {/* Modal de edición de afiliado */}
+      {editingAff && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.7)" }}>
+          <div className="w-full max-w-md rounded-2xl p-6 flex flex-col gap-4" style={{ background: "#1a1a1c", border: "1px solid rgba(255,255,255,0.1)" }}>
+            <div className="flex items-center justify-between">
+              <h3 className="text-white font-bold text-base">Editar afiliado</h3>
+              <button onClick={() => setEditingAff(null)} className="text-gray-500 hover:text-white"><X className="w-4 h-4" /></button>
+            </div>
+            <div className="text-sm text-gray-400">{editingAff.name} · <span className="font-mono text-gray-500">{editingAff.code}</span></div>
+            <div className="flex flex-col gap-3">
+              <Field label="Estado">
+                <select className={inputCls} value={editingAff.status} onChange={e => setEditingAff(v => v && ({ ...v, status: e.target.value as Affiliate["status"] }))}>
+                  <option value="pending">Pendiente</option>
+                  <option value="approved">Aprobado</option>
+                  <option value="rejected">Rechazado</option>
+                  <option value="suspended">Suspendido</option>
+                </select>
+              </Field>
+              <Field label="Comisión (%)">
+                <input type="number" min={0} max={100} step={1} className={inputCls}
+                  value={editingAff.commission_rate}
+                  onChange={e => setEditingAff(v => v && ({ ...v, commission_rate: Number(e.target.value) }))} />
+              </Field>
+              <Field label="Método de pago">
+                <input className={inputCls} placeholder="Nequi, Bancolombia, PayPal..." value={editingAff.payout_method ?? ""}
+                  onChange={e => setEditingAff(v => v && ({ ...v, payout_method: e.target.value }))} />
+              </Field>
+              <Field label="Detalles de pago">
+                <input className={inputCls} placeholder="Número de cuenta, email, etc." value={editingAff.payout_details ?? ""}
+                  onChange={e => setEditingAff(v => v && ({ ...v, payout_details: e.target.value }))} />
+              </Field>
+            </div>
+            <div className="flex gap-2 justify-end">
+              <button onClick={() => setEditingAff(null)} className="px-4 py-2 rounded-xl text-sm text-gray-400 hover:text-white border border-white/[0.08]">Cancelar</button>
+              <button onClick={saveAff} disabled={editBusy} className="px-4 py-2 rounded-xl text-sm font-bold text-white disabled:opacity-50" style={{ background: "#f97316" }}>
+                {editBusy ? "Guardando..." : "Guardar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {tab === "list" ? (
         affiliates.length > 0 ? (
           <Card className="p-0 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead><tr className="text-left text-gray-500 text-[11px] uppercase" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-                  <th className="px-5 py-3">Afiliado</th><th className="px-3 py-3">Código</th><th className="px-3 py-3">Clicks</th><th className="px-3 py-3">Conv.</th><th className="px-3 py-3">Estado</th><th className="px-3 py-3"></th>
+                  <th className="px-5 py-3">Afiliado</th><th className="px-3 py-3">Código</th><th className="px-3 py-3">Clicks</th><th className="px-3 py-3">Conv.</th><th className="px-3 py-3">Comis.</th><th className="px-3 py-3">Estado</th><th className="px-3 py-3"></th>
                 </tr></thead>
                 <tbody>
                   {affiliates.map(a => {
@@ -1099,9 +1157,11 @@ const AffiliatesSection = ({ settings, onRefresh }: { settings: Record<string, s
                         <td className="px-3 py-3"><span className="font-mono text-xs text-gray-300 bg-white/[0.05] px-2 py-0.5 rounded">{a.code}</span></td>
                         <td className="px-3 py-3 text-white font-mono">{c.clicks}</td>
                         <td className="px-3 py-3 text-white font-mono">{c.conv}</td>
+                        <td className="px-3 py-3 text-gray-300 font-mono text-xs">{a.commission_rate}%</td>
                         <td className="px-3 py-3"><span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: meta.color + "22", color: meta.color }}>{meta.label}</span></td>
                         <td className="px-3 py-3">
                           <div className="flex items-center gap-1 justify-end">
+                            <button onClick={() => setEditingAff(a)} title="Editar" className="p-1.5 rounded-lg text-gray-500 hover:text-orange-400 hover:bg-white/[0.05]"><Pencil className="w-3.5 h-3.5" /></button>
                             {a.status !== "approved" && <button onClick={() => setStatus(a.id, "approved")} title="Aprobar" className="p-1.5 rounded-lg text-gray-500 hover:text-emerald-400 hover:bg-white/[0.05]"><Check className="w-3.5 h-3.5" /></button>}
                             {a.status !== "suspended" && <button onClick={() => setStatus(a.id, "suspended")} title="Suspender" className="p-1.5 rounded-lg text-gray-500 hover:text-yellow-400 hover:bg-white/[0.05]"><Ban className="w-3.5 h-3.5" /></button>}
                             {a.status !== "rejected" && <button onClick={() => setStatus(a.id, "rejected")} title="Rechazar" className="p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-white/[0.05]"><X className="w-3.5 h-3.5" /></button>}
@@ -1561,12 +1621,12 @@ const AnalyticsSection = () => {
                               </div>
                               {v.referrer && <div className="text-gray-600 text-[10px] truncate mt-0.5">← {v.referrer}</div>}
                             </div>
-                            <div>
+                            <div className="min-w-0">
                               {v.ip
-                                ? <span className="font-mono text-[11px] text-orange-300/80 bg-orange-400/10 px-2 py-0.5 rounded-md">{v.ip}</span>
+                                ? <span className="font-mono text-[10px] text-orange-300/80 bg-orange-400/10 px-1.5 py-0.5 rounded-md break-all leading-tight inline-block max-w-full">{v.ip}</span>
                                 : <span className="text-gray-700 text-[11px]">—</span>}
                             </div>
-                            <div className="text-xs text-gray-500 truncate">{v.device ?? "Desktop"} · {v.browser ?? "—"}</div>
+                            <div className="text-xs text-gray-500 truncate min-w-0">{v.device ?? "Desktop"} · {v.browser ?? "—"}</div>
                             <div className="text-right">
                               <div className="text-gray-500 text-[11px]">
                                 {new Date(v.created_at).toLocaleString("es-CO", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
@@ -1658,7 +1718,8 @@ type SubRecord = {
   id: string; user_id: string; user_email: string | null;
   plan_name: string; plan_price: number;
   status: "pending" | "active" | "expired" | "cancelled";
-  efipay_reference: string | null; starts_at: string | null; expires_at: string | null; created_at: string;
+  efipay_reference: string | null; ref_code: string | null;
+  starts_at: string | null; expires_at: string | null; created_at: string;
 };
 const SUB_STATUS: Record<string, { label: string; color: string; bg: string }> = {
   active:    { label: "Activa",    color: "#10b981", bg: "rgba(16,185,129,0.12)" },
@@ -1694,6 +1755,37 @@ const SubscriptionsSection = () => {
       starts_at: now.toISOString(),
       expires_at: expires.toISOString(),
     }).eq("id", sub.id);
+
+    // Tracking de conversión de afiliado
+    if (sub.ref_code) {
+      const { data: aff } = await supabase
+        .from("affiliates")
+        .select("id, commission_rate, total_earned")
+        .eq("code", sub.ref_code)
+        .maybeSingle();
+      if (aff) {
+        const rate = (aff.commission_rate ?? 30) / 100;
+        const earned = (sub.plan_price ?? 0) * rate;
+        // Marcar el último click de este afiliado como convertido
+        const { data: clicks } = await supabase
+          .from("referrals")
+          .select("id")
+          .eq("affiliate_id", aff.id)
+          .eq("status", "click")
+          .order("created_at", { ascending: false })
+          .limit(1);
+        if (clicks?.length) {
+          await supabase.from("referrals")
+            .update({ status: "converted", amount: earned })
+            .eq("id", clicks[0].id);
+        }
+        // Actualizar ganancias del afiliado
+        await supabase.from("affiliates")
+          .update({ total_earned: (aff.total_earned ?? 0) + earned })
+          .eq("id", aff.id);
+      }
+    }
+
     await fetch();
     setBusy(null);
   };
@@ -1769,8 +1861,13 @@ const SubscriptionsSection = () => {
                   <tr key={sub.id} style={{ borderBottom: i < filtered.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none" }}
                     className="hover:bg-white/[0.02] transition-colors">
                     <td className="px-4 py-3">
-                      <p className="text-white text-xs font-medium">{sub.user_email ?? "—"}</p>
-                      <p className="text-gray-600 text-[10px] font-mono">{sub.user_id.slice(0,8)}…</p>
+                      <p className="text-white text-xs font-medium">
+                        {sub.user_email ?? <span className="text-yellow-600 italic">Sin cuenta vinculada</span>}
+                      </p>
+                      <p className="text-gray-600 text-[10px] font-mono">
+                        {sub.user_id ? sub.user_id.slice(0,8)+"…" : ""}
+                        {sub.ref_code && <span className="ml-1 text-orange-700">ref:{sub.ref_code}</span>}
+                      </p>
                     </td>
                     <td className="px-4 py-3">
                       <p className="text-white text-xs font-semibold">{sub.plan_name}</p>
