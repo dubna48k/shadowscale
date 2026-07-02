@@ -257,7 +257,9 @@ const CuentaDashboard = () => {
               <h3 className="text-white font-semibold text-sm">Herramientas incluidas</h3>
             </div>
             <div className="grid grid-cols-1 gap-1.5">
-              {activePlan.features.map((f: string, i: number) => (
+              {activePlan.features
+                .filter((f: string) => f && !f.toLowerCase().includes("gratis") && !f.toLowerCase().includes("trial") && f.trim() !== "")
+                .map((f: string, i: number) => (
                 <div key={i} className="flex items-center gap-2 text-sm text-gray-300">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                   {f}

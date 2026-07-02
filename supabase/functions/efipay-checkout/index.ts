@@ -93,16 +93,23 @@ Deno.serve(async (req) => {
 
     const data = await res.json();
 
+    console.log("[efipay-checkout] Efipay response:", JSON.stringify(data));
+
     if (!res.ok) {
       return json({ error: data?.message ?? `Efipay error ${res.status}`, detail: data });
     }
 
-    const checkout_url = data.url ?? null;
-    const payment_id   = data.payment_id ?? null;
+    // Efipay puede devolver la URL y el ID en diferentes campos según versión
+    const checkout_url = data.url ?? data.checkout_url ?? data.payment_url ?? data.data?.url ?? null;
+    const payment_id   =
+      data.payment_id ?? data.id ?? data.checkout_id ??
+      data.data?.payment_id ?? data.data?.id ?? null;
 
     if (!checkout_url) {
       return json({ error: "Efipay no devolvió URL de pago", raw: data }, 502);
     }
+
+    const efipay_ref = payment_id != null ? String(payment_id) : `SS-${Date.now()}`;
 
     // 5. Guardar suscripción pendiente con precio real de BD
     await supabase.from("subscriptions").insert({
@@ -111,11 +118,11 @@ Deno.serve(async (req) => {
       plan_name:        plan.name,
       plan_price:       Number(plan.price),
       status:           "pending",
-      efipay_reference: payment_id ?? `SS-${Date.now()}`,
+      efipay_reference: efipay_ref,
       ref_code:         typeof ref_code === "string" ? ref_code.slice(0, 50) : null,
     });
 
-    return json({ checkout_url, payment_id });
+    return json({ checkout_url, payment_id: efipay_ref });
 
   } catch (err) {
     return json({ error: String(err) }, 500);
