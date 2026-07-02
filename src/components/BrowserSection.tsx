@@ -12,7 +12,7 @@ const BrowserMockup = ({ videoUrl, imageUrl }: { videoUrl: string; imageUrl: str
   const hasImage = !!imageUrl;
 
   return (
-    <div className="relative w-full max-w-2xl mx-auto select-none">
+    <div className="relative w-full select-none">
       {/* Purple glow behind */}
       <div
         className="absolute inset-0 rounded-2xl blur-3xl opacity-30 -z-10"
@@ -111,25 +111,25 @@ const BrowserSection = ({ settings = {} }: BrowserSectionProps) => {
   const imageUrl = settings["browser_image_url"] ?? "";
 
   return (
-    <section className="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
-      <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-        {/* Left: text */}
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
+      <div className="flex flex-col items-center text-center gap-10">
+        {/* Text */}
         <motion.div
-          className="flex flex-col gap-5"
-          initial={{ opacity: 0, x: -24 }}
-          whileInView={{ opacity: 1, x: 0 }}
+          className="flex flex-col items-center gap-5 max-w-2xl"
+          initial={{ opacity: 0, y: -16 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={spring}
         >
-          <h2 className="text-[26px] sm:text-[32px] font-bold text-white leading-tight">{title}</h2>
-          <p className="text-[14px] text-gray-400 leading-relaxed">{desc}</p>
+          <h2 className="text-[26px] sm:text-[36px] font-bold text-white leading-tight">{title}</h2>
+          <p className="text-[14px] sm:text-[16px] text-gray-400 leading-relaxed">{desc}</p>
 
           {downloadLink && (
             <a
               href={downloadLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 self-start px-6 py-3 rounded-xl font-bold text-white text-sm transition-all hover:opacity-90 hover:scale-105"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white text-sm transition-all hover:opacity-90 hover:scale-105"
               style={{ background: "#f97316", boxShadow: "0 0 24px rgba(249,115,22,0.4)" }}
             >
               <Download className="w-4 h-4" />
@@ -151,10 +151,11 @@ const BrowserSection = ({ settings = {} }: BrowserSectionProps) => {
           </div>
         </motion.div>
 
-        {/* Right: browser mockup */}
+        {/* Browser mockup — grande, a todo el ancho, debajo del texto */}
         <motion.div
-          initial={{ opacity: 0, x: 24 }}
-          whileInView={{ opacity: 1, x: 0 }}
+          className="w-full"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ ...spring, delay: 0.08 }}
         >
